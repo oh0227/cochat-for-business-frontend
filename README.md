@@ -12,7 +12,7 @@
 
 ## 📂 Folder Structure (도메인 기반)
 
-```text
+\`\`\`text
 src/
 ├── app/ # 라우팅 및 페이지 (Next.js App Router)
 │ ├── (main)/ # 공통 GNB 사이드바가 포함된 메인 레이아웃
@@ -30,7 +30,7 @@ src/
 ├── services/ # API 통신 로직 및 Axios/Fetch 설정
 ├── types/ # TypeScript 공통 인터페이스 (NotificationEvent 등)
 └── lib/ # 유틸리티 함수 (cn, date 등)
-```
+\`\`\`
 
 ## 🚀 Getting Started
 
