@@ -1,26 +1,119 @@
 @import "tailwindcss";
+@import "pretendard/dist/web/variable/pretendardvariable.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* ─── Font ─────────────────────────────────────────── */
+  --font-pretendard: "Pretendard Variable", Pretendard, sans-serif;
+
+  --font-size-5xs: 12px;
+  --font-size-3xs: 14px;
+  --font-size-2xs: 15px;
+  --font-size-xs:  16px;
+  --font-size-sm:  18px;
+  --font-size-md:  20px;
+  --font-size-lg:  24px;
+  --font-size-2xl: 30px;
+  --font-size-4xl: 36px;
+
+  --font-weight-regular:   400;
+  --font-weight-medium:    500;
+  --font-weight-semibold:  600;
+  --font-weight-bold:      700;
+
+  --line-height-5xs: 16px;
+  --line-height-4xs: 20px;
+  --line-height-3xs: 22px;
+  --line-height-2xs: 24px;
+  --line-height-xs:  26px;
+  --line-height-sm:  28px;
+  --line-height-lg:  32px;
+  --line-height-3xl: 42px;
+  --line-height-4xl: 48px;
+
+  /* ─── Border Radius ─────────────────────────────────── */
+  --radius-3xs: 2px;
+  --radius-2xs: 4px;
+  --radius-xs:  8px;
+  --radius-sm:  12px;
+  --radius-md:  16px;
+  --radius-lg:  20px;
+  --radius-8xl: 999px;
+
+  /* ─── Spacing / Gap ─────────────────────────────────── */
+  --spacing-none: 0px;
+  --spacing-4xs:  2px;
+  --spacing-3xs:  4px;
+  --spacing-2xs:  8px;
+  --spacing-xs:   12px;
+  --spacing-sm:   16px;
+  --spacing-md:   20px;
+  --spacing-lg:   24px;
+  --spacing-xl:   32px;
+  --spacing-2xl:  40px;
+  --spacing-3xl:  48px;
+  --spacing-4xl:  56px;
+  --spacing-6xl:  72px;
+  --spacing-7xl:  80px;
+  --spacing-9xl:  120px;
+  --spacing-11xl: 170px;
+  --spacing-12xl: 320px;
+
+  /* ─── Colors: Brand ─────────────────────────────────── */
+  --color-brand-20:   #f8f9ff;
+  --color-brand-50:   #eff0fe;
+  --color-brand-80:   #e1e3ff;
+  --color-brand-100:  #cfd0fb;
+  --color-brand-400:  #8285f4;
+  --color-brand-500:  #6366f1;
+  --color-brand-600:  #5a5ddb;
+  --color-brand-700:  #4648ab;
+
+  /* ─── Colors: Gray (Surface / Label / Stroke) ────────── */
+  --color-gray-default: #ffffff;
+  --color-gray-20:      #f3f4f5;
+  --color-gray-50:      #f0f2f3;
+  --color-gray-80:      #dfe3e5;
+  --color-gray-100:     #d2d5d8;
+  --color-gray-400:     #8a939b;
+  --color-gray-500:     #6d7882;
+  --color-gray-700:     #4d555c;
+  --color-gray-800:     #3c4248;
+  --color-gray-900:     #2e3237;
+  --color-gray-950:     #212225;
+
+  /* ─── Colors: Priority ───────────────────────────────── */
+  --color-urgent-50:    #fef2f2;
+  --color-urgent-300:   #fca5a5;
+  --color-urgent-500:   #ef4444;
+
+  --color-important-50:  #fffaeb;
+  --color-important-500: #f79009;
+
+  --color-normal-50:    #ebf3fe;
+  --color-normal-300:   #7cabf9;
+  --color-normal-500:   #3b82f6;
+
+  /* ─── Colors: System ─────────────────────────────────── */
+  --color-system-danger:      #ef4444;
+  --color-system-success:     #10a760;
+  --color-system-information: #3676e0;
+
+  /* ─── Colors: Status ─────────────────────────────────── */
+  --color-status-completed-50:  #e7f8f0;
+  --color-status-completed-500: #12b76a;
+
+  /* ─── Background ─────────────────────────────────────── */
+  --color-background: #ffffff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    font-family: var(--font-pretendard);
+    background-color: var(--color-background);
+    color: var(--color-gray-950);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-3xs);
+    letter-spacing: -0.4px;
+    -webkit-font-smoothing: antialiased;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
