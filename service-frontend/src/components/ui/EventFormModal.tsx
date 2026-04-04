@@ -14,9 +14,18 @@ const MOCK_CONTACTS = [
   { name: '오지민', email: 'jimin.oh@company.com', team: '디자인팀' },
 ]
 
+export interface EventFormData {
+  title: string
+  date: string
+  time: string
+  attendees: string[]
+  memo: string
+}
+
 interface EventFormModalProps {
   event?: CalendarEvent | null
   onClose: () => void
+  onSubmit: (data: EventFormData) => void
 }
 
 function formatDateLabel(isoString: string): string {
@@ -33,7 +42,7 @@ function formatTimeLabel(isoString: string): string {
   }).format(new Date(isoString))
 }
 
-export default function EventFormModal({ event, onClose }: EventFormModalProps) {
+export default function EventFormModal({ event, onClose, onSubmit }: EventFormModalProps) {
   const isEdit = !!event
 
   const [title, setTitle] = useState(event?.title ?? '')
@@ -293,7 +302,7 @@ export default function EventFormModal({ event, onClose }: EventFormModalProps) 
           <div className="flex justify-end border-t border-[#e2e8f0] px-6 py-6">
             <button
               type="button"
-              onClick={isValid ? onClose : undefined}
+              onClick={() => { if (isValid) onSubmit({ title, date, time, attendees, memo }) }}
               disabled={!isValid}
               className="flex h-[44px] items-center gap-2 rounded-[12px] px-5 font-medium transition-colors"
               style={{

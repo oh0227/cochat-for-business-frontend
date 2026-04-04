@@ -5,16 +5,47 @@ import { CalendarDays, CalendarPlus } from 'lucide-react'
 import { mockCalendarEvents } from '@/mocks'
 import CalendarGrid from '@/components/ui/CalendarGrid'
 import TodayPanel from '@/components/ui/TodayPanel'
-import EventFormModal from '@/components/ui/EventFormModal'
+import EventFormModal, { type EventFormData } from '@/components/ui/EventFormModal'
 import type { CalendarEvent } from '@/types'
+
+const pad = (n: number) => String(n).padStart(2, '0')
+
+/** "2026년 4월 5일" + "오후 2:00" → "2026-04-05T14:00:00+09:00" */
+function parseToIso(dateStr: string, timeStr: string): string {
+  const dateMatch = dateStr.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/)
+  const now = new Date()
+  const year = dateMatch ? parseInt(dateMatch[1]) : now.getFullYear()
+  const month = dateMatch ? parseInt(dateMatch[2]) : now.getMonth() + 1
+  const day = dateMatch ? parseInt(dateMatch[3]) : now.getDate()
+
+  let hour = 0
+  let minute = 0
+  const timeMatch = timeStr.match(/(오전|오후)\s*(\d{1,2}):(\d{2})/)
+  if (timeMatch) {
+    hour = parseInt(timeMatch[2])
+    minute = parseInt(timeMatch[3])
+    if (timeMatch[1] === '오후' && hour !== 12) hour += 12
+    if (timeMatch[1] === '오전' && hour === 12) hour = 0
+  }
+
+  return `${year}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:00+09:00`
+}
+
+function addOneHour(iso: string): string {
+  const d = new Date(new Date(iso).getTime() + 3600_000)
+  const kst = new Date(d.getTime() + 9 * 3600_000)
+  return `${kst.getUTCFullYear()}-${pad(kst.getUTCMonth() + 1)}-${pad(kst.getUTCDate())}T${pad(kst.getUTCHours())}:${pad(kst.getUTCMinutes())}:00+09:00`
+}
 
 export default function CalendarPage() {
   const today = new Date()
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
-  const todayEvents = mockCalendarEvents.filter((e) => e.startAt.startsWith(todayStr))
+  const todayStr = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`
 
+  const [events, setEvents] = useState<CalendarEvent[]>(mockCalendarEvents)
   const [modalOpen, setModalOpen] = useState(false)
   const [editEvent, setEditEvent] = useState<CalendarEvent | null>(null)
+
+  const todayEvents = events.filter((e) => e.startAt.startsWith(todayStr))
 
   function openCreateModal() {
     setEditEvent(null)
@@ -29,6 +60,35 @@ export default function CalendarPage() {
   function closeModal() {
     setModalOpen(false)
     setEditEvent(null)
+  }
+
+  function handleSubmit(data: EventFormData) {
+    const startAt = parseToIso(data.date, data.time)
+    const endAt = addOneHour(startAt)
+    const isAllDay = !data.time.trim()
+
+    if (editEvent) {
+      setEvents((prev) =>
+        prev.map((e) =>
+          e.id === editEvent.id
+            ? { ...e, title: data.title, startAt, endAt, isAllDay, attendees: data.attendees }
+            : e,
+        ),
+      )
+    } else {
+      const newEvent: CalendarEvent = {
+        id: `event-${Date.now()}`,
+        title: data.title,
+        startAt,
+        endAt,
+        isAllDay,
+        attendees: data.attendees,
+        relatedNotificationIds: [],
+      }
+      setEvents((prev) => [...prev, newEvent])
+    }
+
+    closeModal()
   }
 
   return (
@@ -73,7 +133,7 @@ export default function CalendarPage() {
       {/* 캘린더 + 오늘 일정 사이드바 */}
       <div className="flex flex-1 overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-gray-80)] bg-white">
         <CalendarGrid
-          events={mockCalendarEvents}
+          events={events}
           initialYear={today.getFullYear()}
           initialMonth={today.getMonth()}
           onEditEvent={openEditModal}
@@ -85,6 +145,7 @@ export default function CalendarPage() {
         <EventFormModal
           event={editEvent}
           onClose={closeModal}
+          onSubmit={handleSubmit}
         />
       )}
     </div>
