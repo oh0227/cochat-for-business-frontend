@@ -1,10 +1,5 @@
 import { notFound } from 'next/navigation'
-import {
-  mockChannelSummaries,
-  mockChatMessages,
-  mockChatRoomNotificationIds,
-  mockNotifications,
-} from '@/mocks'
+import { getNotifications, buildChannelSummaries } from '@/lib/api'
 import ChatRoom from '@/components/ui/ChatRoom'
 
 interface ChatRoomPageProps {
@@ -14,18 +9,22 @@ interface ChatRoomPageProps {
 export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
   const { channelId } = await params
 
-  const channel = mockChannelSummaries.find((c) => c.id === channelId)
+  const notifications = await getNotifications()
+  const channelSummaries = buildChannelSummaries(notifications)
+
+  const channel = channelSummaries.find((c) => c.id === channelId)
   if (!channel) notFound()
 
-  const messages = mockChatMessages[channelId] ?? []
-  const notifIds = mockChatRoomNotificationIds[channelId] ?? []
-  const notifications = mockNotifications.filter((n) => notifIds.includes(n.id))
+  // 해당 채널의 알림만 우측 패널에 표시
+  const channelNotifications = notifications.filter(
+    (n) => `${n.integrationId}:${n.channel ?? '__dm__'}` === channelId
+  )
 
   return (
     <ChatRoom
       channel={channel}
-      messages={messages}
-      notifications={notifications}
+      messages={[]}
+      notifications={channelNotifications}
     />
   )
 }

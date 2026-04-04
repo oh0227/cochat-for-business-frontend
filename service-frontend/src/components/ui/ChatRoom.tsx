@@ -35,12 +35,19 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
 
   const { iconBg, textColor, Icon } = PROVIDER_ICON[channel.provider] ?? PROVIDER_ICON.slack
 
-  // 알림 선택 시 해당 메시지로 스크롤
+  // 알림 선택 시 해당 메시지로 스크롤 + 읽음 처리
   function handleSelectNotif(notifId: string) {
     const next = selectedNotifId === notifId ? null : notifId
     setSelectedNotifId(next)
     setShowAiDraft(false)
     if (!next) return
+
+    // 읽음 상태로 업데이트 (fire-and-forget)
+    fetch(`/api/notifications/${notifId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'read' }),
+    }).catch(() => {/* 무시 */})
 
     const linked = messages.find((m) => m.notificationId === notifId)
     if (linked) {

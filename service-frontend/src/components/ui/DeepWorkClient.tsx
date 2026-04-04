@@ -31,21 +31,37 @@ function formatTime(totalSeconds: number): string {
   return `${m}:${s}`
 }
 
-// [백엔드 연결] POST /api/briefings/generate 호출
-// 현재는 목업 Route Handler를 사용합니다.
-// 실제 백엔드 연결 시 URL을 실제 엔드포인트로 교체하고 Authorization 헤더를 추가하세요.
-// [백엔드 연결] 세션 이후 새 알림이 없을 경우 백엔드가 422를 반환해야 버튼 비활성화가 동작합니다.
-async function requestBriefingGenerate(sinceAt: string): Promise<{ noNewAlerts: boolean }> {
-  const res = await fetch('/api/briefings/generate', { // [백엔드 연결] URL 교체
+async function startFocusSession(plannedDurationMinutes: number): Promise<number | null> {
+  try {
+    const res = await fetch('/api/focus-sessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plannedDurationMinutes }),
+    })
+    if (!res.ok) return null
+    const data = await res.json() as { id: number }
+    return data.id ?? null
+  } catch {
+    return null
+  }
+}
+
+async function endFocusSession(sessionId: number): Promise<void> {
+  try {
+    await fetch(`/api/focus-sessions/${sessionId}`, { method: 'PATCH' })
+  } catch {
+    // 종료 실패 시 조용히 처리
+  }
+}
+
+async function createBriefing(sessionId: number): Promise<{ ok: boolean }> {
+  const res = await fetch('/api/briefings/create', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    // [백엔드 연결] body 필드명을 백엔드 스펙에 맞게 수정
-    body: JSON.stringify({ sinceAt }),
+    body: JSON.stringify({ sessionId }),
   })
-  // [백엔드 연결] 422: 새 알림 없음 → 버튼 비활성화, 그 외 오류는 에러 throw
-  if (res.status === 422) return { noNewAlerts: true }
   if (!res.ok) throw new Error('브리핑 생성에 실패했습니다.')
-  return { noNewAlerts: false }
+  return { ok: true }
 }
 
 interface DeepWorkClientProps {
@@ -82,35 +98,29 @@ export default function DeepWorkClient({
   // 현재는 initialPendingCount를 그대로 사용합니다.
   const pendingCount = initialPendingCount
 
-  function handleStartSession() {
-    // [백엔드 연결] 집중 세션 생성 API를 호출해야 합니다.
-    // POST /sessions { plannedDurationMinutes: selectedModalDuration }
-    // 응답의 session.id를 저장해두고 종료 시 사용합니다.
-    start(selectedModalDuration, new Date().toISOString())
+  async function handleStartSession() {
+    const duration = selectedModalDuration
+    const sessionId = duration ? await startFocusSession(duration) : null
+    start(duration, new Date().toISOString(), sessionId)
     setShowModal(false)
     setSelectedModalDuration(null)
   }
 
-  function handleEndSession() {
-    // [백엔드 연결] 집중 세션 종료 API를 호출해야 합니다.
-    // PATCH /sessions/:id { status: 'completed', endedAt: new Date().toISOString() }
+  async function handleEndSession() {
+    const sessionId = useDeepWorkStore.getState().sessionId
+    if (sessionId) await endFocusSession(sessionId)
     end()
   }
 
-  // [브리핑 받기] 버튼 클릭:
-  // 1. 세션 시작 시각(sinceAt) 이후 보류된 알림으로 브리핑 생성 요청
-  // 2. 성공 시 /briefing 페이지로 이동
-  // 3. 새 알림 없음(422) 시 버튼 비활성화
   async function handleRequestBriefing() {
-    const sinceAt = useDeepWorkStore.getState().sessionStartedAt ?? new Date(0).toISOString()
+    const sessionId = useDeepWorkStore.getState().sessionId
+    if (!sessionId) {
+      setNoNewAlerts(true)
+      return
+    }
     setBriefingLoading(true)
     try {
-      const { noNewAlerts: hasNoNew } = await requestBriefingGenerate(sinceAt)
-      if (hasNoNew) {
-        setNoNewAlerts(true)
-        setBriefingLoading(false)
-        return
-      }
+      await createBriefing(sessionId)
       router.push('/briefing')
     } catch {
       setBriefingLoading(false)
