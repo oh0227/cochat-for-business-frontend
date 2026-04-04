@@ -1,25 +1,42 @@
-// [백엔드 연결] 이 파일은 실제 백엔드가 준비되기 전까지 사용하는 목업 OAuth 콜백 Route Handler입니다.
-// 실제 OAuth 콜백은 백엔드가 처리합니다. 백엔드 연결 후 이 파일은 삭제하세요.
+// OAuth 콜백 프록시 핸들러.
+// 실제 OAuth 콜백은 백엔드가 처리합니다: GET /api/v1/integrations/{provider}/callback?code=...
+// 백엔드가 OAuth code를 처리한 뒤 프론트엔드의 /setup?provider={provider}&status=connected 로 리다이렉트합니다.
 //
-// ─── 실제 백엔드 연결 시 체크리스트 ───────────────────────────────────────
-//
-// 1. 이 파일(route.ts) 삭제
-//
-// 2. 실제 OAuth 콜백 처리는 백엔드에서 수행됩니다.
-//    백엔드는 OAuth code를 받아 access_token을 발급받고,
-//    프론트엔드의 /setup?provider={provider}&status=connected 로 리다이렉트합니다.
-//
-// 3. 에러 케이스 처리
-//    - OAuth 실패 시: /setup?provider={provider}&status=error&message=... 으로 리다이렉트
-//    - SetupClient.tsx에서 status=error 케이스에 대한 에러 UI 추가 필요
-// ────────────────────────────────────────────────────────────────────────────
+// 이 파일은 백엔드가 OAuth redirect_uri로 프론트엔드 주소를 사용하는 경우를 위한 브릿지입니다.
+// 백엔드가 자체 콜백 URL을 사용한다면 이 파일은 사용되지 않습니다.
 
 type RouteParams = Promise<{ provider: string }>
 
 export async function GET(request: Request, { params }: { params: RouteParams }) {
   const { provider } = await params
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+  const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL ?? new URL(request.url).origin
 
-  // [백엔드 연결] 아래 로직 삭제. 실제 콜백은 백엔드에서 처리됩니다.
-  const baseUrl = new URL(request.url).origin
-  return Response.redirect(`${baseUrl}/setup?provider=${provider}&status=connected`)
+  const { searchParams } = new URL(request.url)
+  const code = searchParams.get('code')
+
+  if (!code) {
+    // code 없이 직접 접근한 경우 (개발 환경 테스트용 - 연결 완료 처리)
+    return Response.redirect(`${frontendUrl}/setup?provider=${provider}&status=connected`)
+  }
+
+  if (!backendUrl) {
+    return Response.json({ error: 'NEXT_PUBLIC_BACKEND_URL이 설정되지 않았습니다.' }, { status: 500 })
+  }
+
+  try {
+    // 백엔드 콜백 엔드포인트로 code 전달
+    const res = await fetch(
+      `${backendUrl}/api/v1/integrations/${provider}/callback?code=${code}`,
+      { cache: 'no-store' }
+    )
+
+    if (!res.ok) {
+      return Response.redirect(`${frontendUrl}/setup?provider=${provider}&status=error`)
+    }
+
+    return Response.redirect(`${frontendUrl}/setup?provider=${provider}&status=connected`)
+  } catch {
+    return Response.redirect(`${frontendUrl}/setup?provider=${provider}&status=error`)
+  }
 }

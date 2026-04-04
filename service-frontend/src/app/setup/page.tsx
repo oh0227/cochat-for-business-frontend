@@ -10,11 +10,15 @@ interface SetupPageProps {
 export default async function SetupPage({ searchParams }: SetupPageProps) {
   const { provider, status } = await searchParams
 
-  // OAuth 콜백으로 돌아온 경우 해당 provider를 연결 완료 상태로 초기화
   const initialConnected: Provider[] =
     status === 'connected' && provider && (VALID_PROVIDERS as string[]).includes(provider)
       ? [provider as Provider]
       : []
 
-  return <SetupClient initialConnected={initialConnected} />
+  const initialError =
+    status === 'error' && provider
+      ? `${provider} 연동 중 오류가 발생했습니다. 다시 시도해주세요.`
+      : null
+
+  return <SetupClient initialConnected={initialConnected} initialError={initialError} />
 }

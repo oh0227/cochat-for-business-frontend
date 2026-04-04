@@ -52,15 +52,15 @@ async function getIntegrationAuthUrl(provider: Provider): Promise<string> {
 
 interface SetupClientProps {
   initialConnected: Provider[]
+  initialError?: string | null
 }
 
-export default function SetupClient({ initialConnected }: SetupClientProps) {
+export default function SetupClient({ initialConnected, initialError = null }: SetupClientProps) {
   const router = useRouter()
 
-  // useReducer 대신 간단하게 각 상태를 Set으로
   const [connected, setConnected] = useState<Set<Provider>>(() => new Set(initialConnected))
   const [loading, setLoading] = useState<Provider | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(initialError)
 
   const isAnyConnected = connected.size > 0
 
