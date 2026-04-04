@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { MessageSquare, Hash, ChevronRight } from 'lucide-react'
 import type { ChannelSummary, NotificationPriority, NotificationProvider } from '@/types'
 import { formatRelativeTime } from '@/utils'
@@ -62,18 +63,16 @@ const PRIORITY_ORDER: NotificationPriority[] = ['critical', 'high', 'medium', 'l
 
 interface ChannelCardProps {
   channel: ChannelSummary
-  onClick?: () => void
 }
 
-export default function ChannelCard({ channel, onClick }: ChannelCardProps) {
+export default function ChannelCard({ channel }: ChannelCardProps) {
   const { iconBg, textColor, Icon } = PROVIDER_STYLE[channel.provider]
 
   const badges = PRIORITY_ORDER.filter((p) => channel.counts[p] > 0)
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    <Link
+      href={`/messages/${channel.id}`}
       className="flex w-full items-center gap-[var(--spacing-sm)] rounded-[14px] border border-[var(--color-gray-80)] bg-white p-[17px] text-left transition-colors hover:bg-[var(--color-gray-20)]"
     >
       {/* 플랫폼 아이콘 */}
@@ -130,6 +129,6 @@ export default function ChannelCard({ channel, onClick }: ChannelCardProps) {
           )
         })}
       </div>
-    </button>
+    </Link>
   )
 }
