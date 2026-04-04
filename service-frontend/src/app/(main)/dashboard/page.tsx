@@ -1,17 +1,16 @@
-import { mockNotifications, mockBriefings, mockFocusSessions } from '@/mocks'
+import { getNotifications } from '@/lib/api'
 import SummaryCard from '@/components/ui/SummaryCard'
 import MessageSection from '@/components/ui/MessageSection'
 import BriefingSection from '@/components/ui/BriefingSection'
 
-export default function DashboardPage() {
-  const activeSession = mockFocusSessions.find((s) => s.status === 'active') ?? null
+export default async function DashboardPage() {
+  const notifications = await getNotifications()
 
-  const criticalCount = mockNotifications.filter((n) => n.priority === 'critical').length
-  const highCount = mockNotifications.filter((n) => n.priority === 'high').length
-  const mediumCount = mockNotifications.filter((n) => n.priority === 'medium').length
+  const criticalCount = notifications.filter((n) => n.priority === 'critical').length
+  const highCount = notifications.filter((n) => n.priority === 'high').length
+  const mediumCount = notifications.filter((n) => n.priority === 'medium').length
 
-  const recentNotifications = mockNotifications.slice(0, 3)
-  const recentBriefings = mockBriefings.slice(0, 3)
+  const recentNotifications = notifications.slice(0, 3)
 
   return (
     <div className="flex flex-col gap-[var(--spacing-md)]">
@@ -33,31 +32,16 @@ export default function DashboardPage() {
 
       {/* 요약 카드 4개 */}
       <div className="flex gap-[var(--spacing-sm)]">
-        <SummaryCard
-          type="priority"
-          priority="critical"
-          count={criticalCount}
-          subtext="즉시 조치 필요"
-        />
-        <SummaryCard
-          type="priority"
-          priority="high"
-          count={highCount}
-          subtext="오늘 안에 확인"
-        />
-        <SummaryCard
-          type="priority"
-          priority="medium"
-          count={mediumCount}
-          subtext="여유있게 확인"
-        />
-        <SummaryCard type="focus" session={activeSession} />
+        <SummaryCard type="priority" priority="critical" count={criticalCount} subtext="즉시 조치 필요" />
+        <SummaryCard type="priority" priority="high" count={highCount} subtext="오늘 안에 확인" />
+        <SummaryCard type="priority" priority="medium" count={mediumCount} subtext="여유있게 확인" />
+        <SummaryCard type="focus" session={null} />
       </div>
 
       {/* 콘텐츠 2열 */}
       <div className="flex gap-[20px]">
         <MessageSection notifications={recentNotifications} />
-        <BriefingSection briefings={recentBriefings} />
+        <BriefingSection briefings={[]} />
       </div>
     </div>
   )

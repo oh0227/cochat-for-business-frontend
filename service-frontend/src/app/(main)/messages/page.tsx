@@ -1,12 +1,22 @@
 import { Sparkles } from 'lucide-react'
-import { mockChannelSummaries, mockMessageSummary } from '@/mocks'
+import { getNotifications, buildChannelSummaries } from '@/lib/api'
 import MessagePriorityCard from '@/components/ui/MessagePriorityCard'
 import ChannelCard from '@/components/ui/ChannelCard'
 import type { NotificationPriority } from '@/types'
 
 const PRIORITY_ORDER: NotificationPriority[] = ['critical', 'high', 'medium', 'low']
 
-export default function MessagesPage() {
+export default async function MessagesPage() {
+  const notifications = await getNotifications()
+  const channelSummaries = buildChannelSummaries(notifications)
+
+  const counts = {
+    critical: notifications.filter((n) => n.priority === 'critical').length,
+    high: notifications.filter((n) => n.priority === 'high').length,
+    medium: notifications.filter((n) => n.priority === 'medium').length,
+    low: notifications.filter((n) => n.priority === 'low').length,
+  }
+
   return (
     <div className="flex flex-col gap-[var(--spacing-xl)]">
       {/* 페이지 헤더 */}
@@ -25,8 +35,6 @@ export default function MessagesPage() {
             모든 메시지를 확인하고 관리하세요.
           </p>
         </div>
-
-        {/* 브리핑 받기 버튼 */}
         <button
           type="button"
           className="flex h-[48px] items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] px-[var(--spacing-sm)] font-medium text-white transition-opacity hover:opacity-90"
@@ -43,11 +51,7 @@ export default function MessagesPage() {
       {/* 우선순위 요약 카드 */}
       <div className="flex gap-[17px]">
         {PRIORITY_ORDER.map((priority) => (
-          <MessagePriorityCard
-            key={priority}
-            priority={priority}
-            count={mockMessageSummary[priority]}
-          />
+          <MessagePriorityCard key={priority} priority={priority} count={counts[priority]} />
         ))}
       </div>
 
@@ -59,11 +63,17 @@ export default function MessagesPage() {
         >
           채널
         </h2>
-        <div className="flex flex-col gap-[var(--spacing-2xs)]">
-          {mockChannelSummaries.map((channel) => (
-            <ChannelCard key={channel.id} channel={channel} />
-          ))}
-        </div>
+        {channelSummaries.length === 0 ? (
+          <p className="text-[var(--color-gray-400)]" style={{ fontSize: 'var(--font-size-3xs)' }}>
+            연결된 채널이 없습니다.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-[var(--spacing-2xs)]">
+            {channelSummaries.map((channel) => (
+              <ChannelCard key={channel.id} channel={channel} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
