@@ -1,22 +1,22 @@
 /** 캘린더(CalendarEvent) mock 데이터 */
 
-import type { CalendarEvent, TodaySchedule } from '@/types'
+import type { CalendarEvent } from '@/types'
 
 export const mockCalendarEvents: CalendarEvent[] = [
   {
     id: 'event-001',
     title: '주간 스프린트 스탠드업',
-    startAt: '2026-04-03T10:00:00Z',
-    endAt: '2026-04-03T10:30:00Z',
+    startAt: '2026-04-06T10:00:00+09:00',
+    endAt: '2026-04-06T10:30:00+09:00',
     isAllDay: false,
-    attendees: ['김민준', '이서연', '박지호', '최유진', '정태양'],
+    attendees: ['김민준', '이서연', '박지호'],
     relatedNotificationIds: [],
   },
   {
     id: 'event-002',
     title: 'Q1 예산 검토 미팅',
-    startAt: '2026-04-03T13:00:00Z',
-    endAt: '2026-04-03T14:00:00Z',
+    startAt: '2026-04-08T13:00:00+09:00',
+    endAt: '2026-04-08T14:00:00+09:00',
     isAllDay: false,
     attendees: ['김민준', '한소희', '재무팀 이혜원'],
     relatedNotificationIds: ['notif-001'],
@@ -24,8 +24,8 @@ export const mockCalendarEvents: CalendarEvent[] = [
   {
     id: 'event-003',
     title: '디자인 리뷰',
-    startAt: '2026-04-04T01:00:00Z',
-    endAt: '2026-04-04T02:30:00Z',
+    startAt: '2026-04-10T10:00:00+09:00',
+    endAt: '2026-04-10T11:30:00+09:00',
     isAllDay: false,
     attendees: ['박지호', '오지민', '이서연'],
     relatedNotificationIds: ['notif-003'],
@@ -33,8 +33,8 @@ export const mockCalendarEvents: CalendarEvent[] = [
   {
     id: 'event-004',
     title: '전사 타운홀',
-    startAt: '2026-04-04T05:00:00Z',
-    endAt: '2026-04-04T06:00:00Z',
+    startAt: '2026-04-14T14:00:00+09:00',
+    endAt: '2026-04-14T15:00:00+09:00',
     isAllDay: false,
     attendees: [],
     relatedNotificationIds: [],
@@ -42,15 +42,65 @@ export const mockCalendarEvents: CalendarEvent[] = [
   {
     id: 'event-005',
     title: '팀 워크샵',
-    startAt: '2026-04-10T00:00:00Z',
-    endAt: '2026-04-10T23:59:59Z',
+    startAt: '2026-04-17T00:00:00+09:00',
+    endAt: '2026-04-17T23:59:59+09:00',
     isAllDay: true,
     attendees: ['김민준', '이서연', '박지호', '최유진', '정태양', '한소희', '오지민'],
     relatedNotificationIds: ['notif-007'],
   },
+  {
+    id: 'event-006',
+    title: '홈 화면 시안 전달',
+    startAt: '2026-04-21T15:00:00+09:00',
+    endAt: '2026-04-21T16:00:00+09:00',
+    isAllDay: false,
+    attendees: ['박지호', '오지민'],
+    relatedNotificationIds: [],
+  },
+  {
+    id: 'event-007',
+    title: 'Q1 예산안 검토',
+    startAt: '2026-04-21T18:00:00+09:00',
+    endAt: '2026-04-21T19:00:00+09:00',
+    isAllDay: false,
+    attendees: ['김민준', '한소희'],
+    relatedNotificationIds: ['notif-001'],
+  },
+  {
+    id: 'event-008',
+    title: '제품 로드맵 기획 미팅',
+    startAt: '2026-04-28T10:00:00+09:00',
+    endAt: '2026-04-28T11:00:00+09:00',
+    isAllDay: false,
+    attendees: ['김민준', '이서연', '정태양'],
+    relatedNotificationIds: [],
+  },
+  {
+    id: 'event-009',
+    title: '스프린트 회고',
+    startAt: '2026-04-28T14:00:00+09:00',
+    endAt: '2026-04-28T15:00:00+09:00',
+    isAllDay: false,
+    attendees: ['김민준', '이서연', '박지호', '최유진'],
+    relatedNotificationIds: [],
+  },
+  // 오늘(2026-04-04) 일정
+  {
+    id: 'event-010',
+    title: '홈 화면 시안 전달',
+    startAt: '2026-04-04T15:00:00+09:00',
+    endAt: '2026-04-04T16:00:00+09:00',
+    isAllDay: false,
+    attendees: ['박지호'],
+    relatedNotificationIds: [],
+  },
+  {
+    id: 'event-011',
+    title: 'Q1 예산안 검토',
+    startAt: '2026-04-04T18:00:00+09:00',
+    endAt: '2026-04-04T19:00:00+09:00',
+    isAllDay: false,
+    attendees: ['김민준', '한소희'],
+    relatedNotificationIds: ['notif-001'],
+  },
 ]
-
-export const mockTodaySchedule: TodaySchedule = {
-  date: '2026-04-03',
-  events: mockCalendarEvents.filter((e) => e.startAt.startsWith('2026-04-03')),
-}
