@@ -49,3 +49,19 @@ export interface NotificationSummary {
   low: number
   total: number
 }
+
+// 메시지 화면 채널별 알림 요약
+export interface ChannelSummary {
+  id: string
+  integrationId: string
+  provider: NotificationProvider
+  workspaceName: string
+  channelName: string
+  counts: {
+    critical: number
+    high: number
+    medium: number
+    low: number
+  }
+  latestAt: string // ISO 8601
+}
