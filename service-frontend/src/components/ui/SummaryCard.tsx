@@ -1,7 +1,7 @@
-import Link from 'next/link'
-import { AlertCircle, Clock, Info, Atom } from 'lucide-react'
+import { AlertCircle, Clock, Info } from 'lucide-react'
 import type { FocusSession } from '@/types'
 import { getPriorityLabel } from '@/utils'
+import FocusCard from './FocusCard'
 
 /* ─── 타입 ─────────────────────────────────────────────────────── */
 
@@ -116,50 +116,3 @@ function PriorityCard({
   )
 }
 
-/* ─── 집중모드 카드 ─────────────────────────────────────────────── */
-
-function FocusCard({ session }: { session: FocusSession | null }) {
-  const isActive = session?.status === 'active'
-
-  return (
-    <div
-      className="flex flex-col justify-between rounded-[14px] border border-[var(--color-gray-80)] bg-white p-[var(--spacing-md)]"
-      style={{ height: '170px' }}
-    >
-      {/* 상단: 제목 + 설명 + 아이콘 */}
-      <div className="flex items-start justify-between gap-[var(--spacing-2xs)]">
-        <div className="flex flex-col gap-[var(--spacing-3xs)]">
-          <span
-            className="font-semibold leading-[var(--line-height-xs)] text-[var(--color-gray-700)]"
-            style={{ fontSize: 'var(--font-size-sm)' }}
-          >
-            집중 모드
-          </span>
-          <p
-            className="leading-[var(--line-height-4xs)] text-[var(--color-gray-700)]"
-            style={{ fontSize: 'var(--font-size-3xs)' }}
-          >
-            {isActive
-              ? `${session!.plannedDurationMinutes}분 세션 진행 중입니다.`
-              : <>집중 모드 중에는<br />긴급한 알림만 표시됩니다.</>}
-          </p>
-        </div>
-        <span
-          className="flex shrink-0 items-center justify-center rounded-[10px] bg-[rgba(90,93,219,0.1)]"
-          style={{ width: '36px', height: '36px' }}
-        >
-          <Atom size={20} className="text-[var(--color-brand-600)]" />
-        </span>
-      </div>
-
-      {/* 하단: 버튼 */}
-      <Link
-        href="/deepwork"
-        className="flex h-[40px] w-full items-center justify-center rounded-[var(--radius-sm)] bg-[var(--color-brand-500)] font-medium text-white transition-colors hover:bg-[var(--color-brand-600)]"
-        style={{ fontSize: 'var(--font-size-xs)' }}
-      >
-        {isActive ? '세션 보기' : '시작하기'}
-      </Link>
-    </div>
-  )
-}
