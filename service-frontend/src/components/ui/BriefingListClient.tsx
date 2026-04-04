@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Sparkles, Loader2 } from 'lucide-react'
 import type { Briefing, NotificationProvider } from '@/types'
+import { useDeepWorkStore } from '@/store/deepWorkStore'
 import BriefingCard from './BriefingCard'
 
 export interface BriefingItem {
@@ -10,37 +11,40 @@ export interface BriefingItem {
   providerCounts: Partial<Record<NotificationProvider, number>>
 }
 
-// [백엔드 연결] 백엔드 응답 스펙에 맞게 이 인터페이스를 수정하세요.
-// - 백엔드가 providerCounts를 내려주지 않는다면 이 필드를 제거하고
-//   handleGetBriefing() 안에서 getProviderCounts(result.briefing.highlights)로 직접 계산하세요.
-// - 응답 필드명이 다를 경우 (예: snake_case) 필드명을 맞게 수정하세요.
-interface GenerateBriefingResponse {
-  briefing: Briefing
-  providerCounts: Partial<Record<NotificationProvider, number>>
+interface BackendBriefingResponse {
+  id: number
+  session_id: number
+  title: string
+  content: string
+  created_at: string
 }
 
-// [백엔드 연결] 브리핑 생성 API 호출 함수
-// 현재는 Next.js Route Handler(목업)를 호출합니다.
-// 실제 백엔드 연결 시 아래 항목을 수정하세요:
-//   1. URL: '/api/briefings/generate' → 실제 백엔드 엔드포인트
-//   2. 인증 헤더: Authorization 주석을 해제하고 토큰을 주입
-//   3. body 필드명: 백엔드 스펙에 맞게 수정 (예: sinceAt → since)
-async function generateBriefing(sinceAt: string): Promise<GenerateBriefingResponse> {
-  const res = await fetch('/api/briefings/generate', { // [백엔드 연결] URL 교체
+async function createBriefingFromSession(sessionId: number): Promise<BriefingItem> {
+  const res = await fetch('/api/briefings/create', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      // [백엔드 연결] 인증 토큰이 필요한 경우 아래 주석을 해제하세요.
-      // 'Authorization': `Bearer ${token}`,
-    },
-    body: JSON.stringify({ sinceAt }), // [백엔드 연결] body 필드명/구조를 백엔드 스펙에 맞게 수정
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId }),
   })
   if (!res.ok) {
-    // [백엔드 연결] 백엔드가 JSON 에러 응답을 내려준다면 res.json()으로 파싱 후 message 필드를 추출하세요.
-    const message = await res.text().catch(() => '알 수 없는 오류가 발생했습니다.')
+    const message = await res.text().catch(() => '브리핑 생성에 실패했습니다.')
     throw new Error(message)
   }
-  return res.json()
+  const data = await res.json() as BackendBriefingResponse
+  return {
+    briefing: {
+      id: String(data.id),
+      sessionId: String(data.session_id),
+      title: data.title,
+      content: data.content,
+      actionItems: [],
+      highlights: [],
+      criticalCount: 0,
+      highCount: 0,
+      mediumCount: 0,
+      generatedAt: data.created_at,
+    },
+    providerCounts: {},
+  }
 }
 
 interface BriefingListClientProps {
@@ -52,16 +56,17 @@ export default function BriefingListClient({ initialItems }: BriefingListClientP
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const sessionId = useDeepWorkStore((s) => s.sessionId)
+
   async function handleGetBriefing() {
+    if (!sessionId) {
+      setError('집중 모드 세션 이후에 브리핑을 받을 수 있습니다.')
+      return
+    }
     setLoading(true)
     setError(null)
-    // [백엔드 연결] sinceAt: 목록 최상단(최신) 브리핑의 generatedAt을 기준으로 그 이후 메시지를 분석 요청합니다.
-    // 브리핑이 하나도 없는 경우 epoch(new Date(0))를 전달해 전체 메시지를 분석합니다.
-    const sinceAt = items[0]?.briefing.generatedAt ?? new Date(0).toISOString()
     try {
-      const result = await generateBriefing(sinceAt)
-      // [백엔드 연결] 응답 구조가 다를 경우 여기서 변환 로직을 추가하세요.
-      // 예) providerCounts를 직접 계산: getProviderCounts(result.briefing.highlights)
+      const result = await createBriefingFromSession(sessionId)
       setItems((prev) => [result, ...prev])
     } catch (e) {
       setError(e instanceof Error ? e.message : '브리핑 생성에 실패했습니다.')
