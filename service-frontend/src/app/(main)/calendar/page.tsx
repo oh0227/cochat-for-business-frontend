@@ -10,24 +10,12 @@ import type { CalendarEvent } from '@/types'
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
-/** "2026년 4월 5일" + "오후 2:00" → "2026-04-05T14:00:00+09:00" */
-function parseToIso(dateStr: string, timeStr: string): string {
-  const dateMatch = dateStr.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/)
-  const now = new Date()
-  const year = dateMatch ? parseInt(dateMatch[1]) : now.getFullYear()
-  const month = dateMatch ? parseInt(dateMatch[2]) : now.getMonth() + 1
-  const day = dateMatch ? parseInt(dateMatch[3]) : now.getDate()
-
-  let hour = 0
-  let minute = 0
-  const timeMatch = timeStr.match(/(오전|오후)\s*(\d{1,2}):(\d{2})/)
-  if (timeMatch) {
-    hour = parseInt(timeMatch[2])
-    minute = parseInt(timeMatch[3])
-    if (timeMatch[1] === '오후' && hour !== 12) hour += 12
-    if (timeMatch[1] === '오전' && hour === 12) hour = 0
-  }
-
+/** Date + "HH:MM" → "YYYY-MM-DDTHH:MM:00+09:00" */
+function parseToIso(date: Date, time: string): string {
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const [hour, minute] = time ? time.split(':').map(Number) : [0, 0]
   return `${year}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:00+09:00`
 }
 
@@ -63,7 +51,7 @@ export default function CalendarPage() {
   }
 
   function handleSubmit(data: EventFormData) {
-    const startAt = parseToIso(data.date, data.time)
+    const startAt = parseToIso(data.date ?? new Date(), data.time)
     const endAt = addOneHour(startAt)
     const isAllDay = !data.time.trim()
 

@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { X, CalendarPlus, CalendarDays, Clock, Users, FileText, Info } from 'lucide-react'
+import { X, CalendarPlus, CalendarDays, Users, FileText, Info } from 'lucide-react'
 import type { CalendarEvent } from '@/types'
+import DatePickerInput from './DatePickerInput'
+import TimePickerInput from './TimePickerInput'
 
 const MOCK_CONTACTS = [
   { name: '김민준', email: 'minjun.kim@company.com', team: '개발팀' },
@@ -16,8 +18,8 @@ const MOCK_CONTACTS = [
 
 export interface EventFormData {
   title: string
-  date: string
-  time: string
+  date: Date | null
+  time: string // "HH:MM" 24h 형식, 빈 문자열이면 종일
   attendees: string[]
   memo: string
 }
@@ -28,29 +30,26 @@ interface EventFormModalProps {
   onSubmit: (data: EventFormData) => void
 }
 
-function formatDateLabel(isoString: string): string {
+/** ISO 문자열에서 KST 기준 "HH:MM" 추출 */
+function isoToHHMM(isoString: string): string {
   const d = new Date(isoString)
-  return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`
-}
-
-function formatTimeLabel(isoString: string): string {
-  return new Intl.DateTimeFormat('ko-KR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-    timeZone: 'Asia/Seoul',
-  }).format(new Date(isoString))
+  const kst = new Date(d.getTime() + 9 * 3600_000)
+  const h = String(kst.getUTCHours()).padStart(2, '0')
+  const m = String(kst.getUTCMinutes()).padStart(2, '0')
+  // 30분 단위로 내림
+  const mRounded = parseInt(m) >= 30 ? '30' : '00'
+  return `${h}:${mRounded}`
 }
 
 export default function EventFormModal({ event, onClose, onSubmit }: EventFormModalProps) {
   const isEdit = !!event
 
   const [title, setTitle] = useState(event?.title ?? '')
-  const [date, setDate] = useState(() =>
-    event?.startAt ? formatDateLabel(event.startAt) : ''
+  const [date, setDate] = useState<Date | null>(() =>
+    event?.startAt ? new Date(event.startAt) : null,
   )
   const [time, setTime] = useState(() =>
-    event?.startAt && !event.isAllDay ? formatTimeLabel(event.startAt) : ''
+    event?.startAt && !event.isAllDay ? isoToHHMM(event.startAt) : '',
   )
   const [attendees, setAttendees] = useState<string[]>(event?.attendees ?? [])
   const [memo, setMemo] = useState('')
@@ -66,7 +65,7 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
       !attendees.includes(c.name),
   )
 
-  const isValid = title.trim().length > 0
+  const isValid = title.trim().length > 0 && date !== null
 
   function addAttendee(name: string) {
     setAttendees((prev) => [...prev, name])
@@ -155,30 +154,16 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
                     날짜
                   </span>
                 </label>
-                <input
-                  type="text"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  placeholder="2026년 3월 26일"
-                  className={inputClass}
-                  style={{ fontSize: 14 }}
-                />
+                <DatePickerInput value={date} onChange={setDate} />
               </div>
               <div className="flex flex-1 flex-col gap-[6px]">
                 <label className="flex items-center gap-[6px]">
-                  <Clock size={14} className="text-[#4d555c]" />
+                  <CalendarDays size={14} className="text-[#4d555c]" />
                   <span className="font-semibold text-[#4d555c]" style={{ fontSize: 14, lineHeight: '20px' }}>
                     시간
                   </span>
                 </label>
-                <input
-                  type="text"
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  placeholder="오후 2:00 - 3:00"
-                  className={inputClass}
-                  style={{ fontSize: 14 }}
-                />
+                <TimePickerInput value={time} onChange={setTime} />
               </div>
             </div>
 
@@ -232,8 +217,7 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
                   <div
                     className="absolute left-0 right-0 top-[46px] z-10 overflow-hidden rounded-[10px] border border-[#dfe3e5] bg-white"
                     style={{
-                      boxShadow:
-                        '0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.1)',
+                      boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.1)',
                     }}
                   >
                     {filteredContacts.map((contact) => (
@@ -245,11 +229,7 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
                       >
                         <span
                           className="flex size-8 shrink-0 items-center justify-center rounded-full text-[#3b82f6]"
-                          style={{
-                            background: 'rgba(59,130,246,0.1)',
-                            fontSize: 14,
-                            fontWeight: 500,
-                          }}
+                          style={{ background: 'rgba(59,130,246,0.1)', fontSize: 14, fontWeight: 500 }}
                         >
                           {contact.name[0]}
                         </span>
@@ -302,7 +282,9 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
           <div className="flex justify-end border-t border-[#e2e8f0] px-6 py-6">
             <button
               type="button"
-              onClick={() => { if (isValid) onSubmit({ title, date, time, attendees, memo }) }}
+              onClick={() => {
+                if (isValid) onSubmit({ title, date, time, attendees, memo })
+              }}
               disabled={!isValid}
               className="flex h-[44px] items-center gap-2 rounded-[12px] px-5 font-medium transition-colors"
               style={{
