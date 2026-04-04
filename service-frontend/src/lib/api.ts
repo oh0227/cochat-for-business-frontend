@@ -104,3 +104,14 @@ export async function getLatestBriefing(): Promise<BackendBriefing | null> {
     return null
   }
 }
+
+/** 브리핑 상세 조회 */
+export async function getBriefingById(id: string): Promise<BackendBriefing | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/briefings/${id}`, { cache: 'no-store' })
+    if (!res.ok) return null
+    return res.json() as Promise<BackendBriefing>
+  } catch {
+    return null
+  }
+}
