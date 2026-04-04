@@ -1,11 +1,12 @@
 'use client'
 
-import { X, Calendar, SquarePen, CircleCheckBig, ExternalLink, Plus, User } from 'lucide-react'
+import { X, Calendar, SquarePen, CircleCheckBig, ExternalLink, User } from 'lucide-react'
 import type { CalendarEvent } from '@/types'
 
 interface EventDetailPanelProps {
   event: CalendarEvent
   onClose: () => void
+  onEdit: () => void
 }
 
 function formatDateTime(isoString: string): string {
@@ -20,7 +21,7 @@ function formatDateTime(isoString: string): string {
   return `${date} · ${time}`
 }
 
-export default function EventDetailPanel({ event, onClose }: EventDetailPanelProps) {
+export default function EventDetailPanel({ event, onClose, onEdit }: EventDetailPanelProps) {
   return (
     <>
       {/* 딤 배경 */}
@@ -112,22 +113,12 @@ export default function EventDetailPanel({ event, onClose }: EventDetailPanelPro
 
           {/* 공유된 사람 */}
           <div className="flex flex-col gap-[var(--spacing-xs)]">
-            <div className="flex items-center justify-between">
-              <p
-                className="font-semibold text-[var(--color-gray-700)]"
-                style={{ fontSize: 'var(--font-size-xs)', lineHeight: 'var(--line-height-2xs)' }}
-              >
-                공유된 사람
-              </p>
-              <button
-                type="button"
-                className="flex items-center gap-[2px] text-[var(--color-brand-600)] transition-opacity hover:opacity-70"
-                style={{ fontSize: 'var(--font-size-xs)', lineHeight: 'var(--line-height-3xs)' }}
-              >
-                추가하기
-                <Plus size={18} />
-              </button>
-            </div>
+            <p
+              className="font-semibold text-[var(--color-gray-700)]"
+              style={{ fontSize: 'var(--font-size-xs)', lineHeight: 'var(--line-height-2xs)' }}
+            >
+              공유된 사람
+            </p>
             {event.attendees.length > 0 ? (
               <div className="flex flex-wrap gap-[var(--spacing-2xs)] rounded-[10px] bg-[var(--color-gray-20)] p-[var(--spacing-xs)]">
                 {event.attendees.map((attendee) => (
@@ -166,6 +157,7 @@ export default function EventDetailPanel({ event, onClose }: EventDetailPanelPro
             <div className="flex flex-col gap-[var(--spacing-2xs)]">
               <button
                 type="button"
+                onClick={onEdit}
                 className="flex h-[44px] w-full items-center justify-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] bg-[rgba(46,50,55,0.08)] font-medium text-[var(--color-gray-950)] transition-colors hover:bg-[rgba(46,50,55,0.12)]"
                 style={{ fontSize: 'var(--font-size-xs)' }}
               >

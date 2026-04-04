@@ -1,15 +1,35 @@
+'use client'
+
+import { useState } from 'react'
 import { CalendarDays, CalendarPlus } from 'lucide-react'
 import { mockCalendarEvents } from '@/mocks'
 import CalendarGrid from '@/components/ui/CalendarGrid'
 import TodayPanel from '@/components/ui/TodayPanel'
+import EventFormModal from '@/components/ui/EventFormModal'
+import type { CalendarEvent } from '@/types'
 
 export default function CalendarPage() {
   const today = new Date()
-
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
-  const todayEvents = mockCalendarEvents.filter((e) =>
-    e.startAt.startsWith(todayStr)
-  )
+  const todayEvents = mockCalendarEvents.filter((e) => e.startAt.startsWith(todayStr))
+
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editEvent, setEditEvent] = useState<CalendarEvent | null>(null)
+
+  function openCreateModal() {
+    setEditEvent(null)
+    setModalOpen(true)
+  }
+
+  function openEditModal(event: CalendarEvent) {
+    setEditEvent(event)
+    setModalOpen(true)
+  }
+
+  function closeModal() {
+    setModalOpen(false)
+    setEditEvent(null)
+  }
 
   return (
     <div className="flex flex-col overflow-hidden" style={{ height: 'calc(100vh - 2 * var(--spacing-lg))' }}>
@@ -40,6 +60,7 @@ export default function CalendarPage() {
           </button>
           <button
             type="button"
+            onClick={openCreateModal}
             className="flex h-[48px] items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] bg-[var(--color-brand-500)] px-[var(--spacing-sm)] font-medium text-white transition-colors hover:bg-[var(--color-brand-600)]"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
@@ -55,9 +76,17 @@ export default function CalendarPage() {
           events={mockCalendarEvents}
           initialYear={today.getFullYear()}
           initialMonth={today.getMonth()}
+          onEditEvent={openEditModal}
         />
         <TodayPanel events={todayEvents} date={today} />
       </div>
+
+      {modalOpen && (
+        <EventFormModal
+          event={editEvent}
+          onClose={closeModal}
+        />
+      )}
     </div>
   )
 }

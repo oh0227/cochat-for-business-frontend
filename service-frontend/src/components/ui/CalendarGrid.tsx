@@ -11,6 +11,7 @@ interface CalendarGridProps {
   events: CalendarEvent[]
   initialYear: number
   initialMonth: number // 0-indexed
+  onEditEvent?: (event: CalendarEvent) => void
 }
 
 /** YYYY-MM-DD 형식으로 날짜 키 생성 (로컬 기준) */
@@ -48,7 +49,7 @@ function formatTime(isoString: string): string {
   }).format(new Date(isoString))
 }
 
-export default function CalendarGrid({ events, initialYear, initialMonth }: CalendarGridProps) {
+export default function CalendarGrid({ events, initialYear, initialMonth, onEditEvent }: CalendarGridProps) {
   const [year, setYear] = useState(initialYear)
   const [month, setMonth] = useState(initialMonth)
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
@@ -197,6 +198,10 @@ export default function CalendarGrid({ events, initialYear, initialMonth }: Cale
         <EventDetailPanel
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
+          onEdit={() => {
+            setSelectedEvent(null)
+            onEditEvent?.(selectedEvent)
+          }}
         />
       )}
     </>
