@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { ArrowLeft, Bell, Hash, MessageSquare, CalendarPlus, Sparkles, ExternalLink } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import type { ChannelSummary, ChatMessage, Notification } from '@/types'
@@ -29,6 +29,8 @@ interface ChatRoomProps {
 export default function ChatRoom({ channel, messages, notifications }: ChatRoomProps) {
   const router = useRouter()
   const [selectedNotifId, setSelectedNotifId] = useState<string | null>(null)
+  const [showAiDraft, setShowAiDraft] = useState(false)
+  const [copied, setCopied] = useState(false)
   const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
   const { iconBg, textColor, Icon } = PROVIDER_ICON[channel.provider] ?? PROVIDER_ICON.slack
@@ -37,6 +39,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
   function handleSelectNotif(notifId: string) {
     const next = selectedNotifId === notifId ? null : notifId
     setSelectedNotifId(next)
+    setShowAiDraft(false)
     if (!next) return
 
     const linked = messages.find((m) => m.notificationId === notifId)
@@ -51,13 +54,29 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
     ? messages.find((m) => m.notificationId === selectedNotifId)
     : null
 
+  const selectedNotif = selectedNotifId
+    ? notifications.find((n) => n.id === selectedNotifId)
+    : null
+
+  // 선택된 알림 요약을 기반으로 AI 답장 초안 생성 (목업)
+  const aiDraftText = selectedNotif
+    ? `${selectedNotif.summary.slice(0, 20)}... 확인했습니다. 검토 후 빠르게 처리하겠습니다.`
+    : null
+
+  function handleCopyDraft() {
+    if (!aiDraftText) return
+    navigator.clipboard.writeText(aiDraftText)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
     <div
       className="flex overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-gray-80)] bg-white"
       style={{ height: 'calc(100vh - 2 * var(--spacing-lg))' }}
     >
       {/* ── 중앙: 채팅 영역 ── */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="relative flex flex-1 flex-col overflow-hidden">
         {/* 헤더 */}
         <div
           className="flex shrink-0 items-center gap-3 border-b border-[var(--color-gray-80)] px-5"
@@ -100,11 +119,26 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
                 <ChatMessageRow
                   message={msg}
                   isSelected={selectedMessage?.id === msg.id}
+                  aiDraft={selectedMessage?.id === msg.id && showAiDraft && aiDraftText ? aiDraftText : undefined}
+                  provider={channel.provider}
+                  onCopy={handleCopyDraft}
                 />
               </div>
             ))}
           </div>
         </div>
+
+        {/* 복사 토스트 */}
+        {copied && (
+          <div className="pointer-events-none absolute bottom-[96px] left-10 z-10">
+            <div
+              className="flex h-[38px] items-center rounded-[4px] px-4 text-white"
+              style={{ background: '#6366f1', boxShadow: '-4px 0px 24px 0px rgba(99,102,241,0.12)', fontSize: 'var(--font-size-2xs)' }}
+            >
+              복사되었습니다.
+            </div>
+          </div>
+        )}
 
         {/* 후속 액션 바 (알림 선택 시 표시) */}
         {selectedNotifId && (
@@ -129,6 +163,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
               </button>
               <button
                 type="button"
+                onClick={() => setShowAiDraft(true)}
                 className="flex h-10 items-center gap-2 rounded-[var(--radius-sm)] px-4 font-medium text-white transition-opacity hover:opacity-80"
                 style={{ fontSize: 'var(--font-size-xs)', background: '#2e3237' }}
               >

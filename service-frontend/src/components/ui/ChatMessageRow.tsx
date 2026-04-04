@@ -1,3 +1,4 @@
+import { Copy, ExternalLink, Sparkles } from 'lucide-react'
 import type { ChatMessage, NotificationPriority } from '@/types'
 import { formatRelativeTime } from '@/utils'
 
@@ -11,9 +12,12 @@ const BAR_COLOR: Record<NotificationPriority, string> = {
 interface ChatMessageRowProps {
   message: ChatMessage
   isSelected: boolean
+  aiDraft?: string
+  provider?: string
+  onCopy?: () => void
 }
 
-export default function ChatMessageRow({ message, isSelected }: ChatMessageRowProps) {
+export default function ChatMessageRow({ message, isSelected, aiDraft, provider, onCopy }: ChatMessageRowProps) {
   const { author, content, createdAt, priorityBar } = message
 
   return (
@@ -67,6 +71,56 @@ export default function ChatMessageRow({ message, isSelected }: ChatMessageRowPr
         >
           {content}
         </p>
+
+        {/* AI 답장 초안 패널 */}
+        {isSelected && aiDraft && (
+          <div className="mt-3 flex flex-col gap-2">
+            {/* 헤더 */}
+            <div className="flex items-center gap-1">
+              <Sparkles size={14} color="#972ddd" />
+              <span
+                className="font-semibold"
+                style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)', color: '#972ddd' }}
+              >
+                AI 답장 제안
+              </span>
+            </div>
+
+            {/* 초안 텍스트 박스 */}
+            <div
+              className="flex h-[42px] items-center justify-between rounded-[10px] border px-[13px]"
+              style={{ background: '#f6eafe', borderColor: '#b85af5' }}
+            >
+              <p
+                className="flex-1 truncate text-[var(--color-gray-950)]"
+                style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+              >
+                {aiDraft}
+              </p>
+              <button
+                type="button"
+                onClick={onCopy}
+                className="ml-2 shrink-0 transition-opacity hover:opacity-60"
+              >
+                <Copy size={18} color="#972ddd" />
+              </button>
+            </div>
+
+            {/* Slack/Discord에서 답장 링크 */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                className="flex items-center gap-1 transition-opacity hover:opacity-70"
+                style={{ color: '#5a5ddb' }}
+              >
+                <span style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)', fontWeight: 500 }}>
+                  {provider === 'discord' ? 'Discord에서 답장' : 'Slack에서 답장'}
+                </span>
+                <ExternalLink size={14} color="#5a5ddb" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
