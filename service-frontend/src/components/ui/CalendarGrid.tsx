@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { CalendarEvent } from '@/types'
+import EventDetailPanel from './EventDetailPanel'
 
 const DAYS = ['월', '화', '수', '목', '금', '토', '일'] as const
 
@@ -25,7 +26,6 @@ function eventDateKey(isoString: string): string {
 /** 해당 월의 캘린더 그리드를 구성하는 날짜 배열 반환 (42칸, 월요일 시작) */
 function buildCalendarDays(year: number, month: number): Date[] {
   const firstDay = new Date(year, month, 1)
-  // 월요일=0, 일요일=6 기준 offset (getDay: 0=일,1=월,...,6=토)
   const startOffset = (firstDay.getDay() + 6) % 7
   const start = new Date(firstDay)
   start.setDate(1 - startOffset)
@@ -51,6 +51,7 @@ function formatTime(isoString: string): string {
 export default function CalendarGrid({ events, initialYear, initialMonth }: CalendarGridProps) {
   const [year, setYear] = useState(initialYear)
   const [month, setMonth] = useState(initialMonth)
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
 
   const today = new Date()
   const todayKey = toDateKey(today)
@@ -76,121 +77,128 @@ export default function CalendarGrid({ events, initialYear, initialMonth }: Cale
     else setMonth(m => m + 1)
   }
 
-  function goToday() {
-    setYear(today.getFullYear())
-    setMonth(today.getMonth())
-  }
-
   return (
-    <div className="flex flex-1 flex-col overflow-hidden">
-      {/* 월 네비게이션 */}
-      <div className="flex items-center justify-center gap-[var(--spacing-sm)] border-b border-[var(--color-gray-80)] py-[10px]">
-        <button
-          type="button"
-          onClick={prevMonth}
-          className="flex size-[36px] items-center justify-center rounded-[10px] text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)]"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <span
-          className="min-w-[100px] text-center font-medium text-[var(--color-gray-950)]"
-          style={{ fontSize: '20px', lineHeight: '30px' }}
-        >
-          {year}년 {month + 1}월
-        </span>
-        <button
-          type="button"
-          onClick={nextMonth}
-          className="flex size-[36px] items-center justify-center rounded-[10px] text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)]"
-        >
-          <ChevronRight size={20} />
-        </button>
-      </div>
-
-      {/* 요일 헤더 */}
-      <div className="flex border-b border-[var(--color-gray-80)]">
-        {DAYS.map((day) => (
-          <div
-            key={day}
-            className="flex h-[44px] flex-1 items-center justify-center border-r border-[var(--color-gray-80)] last:border-r-0"
+    <>
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* 월 네비게이션 */}
+        <div className="flex items-center justify-center gap-[var(--spacing-sm)] border-b border-[var(--color-gray-80)] py-[10px]">
+          <button
+            type="button"
+            onClick={prevMonth}
+            className="flex size-[36px] items-center justify-center rounded-[10px] text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)]"
           >
-            <span
-              className="font-medium text-[var(--color-gray-400)]"
-              style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+            <ChevronLeft size={20} />
+          </button>
+          <span
+            className="min-w-[100px] text-center font-medium text-[var(--color-gray-950)]"
+            style={{ fontSize: '20px', lineHeight: '30px' }}
+          >
+            {year}년 {month + 1}월
+          </span>
+          <button
+            type="button"
+            onClick={nextMonth}
+            className="flex size-[36px] items-center justify-center rounded-[10px] text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)]"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+
+        {/* 요일 헤더 */}
+        <div className="flex border-b border-[var(--color-gray-80)]">
+          {DAYS.map((day) => (
+            <div
+              key={day}
+              className="flex h-[44px] flex-1 items-center justify-center border-r border-[var(--color-gray-80)] last:border-r-0"
             >
-              {day}
-            </span>
-          </div>
-        ))}
-      </div>
+              <span
+                className="font-medium text-[var(--color-gray-400)]"
+                style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+              >
+                {day}
+              </span>
+            </div>
+          ))}
+        </div>
 
-      {/* 날짜 그리드 */}
-      <div className="flex flex-1 flex-col">
-        {weeks.map((week, wi) => (
-          <div key={wi} className="flex flex-1 border-b border-[var(--color-gray-80)] last:border-b-0">
-            {week.map((day, di) => {
-              const isCurrentMonth = day.getMonth() === month
-              const key = toDateKey(day)
-              const isToday = key === todayKey
-              const dayEvents = eventMap.get(key) ?? []
-              const MAX_VISIBLE = 2
-              const overflow = dayEvents.length - MAX_VISIBLE
+        {/* 날짜 그리드 */}
+        <div className="flex flex-1 flex-col">
+          {weeks.map((week, wi) => (
+            <div key={wi} className="flex flex-1 border-b border-[var(--color-gray-80)] last:border-b-0">
+              {week.map((day, di) => {
+                const isCurrentMonth = day.getMonth() === month
+                const key = toDateKey(day)
+                const isToday = key === todayKey
+                const dayEvents = eventMap.get(key) ?? []
+                const MAX_VISIBLE = 2
+                const overflow = dayEvents.length - MAX_VISIBLE
 
-              return (
-                <div
-                  key={di}
-                  className={[
-                    'flex flex-1 flex-col border-r border-[var(--color-gray-80)] last:border-r-0',
-                    !isCurrentMonth ? 'bg-[rgba(46,50,55,0.08)]' : '',
-                  ].join(' ')}
-                >
-                  {/* 날짜 숫자 */}
-                  <div className="flex h-[44px] items-center justify-center p-[10px]">
-                    <span
-                      className={[
-                        'flex size-[24px] items-center justify-center font-medium',
-                        isToday
-                          ? 'rounded-full bg-[var(--color-brand-500)] text-white'
-                          : isCurrentMonth
-                            ? 'text-[var(--color-gray-900)]'
-                            : 'text-[var(--color-gray-400)]',
-                      ].join(' ')}
-                      style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
-                    >
-                      {day.getDate()}
-                    </span>
-                  </div>
-
-                  {/* 이벤트 목록 */}
-                  <div className="flex flex-col gap-[6px] overflow-hidden p-[6px] pt-0">
-                    {dayEvents.slice(0, MAX_VISIBLE).map((event) => (
-                      <div
-                        key={event.id}
-                        className="truncate rounded-[4px] bg-[var(--color-brand-500)] px-[6px] py-[2px] text-white"
-                        style={{ fontSize: '12px', lineHeight: '18px' }}
-                        title={event.title}
-                      >
-                        {!event.isAllDay && (
-                          <span className="mr-1 opacity-80">{formatTime(event.startAt)}</span>
-                        )}
-                        {event.title}
-                      </div>
-                    ))}
-                    {overflow > 0 && (
+                return (
+                  <div
+                    key={di}
+                    className={[
+                      'flex flex-1 flex-col border-r border-[var(--color-gray-80)] last:border-r-0',
+                      !isCurrentMonth ? 'bg-[rgba(46,50,55,0.08)]' : '',
+                    ].join(' ')}
+                  >
+                    {/* 날짜 숫자 */}
+                    <div className="flex h-[44px] items-center justify-center p-[10px]">
                       <span
-                        className="px-[6px] text-[var(--color-gray-500)]"
-                        style={{ fontSize: '12px', lineHeight: '16px' }}
+                        className={[
+                          'flex size-[24px] items-center justify-center font-medium',
+                          isToday
+                            ? 'rounded-full bg-[var(--color-brand-500)] text-white'
+                            : isCurrentMonth
+                              ? 'text-[var(--color-gray-900)]'
+                              : 'text-[var(--color-gray-400)]',
+                        ].join(' ')}
+                        style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
                       >
-                        +{overflow}개 더보기
+                        {day.getDate()}
                       </span>
-                    )}
+                    </div>
+
+                    {/* 이벤트 목록 */}
+                    <div className="flex flex-col gap-[6px] overflow-hidden p-[6px] pt-0">
+                      {dayEvents.slice(0, MAX_VISIBLE).map((event) => (
+                        <button
+                          key={event.id}
+                          type="button"
+                          onClick={() => setSelectedEvent(event)}
+                          className="truncate rounded-[4px] bg-[var(--color-brand-500)] px-[6px] py-[2px] text-left text-white transition-opacity hover:opacity-80"
+                          style={{ fontSize: '12px', lineHeight: '18px' }}
+                          title={event.title}
+                        >
+                          {!event.isAllDay && (
+                            <span className="mr-1 opacity-80">{formatTime(event.startAt)}</span>
+                          )}
+                          {event.title}
+                        </button>
+                      ))}
+                      {overflow > 0 && (
+                        <span
+                          className="px-[6px] text-[var(--color-gray-500)]"
+                          style={{ fontSize: '12px', lineHeight: '16px' }}
+                        >
+                          +{overflow}개 더보기
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )
-            })}
-          </div>
-        ))}
+                )
+              })}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+
+      {/* 이벤트 상세 패널 */}
+      {selectedEvent && (
+        <EventDetailPanel
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+        />
+      )}
+    </>
   )
 }
