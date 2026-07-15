@@ -49,5 +49,5 @@ src/
 ## 🌿 Git Branch Strategy
 
 - \`main\`: 운영계 배포용 (안정화된 버전)
-- \`develop\`: 개발 테스트용 (기본 작업 브랜치)
+- \`dev\`: 개발 테스트용 (기본 작업 브랜치)
 - \`feature/\*\`: 개별 기능 개발용 브랜치 (ex: \`feature/dashboard\`)
