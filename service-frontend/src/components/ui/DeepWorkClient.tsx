@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Play, X, AlarmClock, Bell, Sparkles, Shield, MessageSquare, Loader2 } from 'lucide-react'
 import type { Notification, NotificationProvider } from '@/types'
@@ -82,13 +82,16 @@ export default function DeepWorkClient({
 
   // 모달·로딩은 이 페이지 내에서만 필요한 로컬 상태
   // 대시보드 [시작하기]로 진입한 경우 pendingOpenModal 플래그를 초기값으로 읽어 바로 모달 오픈
-  const [showModal, setShowModal] = useState(() => {
-    const pending = useDeepWorkStore.getState().pendingOpenModal
-    if (pending) consumeModalPending()
-    return pending
-  })
+  const [showModal, setShowModal] = useState(() => useDeepWorkStore.getState().pendingOpenModal)
   const [selectedModalDuration, setSelectedModalDuration] = useState<Duration | null>(null)
   const [briefingLoading, setBriefingLoading] = useState(false)
+
+  // pendingOpenModal 소비(store.set())는 렌더링 단계가 아닌 마운트 후 이펙트에서 처리
+  // (렌더링 중 다른 컴포넌트의 setState를 트리거하면 React 경고가 발생함)
+  useEffect(() => {
+    if (showModal) consumeModalPending()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // [백엔드 연결] 집중모드 진행 중 긴급 알림은 polling 또는 WebSocket으로 실시간 수신해야 합니다.
   // 현재는 initialUrgentNotifications를 그대로 사용합니다.
