@@ -20,10 +20,11 @@ const NAV_ITEMS = [
   { label: '캘린더', href: '/calendar', icon: Calendar },
 ] as const
 
-// mock unread count — 실제 API 연결 시 props 또는 상태로 교체
-const UNREAD_COUNT = 12
+interface SidebarProps {
+  unreadCount: number
+}
 
-export default function Sidebar() {
+export default function Sidebar({ unreadCount }: SidebarProps) {
   const pathname = usePathname()
 
   return (
@@ -62,9 +63,9 @@ export default function Sidebar() {
               >
                 {label}
               </span>
-              {label === '메시지' && UNREAD_COUNT > 0 && (
+              {label === '메시지' && unreadCount > 0 && (
                 <span className="flex h-5 min-w-5 items-center justify-center rounded-[var(--radius-8xl)] bg-[var(--color-brand-500)] px-1 text-[11px] font-semibold text-white">
-                  {UNREAD_COUNT > 99 ? '99+' : UNREAD_COUNT}
+                  {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
             </Link>
