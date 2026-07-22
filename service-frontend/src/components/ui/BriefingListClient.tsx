@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Sparkles, Loader2 } from 'lucide-react'
 import type { Briefing, NotificationProvider } from '@/types'
 import { useDeepWorkStore } from '@/store/deepWorkStore'
+import { buildBriefingTitle } from '@/lib/api'
 import BriefingCard from './BriefingCard'
 
 export interface BriefingItem {
@@ -12,11 +13,10 @@ export interface BriefingItem {
 }
 
 interface BackendBriefingResponse {
-  id: number
+  briefing_id: number
   session_id: number
-  title: string
   content: string
-  created_at: string
+  generated_at: string
 }
 
 async function createBriefingFromSession(sessionId: number): Promise<BriefingItem> {
@@ -32,16 +32,16 @@ async function createBriefingFromSession(sessionId: number): Promise<BriefingIte
   const data = await res.json() as BackendBriefingResponse
   return {
     briefing: {
-      id: String(data.id),
+      id: String(data.briefing_id),
       sessionId: String(data.session_id),
-      title: data.title,
+      title: buildBriefingTitle(data.generated_at),
       content: data.content,
       actionItems: [],
       highlights: [],
       criticalCount: 0,
       highCount: 0,
       mediumCount: 0,
-      generatedAt: data.created_at,
+      generatedAt: data.generated_at,
     },
     providerCounts: {},
   }

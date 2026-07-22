@@ -6,6 +6,7 @@
  */
 
 import type { Notification, NotificationPriority, NotificationProvider, NotificationStatus, ChannelSummary } from '@/types'
+import { formatDate } from '@/utils'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
@@ -28,11 +29,15 @@ interface BackendNotification {
 }
 
 interface BackendBriefing {
-  id: number
+  briefing_id: number
   session_id: number
-  title: string
   content: string
-  created_at: string
+  generated_at: string
+}
+
+/** 백엔드가 브리핑 제목을 내려주지 않아 생성 시각 기준으로 제목을 만든다 */
+export function buildBriefingTitle(generatedAt: string): string {
+  return `${formatDate(generatedAt)} 브리핑`
 }
 
 // ─── 변환 함수 ───────────────────────────────────────────────────────────────

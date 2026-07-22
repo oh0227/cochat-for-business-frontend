@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getBriefingById } from '@/lib/api'
+import { buildBriefingTitle, getBriefingById } from '@/lib/api'
 import BriefingDetailView from '@/components/ui/BriefingDetailView'
 import type { Briefing } from '@/types'
 
@@ -10,16 +10,16 @@ export default async function BriefingDetailPage({ params }: { params: Promise<{
   if (!data) notFound()
 
   const briefing: Briefing = {
-    id: String(data.id),
+    id: String(data.briefing_id),
     sessionId: String(data.session_id),
-    title: data.title,
+    title: buildBriefingTitle(data.generated_at),
     content: data.content,
     actionItems: [],
     highlights: [],
     criticalCount: 0,
     highCount: 0,
     mediumCount: 0,
-    generatedAt: data.created_at,
+    generatedAt: data.generated_at,
   }
 
   return <BriefingDetailView briefing={briefing} notifications={[]} />

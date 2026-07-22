@@ -1,4 +1,4 @@
-import { getLatestBriefing } from '@/lib/api'
+import { buildBriefingTitle, getLatestBriefing } from '@/lib/api'
 import BriefingListClient, { type BriefingItem } from '@/components/ui/BriefingListClient'
 import type { Briefing } from '@/types'
 
@@ -9,16 +9,16 @@ export default async function BriefingPage() {
     ? [
         {
           briefing: {
-            id: String(latest.id),
+            id: String(latest.briefing_id),
             sessionId: String(latest.session_id),
-            title: latest.title,
+            title: buildBriefingTitle(latest.generated_at),
             content: latest.content,
             actionItems: [],
             highlights: [],
             criticalCount: 0,
             highCount: 0,
             mediumCount: 0,
-            generatedAt: latest.created_at,
+            generatedAt: latest.generated_at,
           } satisfies Briefing,
           providerCounts: {},
         },
