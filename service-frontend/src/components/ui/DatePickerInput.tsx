@@ -77,7 +77,7 @@ export default function DatePickerInput({
 
       {open && (
         <div
-          className="absolute left-0 top-[46px] z-20 w-[272px] overflow-hidden rounded-[12px] border border-[#dfe3e5] bg-white"
+          className="absolute left-0 top-[46px] z-20 w-[min(272px,100%)] overflow-hidden rounded-[12px] border border-[#dfe3e5] bg-white"
           style={{ boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)' }}
         >
           {/* 월 네비게이션 */}
