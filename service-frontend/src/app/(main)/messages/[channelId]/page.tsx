@@ -7,7 +7,9 @@ interface ChatRoomPageProps {
 }
 
 export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
-  const { channelId } = await params
+  const { channelId: rawChannelId } = await params
+  // 라우트 파라미터가 percent-encoding된 채로 넘어오는 경우가 있어 명시적으로 디코딩한다
+  const channelId = decodeURIComponent(rawChannelId)
 
   const notifications = await getNotifications()
   const channelSummaries = buildChannelSummaries(notifications)
