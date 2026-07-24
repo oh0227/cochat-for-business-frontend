@@ -80,10 +80,10 @@ export default function SetupClient({ initialConnected, initialError = null }: S
   return (
     <div className="flex min-h-screen flex-col bg-white">
       {/* 본문 */}
-      <div className="flex flex-1 flex-col items-center px-[460px] pt-[170px]">
-        <div className="flex w-full flex-col items-start gap-14">
+      <div className="flex flex-1 flex-col items-center px-[var(--spacing-md)] pt-16 sm:px-[var(--spacing-xl)] sm:pt-24 lg:pt-[170px]">
+        <div className="flex w-full max-w-[1000px] flex-col items-start gap-10 sm:gap-14">
           {/* 상단: 로고 + 환영 메시지 */}
-          <div className="flex w-full flex-col items-center gap-10">
+          <div className="flex w-full flex-col items-center gap-6 sm:gap-10">
             <Image src="/icon.png" alt="CoChat" width={72} height={72} />
 
             <div className="flex flex-col items-center gap-1 text-center">
@@ -98,7 +98,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
                 style={{ fontSize: 'var(--font-size-xs)', lineHeight: 'var(--line-height-3xs)' }}
               >
                 CoChat은 여러 워크스페이스의 알림을 한곳에 모아 메시지의 중요도를 분류해 전달하여,
-                <br />
+                <br className="hidden sm:inline" />
                 사용자가 온전히 집중할 수 있는 업무 환경을 만듭니다.
               </p>
             </div>
@@ -106,7 +106,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
 
           {/* 워크스페이스 연결 섹션 */}
           <div className="flex w-full flex-col items-center gap-4">
-            <div className="w-[1000px]">
+            <div className="w-full">
               <span
                 className="font-semibold text-[var(--color-gray-950)]"
                 style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
@@ -116,7 +116,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
             </div>
 
             {/* 연결 카드 3개 */}
-            <div className="flex w-[1000px] gap-4">
+            <div className="flex w-full flex-col gap-4 md:flex-row">
               {PROVIDERS.map(({ id, name, description, iconBg, Icon, iconColor }) => {
                 const isConnected = connected.has(id)
                 const isLoading = loading === id
@@ -215,23 +215,25 @@ export default function SetupClient({ initialConnected, initialError = null }: S
 
       {/* 하단 바 */}
       <div
-        className="flex shrink-0 items-center justify-end px-[460px]"
+        className="flex shrink-0 items-center justify-center px-[var(--spacing-md)] sm:px-[var(--spacing-xl)]"
         style={{ height: 128, borderTop: '1px solid #e2e8f0' }}
       >
-        <button
-          type="button"
-          onClick={() => router.push('/dashboard')}
-          disabled={!isAnyConnected}
-          className="flex h-12 w-[130px] items-center justify-center rounded-[12px] font-medium transition-colors"
-          style={{
-            fontSize: 'var(--font-size-xs)',
-            background: isAnyConnected ? '#6366f1' : '#f0f2f3',
-            color: isAnyConnected ? 'white' : '#8a939b',
-            cursor: isAnyConnected ? 'pointer' : 'default',
-          }}
-        >
-          시작하기
-        </button>
+        <div className="flex w-full max-w-[1000px] justify-end">
+          <button
+            type="button"
+            onClick={() => router.push('/dashboard')}
+            disabled={!isAnyConnected}
+            className="flex h-12 w-full items-center justify-center rounded-[12px] font-medium transition-colors sm:w-[130px]"
+            style={{
+              fontSize: 'var(--font-size-xs)',
+              background: isAnyConnected ? '#6366f1' : '#f0f2f3',
+              color: isAnyConnected ? 'white' : '#8a939b',
+              cursor: isAnyConnected ? 'pointer' : 'default',
+            }}
+          >
+            시작하기
+          </button>
+        </div>
       </div>
     </div>
   )

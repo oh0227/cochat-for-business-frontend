@@ -22,7 +22,7 @@ export default function TodayPanel({ events, date }: TodayPanelProps) {
   }).format(date)
 
   return (
-    <aside className="flex w-[280px] shrink-0 flex-col gap-[var(--spacing-sm)] border-l border-[var(--color-gray-80)] p-[var(--spacing-sm)]">
+    <aside className="flex w-full shrink-0 flex-col gap-[var(--spacing-sm)] border-t border-[var(--color-gray-80)] p-[var(--spacing-sm)] lg:w-[280px] lg:border-l lg:border-t-0">
       {/* 헤더 */}
       <div className="flex items-center gap-[var(--spacing-2xs)]">
         <CalendarDays size={18} className="text-[var(--color-gray-700)]" />

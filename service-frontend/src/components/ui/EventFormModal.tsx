@@ -96,7 +96,7 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
       {/* 모달 */}
       <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         <div
-          className="flex w-[672px] flex-col overflow-hidden rounded-[14px] border border-[#e2e8f0] bg-white"
+          className="flex max-h-[90vh] w-full max-w-[672px] flex-col overflow-y-auto rounded-[14px] border border-[#e2e8f0] bg-white"
           style={{ boxShadow: '0px 25px 50px 0px rgba(0,0,0,0.25)' }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -146,7 +146,7 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
             </div>
 
             {/* 날짜 + 시간 */}
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <div className="flex flex-1 flex-col gap-[6px]">
                 <label className="flex items-center gap-[6px]">
                   <CalendarDays size={14} className="text-[#4d555c]" />

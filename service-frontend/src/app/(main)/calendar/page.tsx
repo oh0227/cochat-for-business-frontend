@@ -80,10 +80,10 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex flex-col overflow-hidden" style={{ height: 'calc(100vh - 2 * var(--spacing-lg))' }}>
+    <div className="flex flex-col lg:h-[calc(100vh_-_2*var(--spacing-lg))] lg:overflow-hidden">
       {/* 페이지 헤더 */}
-      <div className="mb-[var(--spacing-sm)] flex items-center gap-[var(--spacing-lg)]">
-        <div className="flex flex-1 flex-col gap-[var(--spacing-3xs)]">
+      <div className="mb-[var(--spacing-sm)] flex flex-col gap-[var(--spacing-sm)] sm:flex-row sm:items-center sm:justify-between sm:gap-[var(--spacing-lg)]">
+        <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-3xs)]">
           <h1
             className="font-bold text-[var(--color-gray-950)]"
             style={{ fontSize: 'var(--font-size-2xl)', lineHeight: 'var(--line-height-3xl)' }}
@@ -97,7 +97,7 @@ export default function CalendarPage() {
             메시지에서 정리한 일정과 마감을 한곳에서 관리할 수 있어요.
           </p>
         </div>
-        <div className="flex items-center gap-[var(--spacing-2xs)]">
+        <div className="flex flex-wrap items-center gap-[var(--spacing-2xs)]">
           <button
             type="button"
             className="flex h-[48px] items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] bg-[rgba(46,50,55,0.08)] px-[var(--spacing-sm)] font-medium text-[var(--color-gray-950)] transition-colors hover:bg-[rgba(46,50,55,0.12)]"
@@ -119,7 +119,7 @@ export default function CalendarPage() {
       </div>
 
       {/* 캘린더 + 오늘 일정 사이드바 */}
-      <div className="flex flex-1 overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-gray-80)] bg-white">
+      <div className="flex flex-1 flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-gray-80)] bg-white lg:flex-row">
         <CalendarGrid
           events={events}
           initialYear={today.getFullYear()}

@@ -31,7 +31,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* 요약 카드 4개 */}
-      <div className="flex gap-[var(--spacing-sm)]">
+      <div className="grid grid-cols-1 gap-[var(--spacing-sm)] sm:grid-cols-2 lg:grid-cols-4">
         <SummaryCard type="priority" priority="critical" count={criticalCount} subtext="즉시 조치 필요" />
         <SummaryCard type="priority" priority="high" count={highCount} subtext="오늘 안에 확인" />
         <SummaryCard type="priority" priority="medium" count={mediumCount} subtext="여유있게 확인" />
@@ -39,7 +39,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* 콘텐츠 2열 */}
-      <div className="flex gap-[20px]">
+      <div className="flex flex-col gap-[20px] lg:flex-row">
         <MessageSection notifications={recentNotifications} />
         <BriefingSection briefings={[]} />
       </div>

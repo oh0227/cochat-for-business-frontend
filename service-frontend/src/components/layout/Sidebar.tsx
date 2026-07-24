@@ -10,6 +10,7 @@ import {
   Atom,
   Calendar,
   Settings,
+  X,
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -22,22 +23,41 @@ const NAV_ITEMS = [
 
 interface SidebarProps {
   unreadCount: number
+  isOpen?: boolean
+  onClose?: () => void
 }
 
-export default function Sidebar({ unreadCount }: SidebarProps) {
+export default function Sidebar({ unreadCount, isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname()
 
   return (
-    <aside className="flex h-screen w-[220px] shrink-0 flex-col bg-[#ffffff] border-r border-[var(--color-gray-80)]">
+    <aside
+      className={[
+        'fixed inset-y-0 left-0 z-50 flex h-screen w-[240px] shrink-0 flex-col bg-[#ffffff] border-r border-[var(--color-gray-80)]',
+        'transition-transform duration-200 ease-out',
+        isOpen ? 'translate-x-0' : '-translate-x-full',
+        'lg:static lg:z-auto lg:w-[220px] lg:translate-x-0',
+      ].join(' ')}
+    >
       {/* 로고 */}
-      <div className="flex items-center gap-[var(--spacing-2xs)] px-[var(--spacing-sm)] py-[var(--spacing-lg)]">
-        <Image src="/logo.png" alt="CoChat 로고" width={28} height={28} />
-        <span
-          className="font-semibold text-[var(--color-gray-950)]"
-          style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+      <div className="flex items-center justify-between gap-[var(--spacing-2xs)] px-[var(--spacing-sm)] py-[var(--spacing-lg)]">
+        <div className="flex items-center gap-[var(--spacing-2xs)]">
+          <Image src="/logo.png" alt="CoChat 로고" width={28} height={28} />
+          <span
+            className="font-semibold text-[var(--color-gray-950)]"
+            style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+          >
+            CoChat
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="메뉴 닫기"
+          className="flex size-8 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)] lg:hidden"
         >
-          CoChat
-        </span>
+          <X size={20} />
+        </button>
       </div>
 
       {/* 메인 네비게이션 */}
@@ -48,6 +68,7 @@ export default function Sidebar({ unreadCount }: SidebarProps) {
             <Link
               key={href}
               href={href}
+              onClick={onClose}
               className={[
                 'flex items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-xs)] px-[var(--spacing-2xs)] py-[var(--spacing-3xs)]',
                 'transition-colors',
@@ -77,6 +98,7 @@ export default function Sidebar({ unreadCount }: SidebarProps) {
       <div className="px-[var(--spacing-2xs)] pb-[var(--spacing-lg)]">
         <Link
           href="/settings"
+          onClick={onClose}
           className={[
             'flex items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-xs)] px-[var(--spacing-2xs)] py-[var(--spacing-3xs)]',
             'transition-colors',

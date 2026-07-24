@@ -78,7 +78,7 @@ export default function BriefingListClient({ initialItems }: BriefingListClientP
   return (
     <>
       {/* 페이지 헤더 */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-[var(--spacing-sm)] sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-[var(--spacing-4xs)]">
           <h1
             className="font-semibold text-[var(--color-gray-950)]"

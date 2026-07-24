@@ -20,8 +20,8 @@ export default async function MessagesPage() {
   return (
     <div className="flex flex-col gap-[var(--spacing-xl)]">
       {/* 페이지 헤더 */}
-      <div className="flex items-center gap-[var(--spacing-lg)]">
-        <div className="flex flex-1 flex-col gap-[var(--spacing-4xs)]">
+      <div className="flex flex-col gap-[var(--spacing-sm)] sm:flex-row sm:items-center sm:gap-[var(--spacing-lg)]">
+        <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-4xs)]">
           <h1
             className="font-bold text-[var(--color-gray-950)]"
             style={{ fontSize: 'var(--font-size-2xl)', lineHeight: 'var(--line-height-3xl)' }}
@@ -37,7 +37,7 @@ export default async function MessagesPage() {
         </div>
         <button
           type="button"
-          className="flex h-[48px] items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] px-[var(--spacing-sm)] font-medium text-white transition-opacity hover:opacity-90"
+          className="flex h-[48px] shrink-0 items-center justify-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] px-[var(--spacing-sm)] font-medium text-white transition-opacity hover:opacity-90"
           style={{
             fontSize: 'var(--font-size-xs)',
             background: 'linear-gradient(109.93deg, #6366f1 1.17%, #7cabf9 98.83%)',
@@ -49,7 +49,7 @@ export default async function MessagesPage() {
       </div>
 
       {/* 우선순위 요약 카드 */}
-      <div className="flex gap-[17px]">
+      <div className="grid grid-cols-2 gap-[var(--spacing-sm)] sm:grid-cols-4 sm:gap-[17px]">
         {PRIORITY_ORDER.map((priority) => (
           <MessagePriorityCard key={priority} priority={priority} count={counts[priority]} />
         ))}

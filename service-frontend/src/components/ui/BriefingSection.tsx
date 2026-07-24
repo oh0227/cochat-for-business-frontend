@@ -8,7 +8,7 @@ interface BriefingSectionProps {
 
 export default function BriefingSection({ briefings }: BriefingSectionProps) {
   return (
-    <div className="flex flex-1 flex-col gap-[var(--spacing-md)] rounded-[14px] border border-[var(--color-gray-80)] bg-white p-[21px]">
+    <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-md)] rounded-[14px] border border-[var(--color-gray-80)] bg-white p-[21px]">
       {/* 헤더 */}
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-[var(--spacing-3xs)]">

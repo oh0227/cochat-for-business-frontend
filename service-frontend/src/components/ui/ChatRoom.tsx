@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { ArrowLeft, Bell, Hash, MessageSquare, CalendarPlus, Sparkles, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Bell, Hash, MessageSquare, CalendarPlus, Sparkles, ExternalLink, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import type { ChannelSummary, ChatMessage, Notification } from '@/types'
 import ChatMessageRow from './ChatMessageRow'
@@ -31,9 +31,10 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
   const [selectedNotifId, setSelectedNotifId] = useState<string | null>(null)
   const [showAiDraft, setShowAiDraft] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [isAlertsOpen, setAlertsOpen] = useState(false)
   const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
-  const { iconBg, textColor, Icon } = PROVIDER_ICON[channel.provider] ?? PROVIDER_ICON.slack
+  const { iconBg, textColor, Icon } = PROVIDER_ICON[channel.provider ?? 'slack'] ?? PROVIDER_ICON.slack
 
   // 알림 선택 시 해당 메시지로 스크롤 + 읽음 처리
   function handleSelectNotif(notifId: string) {
@@ -78,43 +79,53 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
   }
 
   return (
-    <div
-      className="flex overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-gray-80)] bg-white"
-      style={{ height: 'calc(100vh - 2 * var(--spacing-lg))' }}
-    >
+    <div className="relative flex h-full overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-gray-80)] bg-white">
       {/* ── 중앙: 채팅 영역 ── */}
-      <div className="relative flex flex-1 flex-col overflow-hidden">
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* 헤더 */}
         <div
-          className="flex shrink-0 items-center gap-3 border-b border-[var(--color-gray-80)] px-5"
+          className="flex shrink-0 items-center gap-3 border-b border-[var(--color-gray-80)] px-3 sm:px-5"
           style={{ height: 72, background: '#f8f9ff' }}
         >
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex size-[42px] items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)]"
+            className="flex size-[42px] shrink-0 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)]"
           >
             <ArrowLeft size={24} />
           </button>
 
           <span
-            className="flex items-center justify-center rounded-[10px]"
+            className="flex shrink-0 items-center justify-center rounded-[10px]"
             style={{ width: 32, height: 32, background: iconBg }}
           >
             <Icon size={18} />
           </span>
 
           <span
-            className="font-medium"
+            className="min-w-0 flex-1 truncate font-medium"
             style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)', color: textColor }}
           >
             {channel.workspaceName} &gt; {channel.channelName}
           </span>
+
+          {/* 알림 패널 토글 (모바일/태블릿 전용) */}
+          <button
+            type="button"
+            onClick={() => setAlertsOpen(true)}
+            aria-label="확인 필요한 알림 열기"
+            className="relative flex size-[42px] shrink-0 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)] lg:hidden"
+          >
+            <Bell size={20} />
+            {notifications.length > 0 && (
+              <span className="absolute right-1 top-1 flex size-[8px] rounded-full bg-[#ef4444]" />
+            )}
+          </button>
         </div>
 
         {/* 메시지 목록 */}
-        <div className="flex-1 overflow-y-auto px-[170px] py-6">
-          <div className="flex flex-col gap-1">
+        <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-8 md:px-12">
+          <div className="mx-auto flex max-w-[760px] flex-col gap-1">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -150,7 +161,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
         {/* 후속 액션 바 (알림 선택 시 표시) */}
         {selectedNotifId && (
           <div
-            className="flex shrink-0 items-center justify-between border-t border-[var(--color-gray-80)] px-10 py-4"
+            className="flex shrink-0 flex-col gap-3 border-t border-[var(--color-gray-80)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-4"
             style={{ boxShadow: '0px -4px 24px 0px rgba(99,102,241,0.12)' }}
           >
             <span
@@ -159,7 +170,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
             >
               후속 액션
             </span>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <button
                 type="button"
                 className="flex h-10 items-center gap-2 rounded-[var(--radius-sm)] px-4 font-medium text-white transition-opacity hover:opacity-80"
@@ -190,25 +201,49 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
         )}
       </div>
 
+      {/* 모바일/태블릿: 알림 패널 오버레이 */}
+      {isAlertsOpen && (
+        <div
+          className="absolute inset-0 z-40 bg-black/40 lg:hidden"
+          onClick={() => setAlertsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* ── 우측: 알림 패널 ── */}
-      <aside className="flex w-[340px] shrink-0 flex-col border-l border-[var(--color-gray-80)]">
+      <aside
+        className={[
+          'absolute inset-y-0 right-0 z-50 flex w-[85vw] max-w-[340px] shrink-0 flex-col border-l border-[var(--color-gray-80)] bg-white',
+          'transition-transform duration-200 ease-out',
+          isAlertsOpen ? 'translate-x-0' : 'translate-x-full',
+          'lg:static lg:z-auto lg:w-[340px] lg:translate-x-0',
+        ].join(' ')}
+      >
         {/* 헤더 */}
         <div
           className="flex shrink-0 items-center gap-3 border-b border-[var(--color-gray-80)] px-5"
           style={{ height: 72 }}
         >
           <span
-            className="flex items-center justify-center rounded-[10px]"
+            className="flex shrink-0 items-center justify-center rounded-[10px]"
             style={{ width: 36, height: 36, background: 'rgba(239,68,68,0.1)' }}
           >
             <Bell size={20} color="#ef4444" />
           </span>
           <span
-            className="font-semibold text-[var(--color-gray-900)]"
+            className="flex-1 truncate font-semibold text-[var(--color-gray-900)]"
             style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
           >
             확인 필요한 알림
           </span>
+          <button
+            type="button"
+            onClick={() => setAlertsOpen(false)}
+            aria-label="알림 패널 닫기"
+            className="flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)] lg:hidden"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         {/* 알림 목록 */}

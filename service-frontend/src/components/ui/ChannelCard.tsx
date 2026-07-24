@@ -92,17 +92,17 @@ export default function ChannelCard({ channel }: ChannelCardProps) {
       </span>
 
       {/* 채널 정보 */}
-      <div className="flex flex-1 flex-col gap-[2px]">
-        <div className="flex items-center gap-[2px]">
+      <div className="flex min-w-0 flex-1 flex-col gap-[2px]">
+        <div className="flex min-w-0 items-center gap-[2px]">
           <span
-            className="font-medium"
+            className="truncate font-medium"
             style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)', color: textColor }}
           >
             {channel.workspaceName}
           </span>
-          <ChevronRight size={20} color={textColor} />
+          <ChevronRight size={20} color={textColor} className="shrink-0" />
           <span
-            className="font-medium"
+            className="truncate font-medium"
             style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)', color: textColor }}
           >
             {channel.channelName}
@@ -117,7 +117,7 @@ export default function ChannelCard({ channel }: ChannelCardProps) {
       </div>
 
       {/* 우선순위 배지들 */}
-      <div className="flex items-center gap-1">
+      <div className="flex shrink-0 flex-wrap items-center justify-end gap-1">
         {badges.map((priority) => {
           const { label, color, bg, border } = PRIORITY_BADGE_STYLE[priority]
           return (

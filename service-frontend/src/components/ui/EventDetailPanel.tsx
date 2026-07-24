@@ -31,9 +31,9 @@ export default function EventDetailPanel({ event, onClose, onEdit }: EventDetail
       />
 
       {/* 슬라이드 패널 */}
-      <div className="fixed right-0 top-0 z-50 flex h-full w-[664px] flex-col border-l border-[var(--color-gray-80)] bg-white shadow-[-4px_0px_24px_0px_rgba(99,102,241,0.12)]">
+      <div className="fixed right-0 top-0 z-50 flex h-full w-full max-w-[664px] flex-col border-l border-[var(--color-gray-80)] bg-white shadow-[-4px_0px_24px_0px_rgba(99,102,241,0.12)]">
         {/* 헤더 */}
-        <div className="flex flex-col gap-[var(--spacing-xs)] border-b border-[var(--color-gray-80)] px-[var(--spacing-xl)] pb-[33px] pt-[var(--spacing-xl)]">
+        <div className="flex flex-col gap-[var(--spacing-xs)] border-b border-[var(--color-gray-80)] px-[var(--spacing-sm)] pb-[24px] pt-[var(--spacing-lg)] sm:px-[var(--spacing-xl)] sm:pb-[33px] sm:pt-[var(--spacing-xl)]">
           {/* X 닫기 */}
           <div className="flex justify-end">
             <button
@@ -66,7 +66,7 @@ export default function EventDetailPanel({ event, onClose, onEdit }: EventDetail
         </div>
 
         {/* 본문 스크롤 영역 */}
-        <div className="flex flex-1 flex-col gap-[var(--spacing-sm)] overflow-y-auto px-[var(--spacing-xl)] py-[var(--spacing-sm)]">
+        <div className="flex flex-1 flex-col gap-[var(--spacing-sm)] overflow-y-auto px-[var(--spacing-sm)] py-[var(--spacing-sm)] sm:px-[var(--spacing-xl)]">
           {/* 일정 요약 */}
           <div className="flex flex-col gap-[var(--spacing-4xs)] rounded-[10px] border border-[#b85af5] bg-[rgba(166,49,243,0.08)] p-[var(--spacing-xs)]">
             <p

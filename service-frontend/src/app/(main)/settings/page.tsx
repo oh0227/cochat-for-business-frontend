@@ -141,16 +141,16 @@ export default function SettingsPage() {
               className="flex flex-col gap-6 rounded-[14px] border border-[var(--color-gray-80)] p-[21px]"
             >
               {/* 섹션 헤더 */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 items-center gap-4">
                   <span
-                    className="flex items-center justify-center rounded-[10px]"
+                    className="flex shrink-0 items-center justify-center rounded-[10px]"
                     style={{ width: 36, height: 36, background: iconBg }}
                   >
                     <Icon size={20} color={iconColor} />
                   </span>
                   <span
-                    className="font-semibold text-[var(--color-gray-950)]"
+                    className="truncate font-semibold text-[var(--color-gray-950)]"
                     style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
                   >
                     {name} 연결된 계정
@@ -161,7 +161,7 @@ export default function SettingsPage() {
                   type="button"
                   onClick={() => handleAdd(provider)}
                   disabled={isAdding}
-                  className="flex h-9 items-center gap-2 rounded-[12px] px-3 font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-60"
+                  className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-[12px] px-3 font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-60"
                   style={{ fontSize: 'var(--font-size-3xs)', background: '#2e3237' }}
                 >
                   <Plus size={18} />
@@ -175,10 +175,10 @@ export default function SettingsPage() {
                   {accounts.map((account) => (
                     <div
                       key={account.id}
-                      className="flex h-[72px] items-center justify-between rounded-[10px] border border-[var(--color-gray-80)] px-[17px]"
+                      className="flex h-[72px] items-center justify-between gap-3 rounded-[10px] border border-[var(--color-gray-80)] px-[17px]"
                     >
                       <span
-                        className="font-semibold text-[var(--color-gray-950)]"
+                        className="min-w-0 truncate font-semibold text-[var(--color-gray-950)]"
                         style={{ fontSize: 'var(--font-size-xs)', lineHeight: 'var(--line-height-2xs)' }}
                       >
                         {account.identifier}
