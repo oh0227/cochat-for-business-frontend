@@ -43,6 +43,9 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
     setShowAiDraft(false)
     if (!next) return
 
+    // 모바일/태블릿 드로어가 열려 있으면 닫아서 스크롤된 메시지가 보이게 한다
+    setAlertsOpen(false)
+
     // 읽음 상태로 업데이트 (fire-and-forget)
     fetch(`/api/notifications/${notifId}`, {
       method: 'PATCH',
