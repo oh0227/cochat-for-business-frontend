@@ -35,7 +35,6 @@ interface BackendNotification {
 /** 백엔드 priority(대문자 시작, 예: "High", "Emergency")를 프론트 표준값으로 정규화 */
 const PRIORITY_MAP: Record<string, NotificationPriority> = {
   emergency: 'critical',
-  critical: 'critical',
   high: 'high',
   medium: 'medium',
   low: 'low',
