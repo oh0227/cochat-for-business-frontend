@@ -32,14 +32,17 @@ interface BackendNotification {
   created_at: string
 }
 
-const KNOWN_PRIORITIES: NotificationPriority[] = ['critical', 'high', 'medium', 'low']
+/** 백엔드 priority(대문자 시작, 예: "High", "Emergency")를 프론트 표준값으로 정규화 */
+const PRIORITY_MAP: Record<string, NotificationPriority> = {
+  emergency: 'critical',
+  critical: 'critical',
+  high: 'high',
+  medium: 'medium',
+  low: 'low',
+}
 
-/** 백엔드 priority(대문자 시작, 예: "High")를 프론트 표준(소문자)으로 정규화 */
 function normalizePriority(raw: string): NotificationPriority {
-  const lowered = raw.toLowerCase()
-  return (KNOWN_PRIORITIES as string[]).includes(lowered)
-    ? (lowered as NotificationPriority)
-    : 'low'
+  return PRIORITY_MAP[raw.toLowerCase()] ?? 'low'
 }
 
 interface BackendBriefing {
