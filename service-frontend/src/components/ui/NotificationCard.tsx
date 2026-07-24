@@ -25,6 +25,13 @@ const PROVIDER_STYLE: Record<
   },
 }
 
+const DEFAULT_STYLE = {
+  iconBg: 'bg-[var(--color-gray-50)]',
+  Icon: ({ size, className }: { size?: number; className?: string }) => (
+    <MessageSquare size={size} className={className ?? 'text-[var(--color-gray-400)]'} />
+  ),
+}
+
 interface NotificationCardProps {
   notification: Notification
   onClick?: () => void
@@ -32,7 +39,7 @@ interface NotificationCardProps {
 
 export default function NotificationCard({ notification, onClick }: NotificationCardProps) {
   const { summary, actor, channel, provider, priority, createdAt } = notification
-  const { iconBg, Icon } = PROVIDER_STYLE[provider]
+  const { iconBg, Icon } = provider ? PROVIDER_STYLE[provider] : DEFAULT_STYLE
 
   const infoItems = [channel, actor, formatRelativeTime(createdAt)].filter(Boolean)
 

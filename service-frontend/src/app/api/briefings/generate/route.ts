@@ -76,6 +76,7 @@ export async function POST(request: Request) {
   // [백엔드 연결] providerCounts를 백엔드가 직접 내려준다면 아래 계산 로직은 삭제합니다.
   const providerCounts: Partial<Record<NotificationProvider, number>> = {}
   for (const n of newNotifications) {
+    if (!n.provider) continue
     providerCounts[n.provider] = (providerCounts[n.provider] ?? 0) + 1
   }
 

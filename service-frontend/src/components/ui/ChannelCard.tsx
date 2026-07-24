@@ -29,6 +29,14 @@ const PROVIDER_STYLE: Record<
   },
 }
 
+const DEFAULT_STYLE = {
+  iconBg: 'rgba(148,163,184,0.1)',
+  textColor: '#94a3b8',
+  Icon: ({ size, color }: { size?: number; color?: string }) => (
+    <MessageSquare size={size} color={color ?? '#94a3b8'} />
+  ),
+}
+
 const PRIORITY_BADGE_STYLE: Record<
   NotificationPriority,
   { label: string; color: string; bg: string; border: string }
@@ -66,7 +74,7 @@ interface ChannelCardProps {
 }
 
 export default function ChannelCard({ channel }: ChannelCardProps) {
-  const { iconBg, textColor, Icon } = PROVIDER_STYLE[channel.provider]
+  const { iconBg, textColor, Icon } = channel.provider ? PROVIDER_STYLE[channel.provider] : DEFAULT_STYLE
 
   const badges = PRIORITY_ORDER.filter((p) => channel.counts[p] > 0)
 

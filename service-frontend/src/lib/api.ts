@@ -5,7 +5,7 @@
  * src/app/api/** 의 Next.js Route Handler를 프록시로 사용하세요.
  */
 
-import type { Notification, NotificationPriority, NotificationProvider, NotificationStatus, ChannelSummary } from '@/types'
+import type { Notification, NotificationPriority, NotificationStatus, ChannelSummary, ChatMessage } from '@/types'
 import { formatDate } from '@/utils'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL
@@ -16,16 +16,30 @@ export const TEMP_USER_ID = 1
 // ─── 백엔드 응답 타입 (snake_case) ───────────────────────────────────────────
 
 interface BackendNotification {
-  id: string
-  integration_id: string
-  raw_event_id: string
-  priority: NotificationPriority
+  id: number
+  title: string
+  sender_name: string | null
+  channel_name: string | null
+  source_type: string
+  priority: string
+  original_text: string
   summary: string
-  actor: string | null
-  channel: string | null
-  provider: NotificationProvider
+  reason: string
+  occurred_at: string
+  source_url: string | null
+  is_direct_target: boolean
   status: NotificationStatus
   created_at: string
+}
+
+const KNOWN_PRIORITIES: NotificationPriority[] = ['critical', 'high', 'medium', 'low']
+
+/** 백엔드 priority(대문자 시작, 예: "High")를 프론트 표준(소문자)으로 정규화 */
+function normalizePriority(raw: string): NotificationPriority {
+  const lowered = raw.toLowerCase()
+  return (KNOWN_PRIORITIES as string[]).includes(lowered)
+    ? (lowered as NotificationPriority)
+    : 'low'
 }
 
 interface BackendBriefing {
@@ -44,14 +58,13 @@ export function buildBriefingTitle(generatedAt: string): string {
 
 function toNotification(raw: BackendNotification): Notification {
   return {
-    id: raw.id,
-    integrationId: raw.integration_id,
-    rawEventId: raw.raw_event_id,
-    priority: raw.priority,
+    id: String(raw.id),
+    // integrationId/rawEventId/provider: 백엔드가 아직 내려주지 않음 (issue #5)
+    priority: normalizePriority(raw.priority),
     summary: raw.summary,
-    actor: raw.actor,
-    channel: raw.channel,
-    provider: raw.provider,
+    originalContent: raw.original_text,
+    actor: raw.sender_name,
+    channel: raw.channel_name,
     status: raw.status,
     createdAt: raw.created_at,
   }
@@ -68,7 +81,7 @@ export function buildChannelSummaries(notifications: Notification[]): ChannelSum
         id: key,
         integrationId: n.integrationId,
         provider: n.provider,
-        workspaceName: n.provider.charAt(0).toUpperCase() + n.provider.slice(1),
+        workspaceName: n.provider ? n.provider.charAt(0).toUpperCase() + n.provider.slice(1) : '메시지',
         channelName: n.channel ?? 'DM',
         counts: { critical: 0, high: 0, medium: 0, low: 0 },
         latestAt: n.createdAt,

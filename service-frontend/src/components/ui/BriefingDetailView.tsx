@@ -148,14 +148,14 @@ export default function BriefingDetailView({ briefing, notifications }: Briefing
               {i > 0 && <div className="mx-[var(--spacing-sm)] border-t border-[var(--color-gray-80)]" />}
               <div className="flex items-start gap-[var(--spacing-xs)] px-[var(--spacing-sm)] py-[var(--spacing-sm)]">
                 {/* 프로바이더 아이콘 */}
-                <span className={['flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white', PROVIDER_COLOR[notification.provider]].join(' ')}>
+                <span className={['flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white', notification.provider ? PROVIDER_COLOR[notification.provider] : 'bg-[var(--color-gray-400)]'].join(' ')}>
                   <MessageSquare size={16} />
                 </span>
 
                 {/* 본문 */}
                 <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-4xs)]">
                   <p className="text-[var(--color-gray-400)]" style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-5xs)' }}>
-                    {PROVIDER_NAME[notification.provider]}{notification.channel ? ` › ${notification.channel}` : ''}
+                    {notification.provider ? PROVIDER_NAME[notification.provider] : '메시지'}{notification.channel ? ` › ${notification.channel}` : ''}
                   </p>
                   <p className="font-medium text-[var(--color-gray-950)]" style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}>
                     {notification.summary}

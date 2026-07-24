@@ -320,7 +320,7 @@ function UrgentNotificationItem({ notification }: { notification: Notification }
       <span
         className={[
           'flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white',
-          PROVIDER_COLOR[provider],
+          provider ? PROVIDER_COLOR[provider] : 'bg-[var(--color-gray-400)]',
         ].join(' ')}
       >
         <MessageSquare size={16} />
@@ -330,7 +330,7 @@ function UrgentNotificationItem({ notification }: { notification: Notification }
           className="text-[var(--color-brand-500)]"
           style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-5xs)' }}
         >
-          {PROVIDER_NAME[provider]}{channel ? ` › ${channel}` : ''}
+          {provider ? PROVIDER_NAME[provider] : '메시지'}{channel ? ` › ${channel}` : ''}
         </p>
         <p
           className="font-medium text-[var(--color-gray-950)]"
