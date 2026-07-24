@@ -285,7 +285,7 @@ export default function DeepWorkClient({
                     className={[
                       'rounded-[var(--radius-xs)] py-[var(--spacing-xs)] font-medium transition-colors',
                       selectedModalDuration === d
-                        ? 'bg-[var(--color-gray-950)] text-white'
+                        ? 'bg-[var(--color-gray-inverse)] text-white'
                         : 'border border-[var(--color-gray-100)] bg-[var(--color-gray-default)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]',
                     ].join(' ')}
                     style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}

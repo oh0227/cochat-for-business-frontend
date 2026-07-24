@@ -174,7 +174,7 @@ export default function SettingsPage() {
                   onClick={() => handleAdd(provider)}
                   disabled={isAdding}
                   className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-[12px] px-3 font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-60"
-                  style={{ fontSize: 'var(--font-size-3xs)', background: 'var(--color-gray-900)' }}
+                  style={{ fontSize: 'var(--font-size-3xs)', background: 'var(--color-gray-inverse)' }}
                 >
                   <Plus size={18} />
                   계정 추가하기

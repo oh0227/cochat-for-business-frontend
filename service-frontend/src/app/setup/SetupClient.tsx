@@ -191,7 +191,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
                       onClick={() => handleConnect(id)}
                       disabled={isLoading}
                       className="flex h-10 w-full items-center justify-center gap-2 rounded-[12px] font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-60"
-                      style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-gray-900)' }}
+                      style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-gray-inverse)' }}
                     >
                       {isLoading && <Loader2 size={16} className="animate-spin" />}
                       연결하기

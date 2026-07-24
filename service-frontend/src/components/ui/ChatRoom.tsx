@@ -177,7 +177,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
               <button
                 type="button"
                 className="flex h-10 items-center gap-2 rounded-[var(--radius-sm)] px-4 font-medium text-white transition-opacity hover:opacity-80"
-                style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-gray-900)' }}
+                style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-gray-inverse)' }}
               >
                 <CalendarPlus size={22} />
                 일정 등록
@@ -186,7 +186,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
                 type="button"
                 onClick={() => setShowAiDraft(true)}
                 className="flex h-10 items-center gap-2 rounded-[var(--radius-sm)] px-4 font-medium text-white transition-opacity hover:opacity-80"
-                style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-gray-900)' }}
+                style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-gray-inverse)' }}
               >
                 <Sparkles size={22} />
                 AI 답장 생성
