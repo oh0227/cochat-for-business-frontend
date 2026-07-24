@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "pretendard/dist/web/variable/pretendardvariable.css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* ─── Font ─────────────────────────────────────────── */
   --font-pretendard: "Pretendard Variable", Pretendard, sans-serif;
@@ -87,6 +89,7 @@
   --color-urgent-500:   #ef4444;
 
   --color-important-50:  #fffaeb;
+  --color-important-300: #fcd38c;
   --color-important-500: #f79009;
 
   --color-normal-50:    #ebf3fe;
@@ -100,10 +103,49 @@
 
   /* ─── Colors: Status ─────────────────────────────────── */
   --color-status-completed-50:  #e7f8f0;
+  --color-status-completed-300: #6ce9a6;
   --color-status-completed-500: #12b76a;
 
   /* ─── Background ─────────────────────────────────────── */
   --color-background: #ffffff;
+}
+
+/* ─── Dark theme overrides ─────────────────────────────── */
+.dark {
+  /* Gray scale: 순서를 뒤집어 재정의 (950이 라이트에서 "가장 진한 텍스트"였다면
+     다크에서는 "가장 밝은 텍스트") — 컴포넌트는 그대로 두고 토큰 값만 교체 */
+  --color-gray-default: #1a1c1f;
+  --color-gray-20:      #232529;
+  --color-gray-50:      #1f2124;
+  --color-gray-80:      #34363b;
+  --color-gray-100:     #3f4247;
+  --color-gray-400:     #9aa1a8;
+  --color-gray-500:     #aeb4ba;
+  --color-gray-700:     #c7ccd1;
+  --color-gray-800:     #d8dbde;
+  --color-gray-900:     #e8eaec;
+  --color-gray-950:     #f5f6f7;
+
+  /* 파스텔 틴트(배경 워시용)만 다크에서 어울리지 않으므로 같은 색상의
+     저투명도 rgba로 재정의. 채도 높은 -400/-500/-600/-700 계열은 유지 */
+  --color-brand-20:  rgba(99, 102, 241, 0.06);
+  --color-brand-50:  rgba(99, 102, 241, 0.12);
+  --color-brand-80:  rgba(99, 102, 241, 0.2);
+  --color-brand-100: rgba(99, 102, 241, 0.28);
+
+  --color-urgent-50:  rgba(239, 68, 68, 0.16);
+  --color-urgent-300: rgba(239, 68, 68, 0.5);
+
+  --color-important-50:  rgba(247, 144, 9, 0.16);
+  --color-important-300: rgba(247, 144, 9, 0.5);
+
+  --color-normal-50:  rgba(59, 130, 246, 0.16);
+  --color-normal-300: rgba(59, 130, 246, 0.5);
+
+  --color-status-completed-50:  rgba(18, 183, 106, 0.16);
+  --color-status-completed-300: rgba(18, 183, 106, 0.5);
+
+  --color-background: #101113;
 }
 
 @layer base {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Hash, MessageSquare, Plus, Trash2 } from 'lucide-react'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 
 type Provider = 'slack' | 'discord' | 'jira'
 
@@ -128,6 +129,17 @@ export default function SettingsPage() {
         </p>
       </div>
 
+      {/* 화면 설정 */}
+      <div className="flex flex-col gap-4 rounded-[14px] border border-[var(--color-gray-80)] p-[21px]">
+        <span
+          className="font-semibold text-[var(--color-gray-950)]"
+          style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+        >
+          화면 설정
+        </span>
+        <ThemeToggle />
+      </div>
+
       {/* 연동 섹션 목록 */}
       <div className="flex flex-col gap-4">
         {PROVIDERS.map((provider) => {
@@ -162,7 +174,7 @@ export default function SettingsPage() {
                   onClick={() => handleAdd(provider)}
                   disabled={isAdding}
                   className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-[12px] px-3 font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-60"
-                  style={{ fontSize: 'var(--font-size-3xs)', background: '#2e3237' }}
+                  style={{ fontSize: 'var(--font-size-3xs)', background: 'var(--color-gray-900)' }}
                 >
                   <Plus size={18} />
                   계정 추가하기
@@ -188,7 +200,7 @@ export default function SettingsPage() {
                         onClick={() => handleDelete(account.id)}
                         className="flex size-8 items-center justify-center rounded-[10px] transition-colors hover:bg-[rgba(239,68,68,0.08)]"
                       >
-                        <Trash2 size={18} color="#ef4444" />
+                        <Trash2 size={18} className="text-[var(--color-urgent-500)]" />
                       </button>
                     </div>
                   ))}
