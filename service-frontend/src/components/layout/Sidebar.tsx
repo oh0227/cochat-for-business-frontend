@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -11,6 +12,8 @@ import {
   Calendar,
   Settings,
   X,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -21,46 +24,27 @@ const NAV_ITEMS = [
   { label: '캘린더', href: '/calendar', icon: Calendar },
 ] as const
 
+const PINNED_STORAGE_KEY = 'sidebarPinned'
+
 interface SidebarProps {
   unreadCount: number
   isOpen?: boolean
   onClose?: () => void
 }
 
-export default function Sidebar({ unreadCount, isOpen = false, onClose }: SidebarProps) {
-  const pathname = usePathname()
-
+function NavLinks({
+  pathname,
+  unreadCount,
+  showLabel,
+  onNavigate,
+}: {
+  pathname: string
+  unreadCount: number
+  showLabel: boolean
+  onNavigate?: () => void
+}) {
   return (
-    <aside
-      className={[
-        'fixed inset-y-0 left-0 z-50 flex h-screen w-[240px] shrink-0 flex-col bg-[var(--color-gray-default)] border-r border-[var(--color-gray-80)]',
-        'transition-transform duration-200 ease-out',
-        isOpen ? 'translate-x-0' : '-translate-x-full',
-        'lg:static lg:z-auto lg:w-[220px] lg:translate-x-0',
-      ].join(' ')}
-    >
-      {/* 로고 */}
-      <div className="flex items-center justify-between gap-[var(--spacing-2xs)] px-[var(--spacing-sm)] py-[var(--spacing-lg)]">
-        <div className="flex items-center gap-[var(--spacing-2xs)]">
-          <Image src="/logo.png" alt="CoChat 로고" width={28} height={28} />
-          <span
-            className="font-semibold text-[var(--color-gray-950)]"
-            style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
-          >
-            CoChat
-          </span>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="메뉴 닫기"
-          className="flex size-8 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)] lg:hidden"
-        >
-          <X size={20} />
-        </button>
-      </div>
-
-      {/* 메인 네비게이션 */}
+    <>
       <nav className="flex flex-1 flex-col gap-[var(--spacing-3xs)] px-[var(--spacing-2xs)]">
         {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
           const isActive = pathname === href || pathname.startsWith(href + '/')
@@ -68,23 +52,27 @@ export default function Sidebar({ unreadCount, isOpen = false, onClose }: Sideba
             <Link
               key={href}
               href={href}
-              onClick={onClose}
+              onClick={onNavigate}
+              title={showLabel ? undefined : label}
               className={[
                 'flex items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-xs)] px-[var(--spacing-2xs)] py-[var(--spacing-3xs)]',
                 'transition-colors',
+                showLabel ? '' : 'justify-center',
                 isActive
                   ? 'bg-[var(--color-brand-500)] text-white'
                   : 'text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]',
               ].join(' ')}
             >
               <Icon size={20} />
-              <span
-                className="flex-1 font-medium"
-                style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
-              >
-                {label}
-              </span>
-              {label === '메시지' && unreadCount > 0 && (
+              {showLabel && (
+                <span
+                  className="flex-1 font-medium"
+                  style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+                >
+                  {label}
+                </span>
+              )}
+              {showLabel && label === '메시지' && unreadCount > 0 && (
                 <span className="flex h-5 min-w-5 items-center justify-center rounded-[var(--radius-8xl)] bg-[var(--color-brand-500)] px-1 text-[11px] font-semibold text-white">
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
@@ -94,28 +82,156 @@ export default function Sidebar({ unreadCount, isOpen = false, onClose }: Sideba
         })}
       </nav>
 
-      {/* 하단 설정 */}
       <div className="px-[var(--spacing-2xs)] pb-[var(--spacing-lg)]">
         <Link
           href="/settings"
-          onClick={onClose}
+          onClick={onNavigate}
+          title={showLabel ? undefined : '설정'}
           className={[
             'flex items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-xs)] px-[var(--spacing-2xs)] py-[var(--spacing-3xs)]',
             'transition-colors',
+            showLabel ? '' : 'justify-center',
             pathname === '/settings'
               ? 'bg-[var(--color-brand-500)] text-white'
               : 'text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]',
           ].join(' ')}
         >
           <Settings size={20} />
-          <span
-            className="font-medium"
-            style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
-          >
-            설정
-          </span>
+          {showLabel && (
+            <span
+              className="font-medium"
+              style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+            >
+              설정
+            </span>
+          )}
         </Link>
       </div>
-    </aside>
+    </>
+  )
+}
+
+export default function Sidebar({ unreadCount, isOpen = false, onClose }: SidebarProps) {
+  const pathname = usePathname()
+  const [pinned, setPinned] = useState(true)
+  const [hovering, setHovering] = useState(false)
+
+  useEffect(() => {
+    const stored = localStorage.getItem(PINNED_STORAGE_KEY)
+    if (stored === 'false') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPinned(false)
+    }
+  }, [])
+
+  function togglePinned() {
+    const next = !pinned
+    setPinned(next)
+    localStorage.setItem(PINNED_STORAGE_KEY, String(next))
+    if (next) setHovering(false)
+  }
+
+  return (
+    <>
+      {/* 모바일/태블릿 오프캔버스 드로어 */}
+      <aside
+        className={[
+          'fixed inset-y-0 left-0 z-50 flex h-screen w-[240px] shrink-0 flex-col bg-[var(--color-gray-default)] border-r border-[var(--color-gray-80)]',
+          'transition-transform duration-200 ease-out',
+          isOpen ? 'translate-x-0' : '-translate-x-full',
+          'lg:hidden',
+        ].join(' ')}
+      >
+        <div className="flex items-center justify-between gap-[var(--spacing-2xs)] px-[var(--spacing-sm)] py-[var(--spacing-lg)]">
+          <div className="flex items-center gap-[var(--spacing-2xs)]">
+            <Image src="/logo.png" alt="CoChat 로고" width={28} height={28} />
+            <span
+              className="font-semibold text-[var(--color-gray-950)]"
+              style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+            >
+              CoChat
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="메뉴 닫기"
+            className="flex size-8 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <NavLinks pathname={pathname} unreadCount={unreadCount} showLabel onNavigate={onClose} />
+      </aside>
+
+      {/* 데스크톱: 고정 사이드바 또는 접힌 레일 */}
+      <aside
+        onMouseEnter={pinned ? undefined : () => setHovering(true)}
+        className={[
+          'hidden shrink-0 flex-col bg-[var(--color-gray-default)] border-r border-[var(--color-gray-80)]',
+          'lg:flex',
+          pinned ? 'lg:w-[220px]' : 'lg:w-[64px]',
+        ].join(' ')}
+      >
+        <div
+          className={[
+            'flex items-center gap-[var(--spacing-2xs)] px-[var(--spacing-sm)] py-[var(--spacing-lg)]',
+            pinned ? 'justify-between' : 'justify-center',
+          ].join(' ')}
+        >
+          {pinned && (
+            <div className="flex min-w-0 items-center gap-[var(--spacing-2xs)]">
+              <Image src="/logo.png" alt="CoChat 로고" width={28} height={28} />
+              <span
+                className="truncate font-semibold text-[var(--color-gray-950)]"
+                style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+              >
+                CoChat
+              </span>
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={togglePinned}
+            aria-label={pinned ? '사이드바 접기' : '사이드바 고정'}
+            title={pinned ? '사이드바 접기' : '사이드바 고정'}
+            className="flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]"
+          >
+            {pinned ? <PanelLeftClose size={18} /> : <Image src="/logo.png" alt="CoChat 로고" width={22} height={22} />}
+          </button>
+        </div>
+        <NavLinks pathname={pathname} unreadCount={unreadCount} showLabel={pinned} />
+      </aside>
+
+      {/* 접힌 상태에서 마우스를 올리면 나타나는 호버 플라이아웃 */}
+      {!pinned && hovering && (
+        <div
+          onMouseLeave={() => setHovering(false)}
+          className="fixed inset-y-0 left-0 z-40 hidden w-[220px] flex-col bg-[var(--color-gray-default)] border-r border-[var(--color-gray-80)] shadow-xl lg:flex"
+        >
+          <div className="flex items-center justify-between gap-[var(--spacing-2xs)] px-[var(--spacing-sm)] py-[var(--spacing-lg)]">
+            <div className="flex min-w-0 items-center gap-[var(--spacing-2xs)]">
+              <Image src="/logo.png" alt="CoChat 로고" width={28} height={28} />
+              <span
+                className="truncate font-semibold text-[var(--color-gray-950)]"
+                style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+              >
+                CoChat
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={togglePinned}
+              aria-label="사이드바 고정"
+              title="사이드바 고정"
+              className="flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]"
+            >
+              <PanelLeftOpen size={18} />
+            </button>
+          </div>
+          <NavLinks pathname={pathname} unreadCount={unreadCount} showLabel />
+        </div>
+      )}
+    </>
   )
 }
