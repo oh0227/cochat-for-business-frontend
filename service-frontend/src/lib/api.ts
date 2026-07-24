@@ -95,6 +95,20 @@ export function buildChannelSummaries(notifications: Notification[]): ChannelSum
   return Array.from(map.values()).sort((a, b) => b.latestAt.localeCompare(a.latestAt))
 }
 
+// 알림의 원문(originalContent)을 채팅방 좌측 메시지 목록으로 변환
+export function toChatMessages(notifications: Notification[]): ChatMessage[] {
+  return [...notifications]
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    .map((n) => ({
+      id: n.id,
+      author: n.actor ?? '알 수 없음',
+      content: n.originalContent,
+      createdAt: n.createdAt,
+      notificationId: n.id,
+      priorityBar: n.priority,
+    }))
+}
+
 // ─── API 함수 ─────────────────────────────────────────────────────────────────
 
 /** 알림 목록 조회 */

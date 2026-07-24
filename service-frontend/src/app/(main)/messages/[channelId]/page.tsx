@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getNotifications, buildChannelSummaries } from '@/lib/api'
+import { getNotifications, buildChannelSummaries, toChatMessages } from '@/lib/api'
 import ChatRoom from '@/components/ui/ChatRoom'
 
 interface ChatRoomPageProps {
@@ -25,7 +25,7 @@ export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
   return (
     <ChatRoom
       channel={channel}
-      messages={[]}
+      messages={toChatMessages(channelNotifications)}
       notifications={channelNotifications}
     />
   )
