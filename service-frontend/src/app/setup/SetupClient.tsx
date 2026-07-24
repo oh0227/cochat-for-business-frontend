@@ -78,7 +78,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-[var(--color-gray-default)]">
       {/* 본문 */}
       <div className="flex flex-1 flex-col items-center px-[var(--spacing-md)] pt-16 sm:px-[var(--spacing-xl)] sm:pt-24 lg:pt-[170px]">
         <div className="flex w-full max-w-[1000px] flex-col items-start gap-10 sm:gap-14">
@@ -127,14 +127,14 @@ export default function SetupClient({ initialConnected, initialError = null }: S
                     className="relative flex flex-1 flex-col justify-between rounded-[20px] p-6"
                     style={{
                       height: 250,
-                      border: `${isConnected ? '1.5px' : '1px'} solid ${isConnected ? '#8285f4' : '#dfe3e5'}`,
+                      border: `${isConnected ? '1.5px' : '1px'} solid ${isConnected ? 'var(--color-brand-400)' : 'var(--color-gray-80)'}`,
                     }}
                   >
                     {/* 연결 완료 배지 (우상단) */}
                     {isConnected && (
                       <div
                         className="absolute right-[14px] top-[14px] flex size-6 items-center justify-center rounded-full"
-                        style={{ background: '#6366f1' }}
+                        style={{ background: 'var(--color-brand-500)' }}
                       >
                         <Check size={14} color="white" strokeWidth={2.5} />
                       </div>
@@ -176,7 +176,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
                           {isConnected && (
                             <p
                               className="font-medium"
-                              style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)', color: '#5a5ddb' }}
+                              style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)', color: 'var(--color-brand-600)' }}
                             >
                               연동 1개
                             </p>
@@ -191,7 +191,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
                       onClick={() => handleConnect(id)}
                       disabled={isLoading}
                       className="flex h-10 w-full items-center justify-center gap-2 rounded-[12px] font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-60"
-                      style={{ fontSize: 'var(--font-size-xs)', background: '#2e3237' }}
+                      style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-gray-900)' }}
                     >
                       {isLoading && <Loader2 size={16} className="animate-spin" />}
                       연결하기
@@ -204,7 +204,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
             {error && (
               <p
                 className="text-center"
-                style={{ fontSize: 'var(--font-size-3xs)', color: '#ef4444' }}
+                style={{ fontSize: 'var(--font-size-3xs)', color: 'var(--color-urgent-500)' }}
               >
                 {error}
               </p>
@@ -216,7 +216,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
       {/* 하단 바 */}
       <div
         className="flex shrink-0 items-center justify-center px-[var(--spacing-md)] sm:px-[var(--spacing-xl)]"
-        style={{ height: 128, borderTop: '1px solid #e2e8f0' }}
+        style={{ height: 128, borderTop: '1px solid var(--color-gray-80)' }}
       >
         <div className="flex w-full max-w-[1000px] justify-end">
           <button
@@ -226,8 +226,8 @@ export default function SetupClient({ initialConnected, initialError = null }: S
             className="flex h-12 w-full items-center justify-center rounded-[12px] font-medium transition-colors sm:w-[130px]"
             style={{
               fontSize: 'var(--font-size-xs)',
-              background: isAnyConnected ? '#6366f1' : '#f0f2f3',
-              color: isAnyConnected ? 'white' : '#8a939b',
+              background: isAnyConnected ? 'var(--color-brand-500)' : 'var(--color-gray-50)',
+              color: isAnyConnected ? 'white' : 'var(--color-gray-400)',
               cursor: isAnyConnected ? 'pointer' : 'default',
             }}
           >

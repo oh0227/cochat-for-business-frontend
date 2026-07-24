@@ -100,7 +100,7 @@ export default function CalendarPage() {
         <div className="flex flex-wrap items-center gap-[var(--spacing-2xs)]">
           <button
             type="button"
-            className="flex h-[48px] items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] bg-[rgba(46,50,55,0.08)] px-[var(--spacing-sm)] font-medium text-[var(--color-gray-950)] transition-colors hover:bg-[rgba(46,50,55,0.12)]"
+            className="flex h-[48px] items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] bg-[var(--color-gray-50)] px-[var(--spacing-sm)] font-medium text-[var(--color-gray-950)] transition-colors hover:bg-[var(--color-gray-80)]"
             style={{ fontSize: 'var(--font-size-xs)' }}
           >
             <CalendarDays size={24} />
@@ -119,7 +119,7 @@ export default function CalendarPage() {
       </div>
 
       {/* 캘린더 + 오늘 일정 사이드바 */}
-      <div className="flex flex-1 flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-gray-80)] bg-white lg:flex-row">
+      <div className="flex flex-1 flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] lg:flex-row">
         <CalendarGrid
           events={events}
           initialYear={today.getFullYear()}

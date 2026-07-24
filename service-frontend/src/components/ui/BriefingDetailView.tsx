@@ -121,7 +121,7 @@ export default function BriefingDetailView({ briefing, notifications }: Briefing
               <ChevronDown size={14} />
             </button>
             {dropdownOpen && (
-              <div className="absolute right-0 top-full z-10 mt-1 min-w-[120px] overflow-hidden rounded-[var(--radius-xs)] border border-[var(--color-gray-80)] bg-white shadow-sm">
+              <div className="absolute right-0 top-full z-10 mt-1 min-w-[120px] overflow-hidden rounded-[var(--radius-xs)] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] shadow-sm">
                 {(['time', 'priority'] as SortType[]).map((option) => (
                   <button
                     key={option}
@@ -142,7 +142,7 @@ export default function BriefingDetailView({ briefing, notifications }: Briefing
         </div>
 
         {/* 알림 목록 */}
-        <div className="overflow-hidden rounded-[var(--radius-sm)] border border-[var(--color-gray-80)] bg-white">
+        <div className="overflow-hidden rounded-[var(--radius-sm)] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)]">
           {sorted.map((notification, i) => (
             <div key={notification.id}>
               {i > 0 && <div className="mx-[var(--spacing-sm)] border-t border-[var(--color-gray-80)]" />}

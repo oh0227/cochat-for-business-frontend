@@ -9,7 +9,7 @@ interface MessageSectionProps {
 
 export default function MessageSection({ notifications }: MessageSectionProps) {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-md)] rounded-[14px] border border-[var(--color-gray-80)] bg-white p-[21px]">
+    <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-md)] rounded-[14px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] p-[21px]">
       {/* 헤더 */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[var(--spacing-2xs)]">

@@ -40,7 +40,7 @@ export default async function MessagesPage() {
           className="flex h-[48px] shrink-0 items-center justify-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] px-[var(--spacing-sm)] font-medium text-white transition-opacity hover:opacity-90"
           style={{
             fontSize: 'var(--font-size-xs)',
-            background: 'linear-gradient(109.93deg, #6366f1 1.17%, #7cabf9 98.83%)',
+            background: 'linear-gradient(109.93deg, var(--color-brand-500) 1.17%, var(--color-normal-300) 98.83%)',
           }}
         >
           <Sparkles size={24} />

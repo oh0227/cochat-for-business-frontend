@@ -16,38 +16,38 @@ const PRIORITY_CONFIG: Record<
 > = {
   critical: {
     label: '긴급',
-    color: '#ef4444',
+    color: 'var(--color-urgent-500)',
     bg: 'rgba(239,68,68,0.1)',
     border: 'rgba(239,68,68,0.2)',
-    selectedBg: '#fef2f2',
-    selectedBorder: '#fca5a5',
+    selectedBg: 'var(--color-urgent-50)',
+    selectedBorder: 'var(--color-urgent-300)',
     Icon: CircleAlert,
   },
   high: {
     label: '중요',
-    color: '#f79009',
+    color: 'var(--color-important-500)',
     bg: 'rgba(247,144,9,0.1)',
     border: 'rgba(247,144,9,0.2)',
-    selectedBg: '#fffaeb',
-    selectedBorder: '#fcd38c',
+    selectedBg: 'var(--color-important-50)',
+    selectedBorder: 'var(--color-important-300)',
     Icon: Clock4,
   },
   medium: {
     label: '보통',
-    color: '#3b82f6',
+    color: 'var(--color-normal-500)',
     bg: 'rgba(59,130,246,0.1)',
     border: 'rgba(59,130,246,0.2)',
-    selectedBg: '#ebf3fe',
-    selectedBorder: '#7cabf9',
+    selectedBg: 'var(--color-normal-50)',
+    selectedBorder: 'var(--color-normal-300)',
     Icon: CircleMinus,
   },
   low: {
     label: '낮음',
-    color: '#12b76a',
+    color: 'var(--color-status-completed-500)',
     bg: 'rgba(18,183,106,0.1)',
     border: 'rgba(18,183,106,0.2)',
-    selectedBg: '#e9f8f1',
-    selectedBorder: '#6ce9a6',
+    selectedBg: 'var(--color-status-completed-50)',
+    selectedBorder: 'var(--color-status-completed-300)',
     Icon: CircleDot,
   },
 }
@@ -68,8 +68,8 @@ export default function AlertCard({ notification, isSelected, onSelect }: AlertC
       onClick={onSelect}
       className="flex w-full flex-col gap-[var(--spacing-3xs)] rounded-[10px] p-[13px] text-left transition-colors"
       style={{
-        background: isSelected ? selectedBg : 'white',
-        border: `${isSelected ? '1.5px' : '1px'} solid ${isSelected ? selectedBorder : '#dfe3e5'}`,
+        background: isSelected ? selectedBg : 'var(--color-gray-default)',
+        border: `${isSelected ? '1.5px' : '1px'} solid ${isSelected ? selectedBorder : 'var(--color-gray-80)'}`,
       }}
     >
       {/* 우선순위 배지 */}

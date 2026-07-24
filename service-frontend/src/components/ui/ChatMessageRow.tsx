@@ -3,10 +3,10 @@ import type { ChatMessage, NotificationPriority } from '@/types'
 import { formatRelativeTime } from '@/utils'
 
 const BAR_COLOR: Record<NotificationPriority, string> = {
-  critical: '#ef4444',
-  high:     '#f79009',
-  medium:   '#3b82f6',
-  low:      '#12b76a',
+  critical: 'var(--color-urgent-500)',
+  high:     'var(--color-important-500)',
+  medium:   'var(--color-normal-500)',
+  low:      'var(--color-status-completed-500)',
 }
 
 interface ChatMessageRowProps {
@@ -27,7 +27,7 @@ export default function ChatMessageRow({ message, isSelected, aiDraft, provider,
         isSelected
           ? {
               background: 'rgba(99,102,241,0.08)',
-              border: '1.5px solid #8285f4',
+              border: '1.5px solid var(--color-brand-400)',
               borderRadius: 12,
             }
           : undefined
@@ -44,7 +44,7 @@ export default function ChatMessageRow({ message, isSelected, aiDraft, provider,
       {/* 아바타 */}
       <div
         className="flex size-9 shrink-0 items-center justify-center rounded-full font-medium text-[var(--color-gray-700)]"
-        style={{ background: 'rgba(46,50,55,0.12)', fontSize: 13 }}
+        style={{ background: 'var(--color-gray-80)', fontSize: 13 }}
       >
         {author[0]}
       </div>
@@ -111,12 +111,12 @@ export default function ChatMessageRow({ message, isSelected, aiDraft, provider,
               <button
                 type="button"
                 className="flex items-center gap-1 transition-opacity hover:opacity-70"
-                style={{ color: '#5a5ddb' }}
+                style={{ color: 'var(--color-brand-600)' }}
               >
                 <span style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)', fontWeight: 500 }}>
                   {provider === 'discord' ? 'Discord에서 답장' : 'Slack에서 답장'}
                 </span>
-                <ExternalLink size={14} color="#5a5ddb" />
+                <ExternalLink size={14} className="text-[var(--color-brand-600)]" />
               </button>
             </div>
           </div>

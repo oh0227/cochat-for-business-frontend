@@ -14,8 +14,8 @@ const PROVIDER_STYLE: Record<
   },
   discord: {
     iconBg: 'rgba(97,95,255,0.1)',
-    textColor: '#6366f1',
-    Icon: ({ size, color }) => <MessageSquare size={size} color={color ?? '#6366f1'} />,
+    textColor: 'var(--color-brand-500)',
+    Icon: ({ size, color }) => <MessageSquare size={size} color={color ?? 'var(--color-brand-500)'} />,
   },
   jira: {
     iconBg: 'rgba(0,82,204,0.1)',
@@ -31,9 +31,9 @@ const PROVIDER_STYLE: Record<
 
 const DEFAULT_STYLE = {
   iconBg: 'rgba(148,163,184,0.1)',
-  textColor: '#94a3b8',
+  textColor: 'var(--color-gray-400)',
   Icon: ({ size, color }: { size?: number; color?: string }) => (
-    <MessageSquare size={size} color={color ?? '#94a3b8'} />
+    <MessageSquare size={size} color={color ?? 'var(--color-gray-400)'} />
   ),
 }
 
@@ -43,25 +43,25 @@ const PRIORITY_BADGE_STYLE: Record<
 > = {
   critical: {
     label: '긴급',
-    color: '#ef4444',
+    color: 'var(--color-urgent-500)',
     bg: 'rgba(239,68,68,0.1)',
     border: 'rgba(239,68,68,0.2)',
   },
   high: {
     label: '중요',
-    color: '#f79009',
+    color: 'var(--color-important-500)',
     bg: 'rgba(247,144,9,0.1)',
     border: 'rgba(247,144,9,0.2)',
   },
   medium: {
     label: '보통',
-    color: '#3b82f6',
+    color: 'var(--color-normal-500)',
     bg: 'rgba(59,130,246,0.1)',
     border: 'rgba(59,130,246,0.2)',
   },
   low: {
     label: '낮음',
-    color: '#12b76a',
+    color: 'var(--color-status-completed-500)',
     bg: 'rgba(18,183,106,0.1)',
     border: 'rgba(18,183,106,0.2)',
   },
@@ -81,7 +81,7 @@ export default function ChannelCard({ channel }: ChannelCardProps) {
   return (
     <Link
       href={`/messages/${channel.id}`}
-      className="flex w-full items-center gap-[var(--spacing-sm)] rounded-[14px] border border-[var(--color-gray-80)] bg-white p-[17px] text-left transition-colors hover:bg-[var(--color-gray-20)]"
+      className="flex w-full items-center gap-[var(--spacing-sm)] rounded-[14px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] p-[17px] text-left transition-colors hover:bg-[var(--color-gray-20)]"
     >
       {/* 플랫폼 아이콘 */}
       <span

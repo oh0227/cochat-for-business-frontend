@@ -15,8 +15,8 @@ const PROVIDER_ICON: Record<string, { iconBg: string; textColor: string; Icon: R
   },
   discord: {
     iconBg: 'rgba(97,95,255,0.1)',
-    textColor: '#6366f1',
-    Icon: ({ size, color }) => <MessageSquare size={size} color={color ?? '#6366f1'} />,
+    textColor: 'var(--color-brand-500)',
+    Icon: ({ size, color }) => <MessageSquare size={size} color={color ?? 'var(--color-brand-500)'} />,
   },
 }
 
@@ -82,13 +82,13 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
   }
 
   return (
-    <div className="relative flex h-full overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-gray-80)] bg-white">
+    <div className="relative flex h-full overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)]">
       {/* ── 중앙: 채팅 영역 ── */}
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* 헤더 */}
         <div
           className="flex shrink-0 items-center gap-3 border-b border-[var(--color-gray-80)] px-3 sm:px-5"
-          style={{ height: 72, background: '#f8f9ff' }}
+          style={{ height: 72, background: 'var(--color-brand-20)' }}
         >
           <button
             type="button"
@@ -121,7 +121,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
           >
             <Bell size={20} />
             {notifications.length > 0 && (
-              <span className="absolute right-1 top-1 flex size-[8px] rounded-full bg-[#ef4444]" />
+              <span className="absolute right-1 top-1 flex size-[8px] rounded-full bg-[var(--color-urgent-500)]" />
             )}
           </button>
         </div>
@@ -154,7 +154,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
           <div className="pointer-events-none absolute bottom-[96px] left-10 z-10">
             <div
               className="flex h-[38px] items-center rounded-[4px] px-4 text-white"
-              style={{ background: '#6366f1', boxShadow: '-4px 0px 24px 0px rgba(99,102,241,0.12)', fontSize: 'var(--font-size-2xs)' }}
+              style={{ background: 'var(--color-brand-500)', boxShadow: '-4px 0px 24px 0px rgba(99,102,241,0.12)', fontSize: 'var(--font-size-2xs)' }}
             >
               복사되었습니다.
             </div>
@@ -177,7 +177,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
               <button
                 type="button"
                 className="flex h-10 items-center gap-2 rounded-[var(--radius-sm)] px-4 font-medium text-white transition-opacity hover:opacity-80"
-                style={{ fontSize: 'var(--font-size-xs)', background: '#2e3237' }}
+                style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-gray-900)' }}
               >
                 <CalendarPlus size={22} />
                 일정 등록
@@ -186,14 +186,14 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
                 type="button"
                 onClick={() => setShowAiDraft(true)}
                 className="flex h-10 items-center gap-2 rounded-[var(--radius-sm)] px-4 font-medium text-white transition-opacity hover:opacity-80"
-                style={{ fontSize: 'var(--font-size-xs)', background: '#2e3237' }}
+                style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-gray-900)' }}
               >
                 <Sparkles size={22} />
                 AI 답장 생성
               </button>
               <button
                 type="button"
-                className="flex h-10 items-center gap-2 rounded-[var(--radius-sm)] bg-[rgba(46,50,55,0.08)] px-4 font-medium text-[var(--color-gray-950)] transition-colors hover:bg-[rgba(46,50,55,0.12)]"
+                className="flex h-10 items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-gray-50)] px-4 font-medium text-[var(--color-gray-950)] transition-colors hover:bg-[var(--color-gray-80)]"
                 style={{ fontSize: 'var(--font-size-xs)' }}
               >
                 <ExternalLink size={22} />
@@ -216,7 +216,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
       {/* ── 우측: 알림 패널 ── */}
       <aside
         className={[
-          'absolute inset-y-0 right-0 z-50 flex w-[85vw] max-w-[340px] shrink-0 flex-col border-l border-[var(--color-gray-80)] bg-white',
+          'absolute inset-y-0 right-0 z-50 flex w-[85vw] max-w-[340px] shrink-0 flex-col border-l border-[var(--color-gray-80)] bg-[var(--color-gray-default)]',
           'transition-transform duration-200 ease-out',
           isAlertsOpen ? 'translate-x-0' : 'translate-x-full',
           'lg:static lg:z-auto lg:w-[340px] lg:translate-x-0',
@@ -231,7 +231,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
             className="flex shrink-0 items-center justify-center rounded-[10px]"
             style={{ width: 36, height: 36, background: 'rgba(239,68,68,0.1)' }}
           >
-            <Bell size={20} color="#ef4444" />
+            <Bell size={20} className="text-[var(--color-urgent-500)]" />
           </span>
           <span
             className="flex-1 truncate font-semibold text-[var(--color-gray-900)]"

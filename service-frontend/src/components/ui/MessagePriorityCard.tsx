@@ -16,8 +16,8 @@ const PRIORITY_CONFIG: Record<
   critical: {
     label: '긴급',
     sublabel: '즉시 조치 필요',
-    color: '#ef4444',
-    bg: '#fef2f2',
+    color: 'var(--color-urgent-500)',
+    bg: 'var(--color-urgent-50)',
     border: 'rgba(239,68,68,0.2)',
     iconBg: 'rgba(239,68,68,0.1)',
     Icon: CircleAlert,
@@ -25,8 +25,8 @@ const PRIORITY_CONFIG: Record<
   high: {
     label: '중요',
     sublabel: '오늘 안에 확인',
-    color: '#f79009',
-    bg: '#fffaeb',
+    color: 'var(--color-important-500)',
+    bg: 'var(--color-important-50)',
     border: 'rgba(247,144,9,0.2)',
     iconBg: 'rgba(247,144,9,0.1)',
     Icon: Clock4,
@@ -34,8 +34,8 @@ const PRIORITY_CONFIG: Record<
   medium: {
     label: '보통',
     sublabel: '여유있게 확인',
-    color: '#3b82f6',
-    bg: '#ebf3fe',
+    color: 'var(--color-normal-500)',
+    bg: 'var(--color-normal-50)',
     border: 'rgba(59,130,246,0.2)',
     iconBg: 'rgba(59,130,246,0.1)',
     Icon: CircleMinus,
@@ -43,8 +43,8 @@ const PRIORITY_CONFIG: Record<
   low: {
     label: '낮음',
     sublabel: '나중에 확인',
-    color: '#12b76a',
-    bg: '#e9f8f1',
+    color: 'var(--color-status-completed-500)',
+    bg: 'var(--color-status-completed-50)',
     border: 'rgba(18,183,106,0.2)',
     iconBg: 'rgba(16,167,96,0.1)',
     Icon: CircleDot,

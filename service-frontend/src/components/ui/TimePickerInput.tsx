@@ -64,11 +64,11 @@ export default function TimePickerInput({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex h-[42px] w-full items-center gap-2 rounded-[10px] border border-[#dfe3e5] bg-white px-4 text-left transition-colors hover:border-[var(--color-brand-500)]"
+        className="flex h-[42px] w-full items-center gap-2 rounded-[10px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] px-4 text-left transition-colors hover:border-[var(--color-brand-500)]"
         style={{ fontSize: 14 }}
       >
-        <Clock size={14} className="shrink-0 text-[#8a939b]" />
-        <span className={value ? 'text-[#212225]' : 'text-[#8a939b]'}>
+        <Clock size={14} className="shrink-0 text-[var(--color-gray-400)]" />
+        <span className={value ? 'text-[var(--color-gray-950)]' : 'text-[var(--color-gray-400)]'}>
           {value ? formatDisplay(value) : placeholder}
         </span>
       </button>
@@ -76,7 +76,7 @@ export default function TimePickerInput({
       {open && (
         <div
           ref={listRef}
-          className="absolute left-0 top-[46px] z-20 max-h-[240px] w-full overflow-y-auto rounded-[12px] border border-[#dfe3e5] bg-white"
+          className="absolute left-0 top-[46px] z-20 max-h-[240px] w-full overflow-y-auto rounded-[12px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)]"
           style={{ boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)' }}
         >
           {TIME_SLOTS.map((slot) => {
@@ -94,7 +94,7 @@ export default function TimePickerInput({
                   height: ITEM_HEIGHT,
                   fontSize: 14,
                   background: isSelected ? 'rgba(99,102,241,0.1)' : undefined,
-                  color: isSelected ? '#6366f1' : '#212225',
+                  color: isSelected ? 'var(--color-brand-500)' : 'var(--color-gray-950)',
                   fontWeight: isSelected ? 600 : undefined,
                 }}
               >

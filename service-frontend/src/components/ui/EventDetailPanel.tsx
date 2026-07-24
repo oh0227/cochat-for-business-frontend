@@ -31,7 +31,7 @@ export default function EventDetailPanel({ event, onClose, onEdit }: EventDetail
       />
 
       {/* 슬라이드 패널 */}
-      <div className="fixed right-0 top-0 z-50 flex h-full w-full max-w-[664px] flex-col border-l border-[var(--color-gray-80)] bg-white shadow-[-4px_0px_24px_0px_rgba(99,102,241,0.12)]">
+      <div className="fixed right-0 top-0 z-50 flex h-full w-full max-w-[664px] flex-col border-l border-[var(--color-gray-80)] bg-[var(--color-gray-default)] shadow-[-4px_0px_24px_0px_rgba(99,102,241,0.12)]">
         {/* 헤더 */}
         <div className="flex flex-col gap-[var(--spacing-xs)] border-b border-[var(--color-gray-80)] px-[var(--spacing-sm)] pb-[24px] pt-[var(--spacing-lg)] sm:px-[var(--spacing-xl)] sm:pb-[33px] sm:pt-[var(--spacing-xl)]">
           {/* X 닫기 */}
@@ -124,7 +124,7 @@ export default function EventDetailPanel({ event, onClose, onEdit }: EventDetail
                 {event.attendees.map((attendee) => (
                   <div
                     key={attendee}
-                    className="flex items-center gap-[var(--spacing-3xs)] rounded-[4px] border border-[#e2e8f0] bg-white px-[var(--spacing-xs)] py-[var(--spacing-4xs)]"
+                    className="flex items-center gap-[var(--spacing-3xs)] rounded-[4px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] px-[var(--spacing-xs)] py-[var(--spacing-4xs)]"
                   >
                     <User size={12} className="text-[var(--color-gray-400)]" />
                     <span
@@ -158,7 +158,7 @@ export default function EventDetailPanel({ event, onClose, onEdit }: EventDetail
               <button
                 type="button"
                 onClick={onEdit}
-                className="flex h-[44px] w-full items-center justify-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] bg-[rgba(46,50,55,0.08)] font-medium text-[var(--color-gray-950)] transition-colors hover:bg-[rgba(46,50,55,0.12)]"
+                className="flex h-[44px] w-full items-center justify-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] bg-[var(--color-gray-50)] font-medium text-[var(--color-gray-950)] transition-colors hover:bg-[var(--color-gray-80)]"
                 style={{ fontSize: 'var(--font-size-xs)' }}
               >
                 <SquarePen size={22} />

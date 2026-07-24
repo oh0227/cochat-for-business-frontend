@@ -47,7 +47,7 @@ export default function NotificationCard({ notification, onClick }: Notification
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-[var(--spacing-sm)] rounded-[var(--radius-sm)] border border-[var(--color-gray-80)] bg-white p-[21px] text-left transition-colors hover:bg-[var(--color-gray-20)]"
+      className="flex w-full items-center gap-[var(--spacing-sm)] rounded-[var(--radius-sm)] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] p-[21px] text-left transition-colors hover:bg-[var(--color-gray-20)]"
     >
       {/* 플랫폼 아이콘 */}
       <span

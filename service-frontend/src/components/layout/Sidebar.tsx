@@ -33,7 +33,7 @@ export default function Sidebar({ unreadCount, isOpen = false, onClose }: Sideba
   return (
     <aside
       className={[
-        'fixed inset-y-0 left-0 z-50 flex h-screen w-[240px] shrink-0 flex-col bg-[#ffffff] border-r border-[var(--color-gray-80)]',
+        'fixed inset-y-0 left-0 z-50 flex h-screen w-[240px] shrink-0 flex-col bg-[var(--color-gray-default)] border-r border-[var(--color-gray-80)]',
         'transition-transform duration-200 ease-out',
         isOpen ? 'translate-x-0' : '-translate-x-full',
         'lg:static lg:z-auto lg:w-[220px] lg:translate-x-0',

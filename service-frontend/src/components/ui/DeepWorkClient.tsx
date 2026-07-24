@@ -185,7 +185,7 @@ export default function DeepWorkClient({
             {/* 타이머 카드 */}
             <div className="flex flex-col items-center gap-[var(--spacing-sm)] rounded-[var(--radius-sm)] border border-[var(--color-brand-80)] bg-[var(--color-brand-20)] px-[var(--spacing-lg)] py-[var(--spacing-xl)]">
               <span
-                className="rounded-[var(--radius-8xl)] border border-[var(--color-brand-100)] bg-white px-[var(--spacing-xs)] py-[var(--spacing-4xs)] text-[var(--color-gray-500)]"
+                className="rounded-[var(--radius-8xl)] border border-[var(--color-brand-100)] bg-[var(--color-gray-default)] px-[var(--spacing-xs)] py-[var(--spacing-4xs)] text-[var(--color-gray-500)]"
                 style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-4xs)' }}
               >
                 집중모드 활성화
@@ -201,7 +201,7 @@ export default function DeepWorkClient({
               <button
                 type="button"
                 onClick={handleEndSession}
-                className="flex items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-xs)] border border-[var(--color-gray-100)] bg-white px-[var(--spacing-md)] py-[var(--spacing-2xs)] font-medium text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)]"
+                className="flex items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-xs)] border border-[var(--color-gray-100)] bg-[var(--color-gray-default)] px-[var(--spacing-md)] py-[var(--spacing-2xs)] font-medium text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)]"
                 style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
               >
                 <X size={14} />
@@ -210,7 +210,7 @@ export default function DeepWorkClient({
             </div>
 
             {/* 긴급 알림 섹션 */}
-            <div className="overflow-hidden rounded-[var(--radius-sm)] border border-[var(--color-gray-80)] bg-white">
+            <div className="overflow-hidden rounded-[var(--radius-sm)] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)]">
               <div className="flex items-center gap-[var(--spacing-2xs)] px-[var(--spacing-md)] py-[var(--spacing-sm)]">
                 <Bell size={18} className="text-[var(--color-urgent-500)]" />
                 <p
@@ -257,7 +257,7 @@ export default function DeepWorkClient({
           onClick={() => setShowModal(false)}
         >
           <div
-            className="rounded-[var(--radius-md)] bg-white p-[var(--spacing-lg)] shadow-lg"
+            className="rounded-[var(--radius-md)] bg-[var(--color-gray-default)] p-[var(--spacing-lg)] shadow-lg"
             style={{ width: '480px', maxWidth: 'calc(100vw - 32px)' }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -286,7 +286,7 @@ export default function DeepWorkClient({
                       'rounded-[var(--radius-xs)] py-[var(--spacing-xs)] font-medium transition-colors',
                       selectedModalDuration === d
                         ? 'bg-[var(--color-gray-950)] text-white'
-                        : 'border border-[var(--color-gray-100)] bg-white text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]',
+                        : 'border border-[var(--color-gray-100)] bg-[var(--color-gray-default)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]',
                     ].join(' ')}
                     style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
                   >
@@ -363,7 +363,7 @@ function PendingBanner({ count, loading, noNewAlerts, onRequestBriefing }: Pendi
   const isDisabled = !hasPending || noNewAlerts || loading
 
   return (
-    <div className="flex items-center gap-[var(--spacing-xs)] rounded-[var(--radius-sm)] border border-[var(--color-gray-80)] bg-white px-[var(--spacing-md)] py-[var(--spacing-sm)]">
+    <div className="flex items-center gap-[var(--spacing-xs)] rounded-[var(--radius-sm)] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] px-[var(--spacing-md)] py-[var(--spacing-sm)]">
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-gray-50)]">
         <Shield size={18} className="text-[var(--color-gray-400)]" />
       </span>

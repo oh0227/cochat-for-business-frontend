@@ -26,7 +26,7 @@ export default function BriefingCard({ briefing, providerCounts }: BriefingCardP
   const providerEntries = (Object.entries(providerCounts) as [NotificationProvider, number][]).filter(([, c]) => c > 0)
 
   return (
-    <div className="flex flex-col gap-[var(--spacing-xs)] rounded-[var(--radius-sm)] border border-[var(--color-gray-80)] bg-white p-[var(--spacing-sm)]">
+    <div className="flex flex-col gap-[var(--spacing-xs)] rounded-[var(--radius-sm)] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] p-[var(--spacing-sm)]">
       {/* 헤더 */}
       <div className="flex items-start justify-between gap-[var(--spacing-xs)]">
         <p className="font-medium text-[var(--color-gray-950)]" style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}>

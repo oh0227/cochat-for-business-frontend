@@ -28,7 +28,7 @@ export default function FocusCard({ session }: FocusCardProps) {
 
   return (
     <div
-      className="flex flex-col justify-between rounded-[14px] border border-[var(--color-gray-80)] bg-white p-[var(--spacing-md)]"
+      className="flex flex-col justify-between rounded-[14px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] p-[var(--spacing-md)]"
       style={{ height: '170px' }}
     >
       {/* 상단: 제목 + 설명 + 아이콘 */}

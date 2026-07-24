@@ -86,7 +86,7 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
   }, [onClose])
 
   const inputClass =
-    'h-[42px] w-full rounded-[10px] border border-[#dfe3e5] bg-white px-4 text-[#212225] placeholder:text-[#8a939b] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-500)]'
+    'h-[42px] w-full rounded-[10px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] px-4 text-[var(--color-gray-950)] placeholder:text-[var(--color-gray-400)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-500)]'
 
   return (
     <>
@@ -96,18 +96,18 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
       {/* 모달 */}
       <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         <div
-          className="flex max-h-[90vh] w-full max-w-[672px] flex-col overflow-y-auto rounded-[14px] border border-[#e2e8f0] bg-white"
+          className="flex max-h-[90vh] w-full max-w-[672px] flex-col overflow-y-auto rounded-[14px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)]"
           style={{ boxShadow: '0px 25px 50px 0px rgba(0,0,0,0.25)' }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* 헤더 */}
-          <div className="flex items-center justify-between border-b border-[#e2e8f0] px-6 py-6">
+          <div className="flex items-center justify-between border-b border-[var(--color-gray-80)] px-6 py-6">
             <div className="flex items-center gap-3">
               <span
                 className="flex items-center justify-center rounded-[4px]"
                 style={{ width: 32, height: 32, background: 'rgba(59,130,246,0.1)' }}
               >
-                <CalendarPlus size={16} className="text-[#3b82f6]" />
+                <CalendarPlus size={16} className="text-[var(--color-normal-500)]" />
               </span>
               <span
                 className="font-medium text-[var(--color-gray-950)]"
@@ -130,8 +130,8 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
             {/* 일정 제목 */}
             <div className="flex flex-col gap-[6px]">
               <label className="flex items-center gap-[6px]">
-                <CalendarDays size={14} className="text-[#4d555c]" />
-                <span className="font-semibold text-[#4d555c]" style={{ fontSize: 14, lineHeight: '20px' }}>
+                <CalendarDays size={14} className="text-[var(--color-gray-700)]" />
+                <span className="font-semibold text-[var(--color-gray-700)]" style={{ fontSize: 14, lineHeight: '20px' }}>
                   일정 제목
                 </span>
               </label>
@@ -149,8 +149,8 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="flex flex-1 flex-col gap-[6px]">
                 <label className="flex items-center gap-[6px]">
-                  <CalendarDays size={14} className="text-[#4d555c]" />
-                  <span className="font-semibold text-[#4d555c]" style={{ fontSize: 14, lineHeight: '20px' }}>
+                  <CalendarDays size={14} className="text-[var(--color-gray-700)]" />
+                  <span className="font-semibold text-[var(--color-gray-700)]" style={{ fontSize: 14, lineHeight: '20px' }}>
                     날짜
                   </span>
                 </label>
@@ -158,8 +158,8 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
               </div>
               <div className="flex flex-1 flex-col gap-[6px]">
                 <label className="flex items-center gap-[6px]">
-                  <CalendarDays size={14} className="text-[#4d555c]" />
-                  <span className="font-semibold text-[#4d555c]" style={{ fontSize: 14, lineHeight: '20px' }}>
+                  <CalendarDays size={14} className="text-[var(--color-gray-700)]" />
+                  <span className="font-semibold text-[var(--color-gray-700)]" style={{ fontSize: 14, lineHeight: '20px' }}>
                     시간
                   </span>
                 </label>
@@ -170,8 +170,8 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
             {/* 공유 */}
             <div className="flex flex-col gap-[6px]">
               <label className="flex items-center gap-[6px]">
-                <Users size={14} className="text-[#4d555c]" />
-                <span className="font-semibold text-[#4d555c]" style={{ fontSize: 14, lineHeight: '20px' }}>
+                <Users size={14} className="text-[var(--color-gray-700)]" />
+                <span className="font-semibold text-[var(--color-gray-700)]" style={{ fontSize: 14, lineHeight: '20px' }}>
                   공유
                 </span>
               </label>
@@ -179,19 +179,19 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
                 {attendees.length > 0 && (
                   <div
                     className="mb-2 flex flex-wrap gap-2 rounded-[10px] p-2"
-                    style={{ background: '#f8f9ff', border: '1px solid #e1e3ff' }}
+                    style={{ background: 'var(--color-brand-20)', border: '1px solid var(--color-brand-80)' }}
                   >
                     {attendees.map((name) => (
                       <div
                         key={name}
                         className="flex h-[34px] items-center gap-1 rounded-[10px] px-3"
-                        style={{ background: '#eff0fe', border: '1px solid #8285f4' }}
+                        style={{ background: 'var(--color-brand-50)', border: '1px solid var(--color-brand-400)' }}
                       >
-                        <span style={{ fontSize: 14, color: '#212225' }}>{name}</span>
+                        <span style={{ fontSize: 14, color: 'var(--color-gray-950)' }}>{name}</span>
                         <button
                           type="button"
                           onClick={() => removeAttendee(name)}
-                          className="ml-1 text-[#8285f4] transition-opacity hover:opacity-70"
+                          className="ml-1 text-[var(--color-brand-400)] transition-opacity hover:opacity-70"
                         >
                           <X size={12} />
                         </button>
@@ -215,7 +215,7 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
                 />
                 {dropdownVisible && filteredContacts.length > 0 && (
                   <div
-                    className="absolute left-0 right-0 top-[46px] z-10 overflow-hidden rounded-[10px] border border-[#dfe3e5] bg-white"
+                    className="absolute left-0 right-0 top-[46px] z-10 overflow-hidden rounded-[10px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)]"
                     style={{
                       boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.1)',
                     }}
@@ -228,16 +228,16 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
                         className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--color-gray-20)]"
                       >
                         <span
-                          className="flex size-8 shrink-0 items-center justify-center rounded-full text-[#3b82f6]"
+                          className="flex size-8 shrink-0 items-center justify-center rounded-full text-[var(--color-normal-500)]"
                           style={{ background: 'rgba(59,130,246,0.1)', fontSize: 14, fontWeight: 500 }}
                         >
                           {contact.name[0]}
                         </span>
                         <div className="flex flex-col">
-                          <span className="font-semibold text-[#212225]" style={{ fontSize: 14 }}>
+                          <span className="font-semibold text-[var(--color-gray-950)]" style={{ fontSize: 14 }}>
                             {contact.name}
                           </span>
-                          <span className="text-[#64748b]" style={{ fontSize: 12 }}>
+                          <span className="text-[var(--color-gray-500)]" style={{ fontSize: 12 }}>
                             {contact.email} · {contact.team}
                           </span>
                         </div>
@@ -251,8 +251,8 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
             {/* 메모 */}
             <div className="flex flex-col gap-[6px]">
               <label className="flex items-center gap-[6px]">
-                <FileText size={14} className="text-[#4d555c]" />
-                <span className="font-semibold text-[#4d555c]" style={{ fontSize: 14, lineHeight: '20px' }}>
+                <FileText size={14} className="text-[var(--color-gray-700)]" />
+                <span className="font-semibold text-[var(--color-gray-700)]" style={{ fontSize: 14, lineHeight: '20px' }}>
                   메모
                 </span>
               </label>
@@ -261,7 +261,7 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
                 onChange={(e) => setMemo(e.target.value)}
                 placeholder="추가 메모나 안건을 입력하세요"
                 rows={4}
-                className="resize-none rounded-[10px] border border-[#dfe3e5] bg-white px-4 py-[10px] text-[#212225] placeholder:text-[#8a939b] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-500)]"
+                className="resize-none rounded-[10px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] px-4 py-[10px] text-[var(--color-gray-950)] placeholder:text-[var(--color-gray-400)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-500)]"
                 style={{ fontSize: 14, lineHeight: '20px' }}
               />
             </div>
@@ -269,17 +269,17 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
             {/* 안내 바 */}
             <div
               className="flex items-center gap-2 rounded-[10px] px-[13px] py-[13px]"
-              style={{ background: '#f8f9ff', border: '1px solid #e1e3ff' }}
+              style={{ background: 'var(--color-brand-20)', border: '1px solid var(--color-brand-80)' }}
             >
-              <Info size={16} className="shrink-0 text-[#5a5ddb]" />
-              <span style={{ fontSize: 12, color: '#64748b', lineHeight: '16px' }}>
+              <Info size={16} className="shrink-0 text-[var(--color-brand-600)]" />
+              <span style={{ fontSize: 12, color: 'var(--color-gray-500)', lineHeight: '16px' }}>
                 공유된 사람에게 초대 알림이 발송됩니다.
               </span>
             </div>
           </div>
 
           {/* 푸터 */}
-          <div className="flex justify-end border-t border-[#e2e8f0] px-6 py-6">
+          <div className="flex justify-end border-t border-[var(--color-gray-80)] px-6 py-6">
             <button
               type="button"
               onClick={() => {
@@ -289,8 +289,8 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
               className="flex h-[44px] items-center gap-2 rounded-[12px] px-5 font-medium transition-colors"
               style={{
                 fontSize: 14,
-                background: isValid ? '#6366f1' : '#f0f2f3',
-                color: isValid ? 'white' : '#8a939b',
+                background: isValid ? 'var(--color-brand-500)' : 'var(--color-gray-50)',
+                color: isValid ? 'white' : 'var(--color-gray-400)',
                 cursor: isValid ? 'pointer' : 'not-allowed',
               }}
             >

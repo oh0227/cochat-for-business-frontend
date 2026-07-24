@@ -33,7 +33,7 @@ export default function FocusTimerWidget({ session }: FocusTimerWidgetProps) {
   if (!visible) return null
 
   return (
-    <div className="fixed right-[var(--spacing-lg)] top-[var(--spacing-lg)] z-50 w-[200px] overflow-hidden rounded-[var(--radius-md)] border-2 border-[var(--color-brand-400)] bg-white shadow-lg">
+    <div className="fixed right-[var(--spacing-lg)] top-[var(--spacing-lg)] z-50 w-[200px] overflow-hidden rounded-[var(--radius-md)] border-2 border-[var(--color-brand-400)] bg-[var(--color-gray-default)] shadow-lg">
       {/* 헤더 */}
       <div className="flex items-center justify-between bg-[var(--color-brand-50)] px-[var(--spacing-xs)] py-[var(--spacing-3xs)]">
         <span
@@ -64,7 +64,7 @@ export default function FocusTimerWidget({ session }: FocusTimerWidgetProps) {
         <button
           type="button"
           onClick={() => setVisible(false)}
-          className="w-full rounded-[var(--radius-xs)] border border-[var(--color-gray-80)] bg-white py-[var(--spacing-3xs)] font-semibold text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)]"
+          className="w-full rounded-[var(--radius-xs)] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] py-[var(--spacing-3xs)] font-semibold text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)]"
           style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-4xs)' }}
         >
           종료

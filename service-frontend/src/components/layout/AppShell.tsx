@@ -17,7 +17,7 @@ export default function AppShell({ unreadCount, children }: AppShellProps) {
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-[var(--color-gray-50)] lg:flex-row">
       {/* 모바일/태블릿 상단 바 */}
-      <header className="flex h-14 shrink-0 items-center gap-[var(--spacing-2xs)] border-b border-[var(--color-gray-80)] bg-white px-[var(--spacing-sm)] lg:hidden">
+      <header className="flex h-14 shrink-0 items-center gap-[var(--spacing-2xs)] border-b border-[var(--color-gray-80)] bg-[var(--color-gray-default)] px-[var(--spacing-sm)] lg:hidden">
         <button
           type="button"
           onClick={() => setSidebarOpen(true)}

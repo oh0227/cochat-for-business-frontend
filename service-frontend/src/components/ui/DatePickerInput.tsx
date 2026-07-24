@@ -66,18 +66,18 @@ export default function DatePickerInput({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex h-[42px] w-full items-center gap-2 rounded-[10px] border border-[#dfe3e5] bg-white px-4 text-left transition-colors hover:border-[var(--color-brand-500)]"
+        className="flex h-[42px] w-full items-center gap-2 rounded-[10px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] px-4 text-left transition-colors hover:border-[var(--color-brand-500)]"
         style={{ fontSize: 14 }}
       >
-        <Calendar size={14} className="shrink-0 text-[#8a939b]" />
-        <span className={displayValue ? 'text-[#212225]' : 'text-[#8a939b]'}>
+        <Calendar size={14} className="shrink-0 text-[var(--color-gray-400)]" />
+        <span className={displayValue ? 'text-[var(--color-gray-950)]' : 'text-[var(--color-gray-400)]'}>
           {displayValue || placeholder}
         </span>
       </button>
 
       {open && (
         <div
-          className="absolute left-0 top-[46px] z-20 w-[min(272px,100%)] overflow-hidden rounded-[12px] border border-[#dfe3e5] bg-white"
+          className="absolute left-0 top-[46px] z-20 w-[min(272px,100%)] overflow-hidden rounded-[12px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)]"
           style={{ boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)' }}
         >
           {/* 월 네비게이션 */}
@@ -85,27 +85,27 @@ export default function DatePickerInput({
             <button
               type="button"
               onClick={prevMonth}
-              className="flex size-7 items-center justify-center rounded-md text-[#8a939b] transition-colors hover:bg-[#f0f2f3]"
+              className="flex size-7 items-center justify-center rounded-md text-[var(--color-gray-400)] transition-colors hover:bg-[var(--color-gray-50)]"
             >
               <ChevronLeft size={16} />
             </button>
-            <span className="font-medium text-[#212225]" style={{ fontSize: 14 }}>
+            <span className="font-medium text-[var(--color-gray-950)]" style={{ fontSize: 14 }}>
               {year}년 {month + 1}월
             </span>
             <button
               type="button"
               onClick={nextMonth}
-              className="flex size-7 items-center justify-center rounded-md text-[#8a939b] transition-colors hover:bg-[#f0f2f3]"
+              className="flex size-7 items-center justify-center rounded-md text-[var(--color-gray-400)] transition-colors hover:bg-[var(--color-gray-50)]"
             >
               <ChevronRight size={16} />
             </button>
           </div>
 
           {/* 요일 헤더 */}
-          <div className="grid grid-cols-7 border-t border-[#f0f2f3] px-3 pb-1 pt-2">
+          <div className="grid grid-cols-7 border-t border-[var(--color-gray-50)] px-3 pb-1 pt-2">
             {DAYS.map((d) => (
               <div key={d} className="flex h-7 items-center justify-center">
-                <span className="text-[#8a939b]" style={{ fontSize: 12 }}>{d}</span>
+                <span className="text-[var(--color-gray-400)]" style={{ fontSize: 12 }}>{d}</span>
               </div>
             ))}
           </div>
@@ -128,7 +128,7 @@ export default function DatePickerInput({
                   }}
                   className="flex h-8 w-full items-center justify-center rounded-full transition-colors hover:bg-[rgba(99,102,241,0.08)]"
                   style={{
-                    background: isSelected ? '#6366f1' : undefined,
+                    background: isSelected ? 'var(--color-brand-500)' : undefined,
                   }}
                 >
                   <span
@@ -137,10 +137,10 @@ export default function DatePickerInput({
                       color: isSelected
                         ? 'white'
                         : isToday
-                          ? '#6366f1'
+                          ? 'var(--color-brand-500)'
                           : isCurrentMonth
-                            ? '#212225'
-                            : '#c0c8d0',
+                            ? 'var(--color-gray-950)'
+                            : 'var(--color-gray-100)',
                       fontWeight: isToday && !isSelected ? 600 : undefined,
                     }}
                   >

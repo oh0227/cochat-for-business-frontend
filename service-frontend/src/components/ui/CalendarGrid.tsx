@@ -139,7 +139,7 @@ export default function CalendarGrid({ events, initialYear, initialMonth, onEdit
                     key={di}
                     className={[
                       'flex flex-1 flex-col border-r border-[var(--color-gray-80)] last:border-r-0',
-                      !isCurrentMonth ? 'bg-[rgba(46,50,55,0.08)]' : '',
+                      !isCurrentMonth ? 'bg-[var(--color-gray-50)]' : '',
                     ].join(' ')}
                   >
                     {/* 날짜 숫자 */}

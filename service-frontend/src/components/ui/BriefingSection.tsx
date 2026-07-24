@@ -8,7 +8,7 @@ interface BriefingSectionProps {
 
 export default function BriefingSection({ briefings }: BriefingSectionProps) {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-md)] rounded-[14px] border border-[var(--color-gray-80)] bg-white p-[21px]">
+    <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-md)] rounded-[14px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] p-[21px]">
       {/* 헤더 */}
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-[var(--spacing-3xs)]">
@@ -56,7 +56,7 @@ function BriefingCard({ briefing }: { briefing: Briefing }) {
   const { title, content, criticalCount, highCount, mediumCount } = briefing
 
   return (
-    <div className="flex flex-col gap-[var(--spacing-sm)] rounded-[10px] border border-[var(--color-gray-80)] bg-white p-[17px]">
+    <div className="flex flex-col gap-[var(--spacing-sm)] rounded-[10px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] p-[17px]">
       {/* 제목 + 본문 */}
       <div className="flex flex-col gap-[var(--spacing-3xs)]">
         <p
