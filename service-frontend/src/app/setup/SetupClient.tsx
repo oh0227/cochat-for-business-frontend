@@ -1,11 +1,43 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Hash, MessageSquare, Check, Loader2 } from 'lucide-react'
+import { TEMP_USER_ID } from '@/lib/api'
 
 type Provider = 'slack' | 'discord' | 'jira'
+const VALID_PROVIDERS: Provider[] = ['slack', 'discord', 'jira']
+
+interface BackendIntegration {
+  provider: string
+}
+
+/** provider별 연동 계정 개수. 백엔드가 연동 계정마다 별도 레코드를 내려주므로 개수를 센다. */
+type ConnectionCounts = Partial<Record<Provider, number>>
+
+async function fetchConnectionCountsFromBackend(): Promise<ConnectionCounts> {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+  if (!backendUrl) return {}
+
+  try {
+    const res = await fetch(`${backendUrl}/api/v1/integrations`, {
+      headers: { 'X-Cochat-User-Id': String(TEMP_USER_ID) },
+      cache: 'no-store',
+    })
+    if (!res.ok) return {}
+    const data = await res.json() as { integrations?: BackendIntegration[] }
+    const counts: ConnectionCounts = {}
+    for (const integration of data.integrations ?? []) {
+      if (!(VALID_PROVIDERS as string[]).includes(integration.provider)) continue
+      const provider = integration.provider as Provider
+      counts[provider] = (counts[provider] ?? 0) + 1
+    }
+    return counts
+  } catch {
+    return {}
+  }
+}
 
 const PROVIDERS: {
   id: Provider
@@ -58,11 +90,27 @@ interface SetupClientProps {
 export default function SetupClient({ initialConnected, initialError = null }: SetupClientProps) {
   const router = useRouter()
 
-  const [connected, setConnected] = useState<Set<Provider>>(() => new Set(initialConnected))
+  // 방금 돌아온 라운드트립의 provider는 우선 1개로 낙관적 표시하고,
+  // 마운트 직후 백엔드 실제 개수로 덮어쓴다.
+  const [connectionCounts, setConnectionCounts] = useState<ConnectionCounts>(() =>
+    Object.fromEntries(initialConnected.map((provider) => [provider, 1]))
+  )
   const [loading, setLoading] = useState<Provider | null>(null)
   const [error, setError] = useState<string | null>(initialError)
 
-  const isAnyConnected = connected.size > 0
+  useEffect(() => {
+    let cancelled = false
+
+    fetchConnectionCountsFromBackend().then((counts) => {
+      if (!cancelled) setConnectionCounts(counts)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const isAnyConnected = Object.values(connectionCounts).some((count) => (count ?? 0) > 0)
 
   async function handleConnect(provider: Provider) {
     setError(null)
@@ -118,7 +166,8 @@ export default function SetupClient({ initialConnected, initialError = null }: S
             {/* 연결 카드 3개 */}
             <div className="flex w-full flex-col gap-4 md:flex-row">
               {PROVIDERS.map(({ id, name, description, iconBg, Icon, iconColor }) => {
-                const isConnected = connected.has(id)
+                const connectionCount = connectionCounts[id] ?? 0
+                const isConnected = connectionCount > 0
                 const isLoading = loading === id
 
                 return (
@@ -178,7 +227,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
                               className="font-medium"
                               style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)', color: 'var(--color-brand-600)' }}
                             >
-                              연동 1개
+                              연동 {connectionCount}개
                             </p>
                           )}
                         </div>
