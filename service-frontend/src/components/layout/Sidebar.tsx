@@ -114,7 +114,7 @@ function NavLinks({
 export default function Sidebar({ unreadCount, isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname()
   const [pinned, setPinned] = useState(true)
-  const [hovering, setHovering] = useState(false)
+  const [hoveringToggle, setHoveringToggle] = useState(false)
 
   useEffect(() => {
     const stored = localStorage.getItem(PINNED_STORAGE_KEY)
@@ -128,7 +128,7 @@ export default function Sidebar({ unreadCount, isOpen = false, onClose }: Sideba
     const next = !pinned
     setPinned(next)
     localStorage.setItem(PINNED_STORAGE_KEY, String(next))
-    if (next) setHovering(false)
+    setHoveringToggle(false)
   }
 
   return (
@@ -164,76 +164,69 @@ export default function Sidebar({ unreadCount, isOpen = false, onClose }: Sideba
         <NavLinks pathname={pathname} unreadCount={unreadCount} showLabel onNavigate={onClose} />
       </aside>
 
-      {/* 데스크톱: 고정된 사이드바 (핀 고정 상태일 때만 레이아웃에 존재) */}
-      {pinned && (
-        <aside className="hidden shrink-0 flex-col bg-[var(--color-gray-default)] border-r border-[var(--color-gray-80)] lg:flex lg:w-[220px]">
-          <div className="flex items-center justify-between gap-[var(--spacing-2xs)] px-[var(--spacing-sm)] py-[var(--spacing-lg)]">
-            <div className="flex min-w-0 items-center gap-[var(--spacing-2xs)]">
-              <Image src="/logo.png" alt="CoChat 로고" width={28} height={28} />
-              <span
-                className="truncate font-semibold text-[var(--color-gray-950)]"
-                style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+      {/*
+        데스크톱 사이드바: 항상 레이아웃에 존재한다 (Gemini 패턴).
+        고정 시 220px 전체 사이드바, 접으면 64px 아이콘 레일로 줄어들 뿐
+        완전히 사라지지 않아서 <main>이 자리를 침범하지 않는다.
+      */}
+      <aside
+        className={[
+          'hidden shrink-0 flex-col bg-[var(--color-gray-default)] border-r border-[var(--color-gray-80)]',
+          'transition-[width] duration-200 ease-out lg:flex',
+          pinned ? 'lg:w-[220px]' : 'lg:w-16',
+        ].join(' ')}
+      >
+        <div className="flex items-center px-[var(--spacing-2xs)] py-[var(--spacing-lg)]">
+          {pinned ? (
+            <>
+              <div className="flex min-w-0 flex-1 items-center gap-[var(--spacing-2xs)] px-[var(--spacing-3xs)]">
+                <Image src="/logo.png" alt="CoChat 로고" width={28} height={28} />
+                <span
+                  className="truncate font-semibold text-[var(--color-gray-950)]"
+                  style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+                >
+                  CoChat
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={togglePinned}
+                aria-label="사이드바 접기"
+                title="사이드바 접기"
+                className="flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]"
               >
-                CoChat
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={togglePinned}
-              aria-label="사이드바 접기"
-              title="사이드바 접기"
-              className="flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]"
-            >
-              <PanelLeftClose size={18} />
-            </button>
-          </div>
-          <NavLinks pathname={pathname} unreadCount={unreadCount} showLabel />
-        </aside>
-      )}
-
-      {/* 접힌 상태: 사이드바는 완전히 사라지고 작은 토글 버튼만 남음 */}
-      {!pinned && (
-        <button
-          type="button"
-          onClick={togglePinned}
-          onMouseEnter={() => setHovering(true)}
-          aria-label="사이드바 열기"
-          title="사이드바 열기"
-          className="fixed left-3 top-3 z-40 hidden size-9 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)] lg:flex"
-        >
-          <PanelLeftOpen size={20} />
-        </button>
-      )}
-
-      {/* 접힌 상태에서 토글 버튼에 마우스를 올리면 나타나는 호버 플라이아웃 */}
-      {!pinned && hovering && (
-        <div
-          onMouseLeave={() => setHovering(false)}
-          className="fixed inset-y-0 left-0 z-40 hidden w-[220px] flex-col bg-[var(--color-gray-default)] border-r border-[var(--color-gray-80)] shadow-xl lg:flex"
-        >
-          <div className="flex items-center justify-between gap-[var(--spacing-2xs)] px-[var(--spacing-sm)] py-[var(--spacing-lg)]">
-            <div className="flex min-w-0 items-center gap-[var(--spacing-2xs)]">
-              <Image src="/logo.png" alt="CoChat 로고" width={28} height={28} />
-              <span
-                className="truncate font-semibold text-[var(--color-gray-950)]"
-                style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+                <PanelLeftClose size={18} />
+              </button>
+            </>
+          ) : (
+            <div className="relative flex w-full justify-center">
+              <button
+                type="button"
+                onClick={togglePinned}
+                onMouseEnter={() => setHoveringToggle(true)}
+                onMouseLeave={() => setHoveringToggle(false)}
+                aria-label="사이드바 열기"
+                className="flex size-9 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]"
               >
-                CoChat
-              </span>
+                {hoveringToggle ? (
+                  <PanelLeftOpen size={20} />
+                ) : (
+                  <Image src="/logo.png" alt="CoChat 로고" width={26} height={26} className="rounded-[6px]" />
+                )}
+              </button>
+              {hoveringToggle && (
+                <span
+                  className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-full px-3 py-1.5 text-white shadow-lg"
+                  style={{ background: 'var(--color-gray-900)', fontSize: 'var(--font-size-3xs)' }}
+                >
+                  사이드바 열기
+                </span>
+              )}
             </div>
-            <button
-              type="button"
-              onClick={togglePinned}
-              aria-label="사이드바 고정"
-              title="사이드바 고정"
-              className="flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]"
-            >
-              <PanelLeftOpen size={18} />
-            </button>
-          </div>
-          <NavLinks pathname={pathname} unreadCount={unreadCount} showLabel />
+          )}
         </div>
-      )}
+        <NavLinks pathname={pathname} unreadCount={unreadCount} showLabel={pinned} />
+      </aside>
     </>
   )
 }
