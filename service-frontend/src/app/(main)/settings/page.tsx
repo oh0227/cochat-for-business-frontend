@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Hash, MessageSquare, Plus, Trash2 } from 'lucide-react'
+import { Hash, MessageSquare, Plus, Trash2, TriangleAlert } from 'lucide-react'
 import ThemeToggle from '@/components/ui/ThemeToggle'
+import { TEMP_USER_ID } from '@/lib/api'
 
 type Provider = 'slack' | 'discord' | 'jira'
 
@@ -10,6 +11,23 @@ interface Integration {
   id: string
   provider: Provider
   identifier: string // email or workspace name
+}
+
+// 백엔드 GET /api/v1/integrations 원본 응답 (스네이크 케이스)
+interface BackendIntegration {
+  provider: string
+  integration_id: number
+  account_identifier: string
+  account_name: string | null
+  status: string
+}
+
+function toIntegration(raw: BackendIntegration): Integration {
+  return {
+    id: String(raw.integration_id),
+    provider: raw.provider as Provider,
+    identifier: raw.account_name || raw.account_identifier,
+  }
 }
 
 const PROVIDER_CONFIG: Record<
@@ -38,28 +56,25 @@ const PROVIDER_CONFIG: Record<
 
 const PROVIDERS: Provider[] = ['slack', 'discord', 'jira']
 
-// [백엔드 연결] GET /api/v1/integrations 호출로 교체
-// 현재는 빈 배열 반환 (백엔드 응답: { integrations: [] })
 async function fetchIntegrations(): Promise<Integration[]> {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/integrations`,
-      { cache: 'no-store' }
+      { headers: { 'X-Cochat-User-Id': String(TEMP_USER_ID) }, cache: 'no-store' }
     )
     if (!res.ok) return []
-    const data = await res.json() as { integrations: Integration[] }
-    return data.integrations ?? []
+    const data = await res.json() as { integrations?: BackendIntegration[] }
+    return (data.integrations ?? []).map(toIntegration)
   } catch {
     return []
   }
 }
 
-// [백엔드 연결] DELETE /api/v1/integrations/{id} 로 교체
 async function deleteIntegration(id: string): Promise<boolean> {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/integrations/${id}`,
-      { method: 'DELETE' }
+      { method: 'DELETE', headers: { 'X-Cochat-User-Id': String(TEMP_USER_ID) } }
     )
     return res.ok
   } catch {
@@ -82,6 +97,8 @@ export default function SettingsPage() {
   const [integrations, setIntegrations] = useState<Integration[]>([])
   const [loading, setLoading] = useState(true)
   const [addingProvider, setAddingProvider] = useState<Provider | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<Integration | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     fetchIntegrations().then((data) => {
@@ -104,11 +121,15 @@ export default function SettingsPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    const ok = await deleteIntegration(id)
+  async function handleConfirmDelete() {
+    if (!deleteTarget) return
+    setDeleting(true)
+    const ok = await deleteIntegration(deleteTarget.id)
     if (ok) {
-      setIntegrations((prev) => prev.filter((i) => i.id !== id))
+      setIntegrations((prev) => prev.filter((i) => i.id !== deleteTarget.id))
     }
+    setDeleting(false)
+    setDeleteTarget(null)
   }
 
   return (
@@ -197,7 +218,7 @@ export default function SettingsPage() {
                       </span>
                       <button
                         type="button"
-                        onClick={() => handleDelete(account.id)}
+                        onClick={() => setDeleteTarget(account)}
                         className="flex size-8 items-center justify-center rounded-[10px] transition-colors hover:bg-[rgba(239,68,68,0.08)]"
                       >
                         <Trash2 size={18} className="text-[var(--color-urgent-500)]" />
@@ -210,6 +231,63 @@ export default function SettingsPage() {
           )
         })}
       </div>
+
+      {/* 삭제 확인 다이얼로그 */}
+      {deleteTarget && (
+        <>
+          <div
+            className="fixed inset-0 z-[60] bg-black/50"
+            onClick={() => !deleting && setDeleteTarget(null)}
+          />
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <div className="flex w-full max-w-[380px] flex-col gap-5 rounded-[16px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] p-6">
+              <div className="flex items-start gap-3">
+                <span
+                  className="flex shrink-0 items-center justify-center rounded-full"
+                  style={{ width: 36, height: 36, background: 'rgba(239,68,68,0.1)' }}
+                >
+                  <TriangleAlert size={18} className="text-[var(--color-urgent-500)]" />
+                </span>
+                <div className="flex flex-col gap-1">
+                  <span
+                    className="font-semibold text-[var(--color-gray-950)]"
+                    style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+                  >
+                    연동을 삭제할까요?
+                  </span>
+                  <p
+                    className="text-[var(--color-gray-700)]"
+                    style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+                  >
+                    {PROVIDER_CONFIG[deleteTarget.provider].name}의 &quot;{deleteTarget.identifier}&quot; 연동이 삭제되고, 되돌릴 수 없습니다.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(null)}
+                  disabled={deleting}
+                  className="flex h-10 items-center justify-center rounded-[10px] border border-[var(--color-gray-80)] px-4 font-medium text-[var(--color-gray-950)] transition-opacity hover:opacity-80 disabled:opacity-60"
+                  style={{ fontSize: 'var(--font-size-xs)' }}
+                >
+                  취소
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmDelete}
+                  disabled={deleting}
+                  className="flex h-10 items-center justify-center rounded-[10px] px-4 font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-60"
+                  style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-urgent-500)' }}
+                >
+                  삭제
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
