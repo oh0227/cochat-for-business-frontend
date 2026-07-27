@@ -217,7 +217,7 @@ export default function Sidebar({ unreadCount, isOpen = false, onClose }: Sideba
               {hoveringToggle && (
                 <span
                   className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-full px-3 py-1.5 text-white shadow-lg"
-                  style={{ background: 'var(--color-gray-900)', fontSize: 'var(--font-size-3xs)' }}
+                  style={{ background: 'var(--color-gray-inverse)', fontSize: 'var(--font-size-3xs)' }}
                 >
                   사이드바 열기
                 </span>
