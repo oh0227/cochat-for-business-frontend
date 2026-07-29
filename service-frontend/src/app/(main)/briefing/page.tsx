@@ -1,20 +1,16 @@
-import { getLatestBriefing, getNotifications } from '@/lib/api'
+import { getBriefings, getNotifications } from '@/lib/api'
 import { buildProviderCounts, getNotificationIds, toBriefing } from '@/lib/briefing'
 import BriefingListClient, { type BriefingItem } from '@/components/ui/BriefingListClient'
 
 export default async function BriefingPage() {
-  const [latest, notifications] = await Promise.all([getLatestBriefing(), getNotifications()])
+  const [briefings, notifications] = await Promise.all([getBriefings(), getNotifications()])
 
-  const initialItems: BriefingItem[] = latest
-    ? [
-        {
-          briefing: toBriefing(latest),
-          providerCounts: buildProviderCounts(
-            notifications.filter((n) => getNotificationIds(latest).includes(Number(n.id)))
-          ),
-        },
-      ]
-    : []
+  const initialItems: BriefingItem[] = briefings.map((raw) => ({
+    briefing: toBriefing(raw),
+    providerCounts: buildProviderCounts(
+      notifications.filter((n) => getNotificationIds(raw).includes(Number(n.id)))
+    ),
+  }))
 
   return (
     <div className="flex flex-col gap-[var(--spacing-lg)]">

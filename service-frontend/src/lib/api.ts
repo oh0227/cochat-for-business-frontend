@@ -137,17 +137,18 @@ export async function getNotifications(): Promise<Notification[]> {
   }
 }
 
-/** 최신 브리핑 조회 */
-export async function getLatestBriefing(): Promise<BackendBriefing | null> {
+/** 브리핑 전체 목록 조회 (최신순) */
+export async function getBriefings(): Promise<BackendBriefing[]> {
   try {
     const res = await fetch(
-      `${BASE_URL}/api/v1/briefings/latest?user_id=${TEMP_USER_ID}`,
+      `${BASE_URL}/api/v1/briefings?user_id=${TEMP_USER_ID}`,
       { cache: 'no-store' }
     )
-    if (!res.ok) return null
-    return res.json() as Promise<BackendBriefing>
+    if (!res.ok) return []
+    const data = await res.json() as { items: BackendBriefing[] }
+    return data.items ?? []
   } catch {
-    return null
+    return []
   }
 }
 
