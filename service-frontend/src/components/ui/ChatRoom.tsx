@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ArrowLeft, Bell, Hash, MessageSquare, CalendarPlus, Sparkles, ExternalLink, X } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { ChannelSummary, ChatMessage, Notification } from '@/types'
 import ChatMessageRow from './ChatMessageRow'
 import AlertCard from './AlertCard'
@@ -28,6 +28,7 @@ interface ChatRoomProps {
 
 export default function ChatRoom({ channel, messages, notifications }: ChatRoomProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [selectedNotifId, setSelectedNotifId] = useState<string | null>(null)
   const [showAiDraft, setShowAiDraft] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -60,6 +61,13 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
       }, 50)
     }
   }
+
+  // 브리핑 등 다른 화면에서 ?notif= 로 특정 메시지를 지정해 들어온 경우 자동으로 선택 + 스크롤
+  useEffect(() => {
+    const notifId = searchParams.get('notif')
+    if (notifId) handleSelectNotif(notifId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const selectedMessage = selectedNotifId
     ? messages.find((m) => m.notificationId === selectedNotifId)

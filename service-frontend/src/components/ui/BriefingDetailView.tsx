@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ChevronDown, MessageSquare, MoreVertical } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft, ChevronDown, MessageSquare } from 'lucide-react'
 import type { Briefing, Notification, NotificationPriority, NotificationProvider } from '@/types'
 import { formatRelativeTime } from '@/utils'
 import MarkdownContent from './MarkdownContent'
@@ -56,6 +57,7 @@ interface BriefingDetailViewProps {
 }
 
 export default function BriefingDetailView({ briefing, notifications }: BriefingDetailViewProps) {
+  const router = useRouter()
   const [sort, setSort] = useState<SortType>('time')
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -164,7 +166,14 @@ export default function BriefingDetailView({ briefing, notifications }: Briefing
           {sorted.map((notification, i) => (
             <div key={notification.id}>
               {i > 0 && <div className="mx-[var(--spacing-sm)] border-t border-[var(--color-gray-80)]" />}
-              <div className="flex items-start gap-[var(--spacing-xs)] px-[var(--spacing-sm)] py-[var(--spacing-sm)]">
+              <button
+                type="button"
+                onClick={() => {
+                  const channelId = `${notification.integrationId}:${notification.channel ?? '__dm__'}`
+                  router.push(`/messages/${encodeURIComponent(channelId)}?notif=${notification.id}`)
+                }}
+                className="flex w-full items-start gap-[var(--spacing-xs)] px-[var(--spacing-sm)] py-[var(--spacing-sm)] text-left transition-colors hover:bg-[var(--color-gray-20)]"
+              >
                 {/* 프로바이더 아이콘 */}
                 <span
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px]"
@@ -203,19 +212,11 @@ export default function BriefingDetailView({ briefing, notifications }: Briefing
                   </p>
                 </div>
 
-                {/* 우선순위 배지 + 더보기 */}
+                {/* 우선순위 배지 */}
                 <div className="flex shrink-0 items-center gap-[var(--spacing-xs)]">
                   <DetailPriorityBadge priority={notification.priority} />
-                  <button
-                    type="button"
-                    disabled
-                    aria-label="추가 옵션 (준비 중)"
-                    className="flex h-6 w-6 items-center justify-center rounded-[var(--radius-2xs)] text-[var(--color-gray-400)] disabled:cursor-not-allowed"
-                  >
-                    <MoreVertical size={16} />
-                  </button>
                 </div>
-              </div>
+              </button>
             </div>
           ))}
         </div>
