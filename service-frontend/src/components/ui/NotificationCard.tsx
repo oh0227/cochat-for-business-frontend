@@ -93,6 +93,7 @@ export default function NotificationCard({ notification, onClick }: Notification
           isScheduleRelated={isScheduleRelated}
           calendarStatus={calendarStatus}
           calendarEventUrl={calendarEventUrl}
+          createdAt={createdAt}
         />
       </div>
     </div>

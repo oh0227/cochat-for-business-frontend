@@ -5,12 +5,14 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CalendarPlus, X, Loader2 } from 'lucide-react'
 import { useCalendarPromptStore } from '@/store/calendarPromptStore'
+import { toDatetimeLocalValue } from '@/lib/datetime'
 
 interface CalendarCandidateNotification {
   id: number
   title: string
   summary: string
   calendar_status: string
+  occurred_at: string
 }
 
 /**
@@ -38,7 +40,7 @@ export default function CalendarPromptModal() {
         if (cancelled || !data) return
         for (const n of data.notifications ?? []) {
           if (n.calendar_status === 'prompted') {
-            enqueue({ notificationId: String(n.id), title: n.title, summary: n.summary })
+            enqueue({ notificationId: String(n.id), title: n.title, summary: n.summary, occurredAt: n.occurred_at })
           }
         }
       })
@@ -53,6 +55,17 @@ export default function CalendarPromptModal() {
   }, [])
 
   const current = queue[0]
+  const [startTime, setStartTime] = useState('')
+  const [duration, setDuration] = useState(30)
+
+  // 큐가 다음 항목으로 넘어가면 시간 입력을 그 항목의 값으로 초기화
+  useEffect(() => {
+    if (!current) return
+    setStartTime(toDatetimeLocalValue(current.occurredAt))
+    setDuration(30)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current?.notificationId])
+
   if (!current) return null
 
   async function respond(action: 'register' | 'dismiss') {
@@ -66,7 +79,9 @@ export default function CalendarPromptModal() {
       const res = await fetch(path, {
         method: 'POST',
         headers: action === 'register' ? { 'Content-Type': 'application/json' } : undefined,
-        body: action === 'register' ? JSON.stringify({}) : undefined,
+        body: action === 'register' && startTime
+          ? JSON.stringify({ start_time: new Date(startTime).toISOString(), duration_minutes: duration })
+          : undefined,
       })
       const data = await res.json().catch(() => ({})) as { error?: string }
       if (!res.ok) {
@@ -137,6 +152,41 @@ export default function CalendarPromptModal() {
               </p>
             )}
           </div>
+        </div>
+
+        <div className="flex gap-[var(--spacing-2xs)]">
+          <label className="flex flex-1 flex-col gap-[var(--spacing-4xs)]">
+            <span
+              className="font-medium text-[var(--color-gray-700)]"
+              style={{ fontSize: 'var(--font-size-4xs)', lineHeight: 'var(--line-height-4xs)' }}
+            >
+              시작 시각
+            </span>
+            <input
+              type="datetime-local"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              className="rounded-[var(--radius-xs)] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] px-[var(--spacing-xs)] py-[var(--spacing-2xs)] text-[var(--color-gray-950)]"
+              style={{ fontSize: 'var(--font-size-3xs)' }}
+            />
+          </label>
+          <label className="flex w-[96px] flex-col gap-[var(--spacing-4xs)]">
+            <span
+              className="font-medium text-[var(--color-gray-700)]"
+              style={{ fontSize: 'var(--font-size-4xs)', lineHeight: 'var(--line-height-4xs)' }}
+            >
+              소요 시간(분)
+            </span>
+            <input
+              type="number"
+              min={15}
+              step={15}
+              value={duration}
+              onChange={(e) => setDuration(Math.max(15, Number(e.target.value) || 30))}
+              className="rounded-[var(--radius-xs)] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] px-[var(--spacing-xs)] py-[var(--spacing-2xs)] text-[var(--color-gray-950)]"
+              style={{ fontSize: 'var(--font-size-3xs)' }}
+            />
+          </label>
         </div>
 
         {error && (

@@ -230,6 +230,7 @@ export default function BriefingDetailView({ briefing, notifications }: Briefing
                     isScheduleRelated={notification.isScheduleRelated}
                     calendarStatus={notification.calendarStatus}
                     calendarEventUrl={notification.calendarEventUrl}
+                    createdAt={notification.createdAt}
                   />
                 </div>
               </div>

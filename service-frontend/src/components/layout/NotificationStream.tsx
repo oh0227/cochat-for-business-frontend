@@ -12,6 +12,7 @@ interface StreamNotificationPayload {
   sender_name: string | null
   summary: string
   calendar_status?: string
+  occurred_at?: string
 }
 
 function isStreamNotificationPayload(value: unknown): value is StreamNotificationPayload {
@@ -70,6 +71,7 @@ export default function NotificationStream() {
               notificationId: String(payload.id),
               title: payload.title,
               summary: payload.summary,
+              occurredAt: payload.occurred_at ?? new Date().toISOString(),
             })
           }
           try {

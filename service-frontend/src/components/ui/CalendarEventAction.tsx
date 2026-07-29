@@ -1,16 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { CalendarPlus, CalendarCheck, ExternalLink, Loader2 } from 'lucide-react'
+import { CalendarPlus, CalendarCheck, ExternalLink } from 'lucide-react'
 import type { CalendarStatus } from '@/types'
+import CalendarEventTimeModal from './CalendarEventTimeModal'
 
 interface CalendarEventActionProps {
   notificationId: string
   isScheduleRelated: boolean
   calendarStatus: CalendarStatus
   calendarEventUrl: string | null
+  createdAt: string // 시간 확인 모달의 기본값 시드 (실제 일정 시간과 다를 수 있어 사용자가 조정)
   // sm: 알림 카드 등 좁은 공간용 pill 배지(기본값) / lg: 채팅방 후속 액션 바처럼 다른 버튼과 나란히 놓이는 컨텍스트용
   size?: 'sm' | 'lg'
 }
@@ -24,9 +25,11 @@ export default function CalendarEventAction({
   isScheduleRelated,
   calendarStatus,
   calendarEventUrl,
+  createdAt,
   size = 'sm',
 }: CalendarEventActionProps) {
   const router = useRouter()
+  const [showTimeModal, setShowTimeModal] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const notConnected = error?.includes('연동') ?? false
@@ -54,21 +57,27 @@ export default function CalendarEventAction({
     )
   }
 
-  async function handleRegister(e: React.MouseEvent) {
+  function handleOpenTimeModal(e: React.MouseEvent) {
     e.stopPropagation()
+    setError(null)
+    setShowTimeModal(true)
+  }
+
+  async function handleConfirmRegister({ startTime, durationMinutes }: { startTime: string; durationMinutes: number }) {
     setSubmitting(true)
     setError(null)
     try {
       const res = await fetch(`/api/notifications/${notificationId}/calendar-event`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ start_time: startTime, duration_minutes: durationMinutes }),
       })
       const data = await res.json().catch(() => ({})) as { error?: string }
       if (!res.ok) {
         setError(data.error ?? '캘린더 등록에 실패했습니다.')
         return
       }
+      setShowTimeModal(false)
       router.refresh()
     } catch (err) {
       console.error('[CalendarEventAction] 캘린더 등록 실패', err)
@@ -79,44 +88,33 @@ export default function CalendarEventAction({
   }
 
   return (
-    <div className={size === 'lg' ? 'flex flex-col gap-[var(--spacing-3xs)]' : 'flex flex-col items-end gap-[var(--spacing-4xs)]'}>
+    <>
       <button
         type="button"
-        onClick={handleRegister}
-        disabled={submitting}
+        onClick={handleOpenTimeModal}
         className={
           size === 'lg'
-            ? 'flex h-10 items-center gap-2 rounded-[var(--radius-sm)] px-4 font-medium text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-60'
-            : 'flex shrink-0 items-center gap-[var(--spacing-4xs)] rounded-[var(--radius-8xl)] border border-[var(--color-gray-100)] px-[var(--spacing-xs)] py-[var(--spacing-4xs)] font-medium text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)] disabled:cursor-not-allowed disabled:opacity-60'
+            ? 'flex h-10 items-center gap-2 rounded-[var(--radius-sm)] px-4 font-medium text-white transition-opacity hover:opacity-80'
+            : 'flex shrink-0 items-center gap-[var(--spacing-4xs)] rounded-[var(--radius-8xl)] border border-[var(--color-gray-100)] px-[var(--spacing-xs)] py-[var(--spacing-4xs)] font-medium text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)]'
         }
         style={{
           fontSize: size === 'lg' ? 'var(--font-size-xs)' : 'var(--font-size-5xs)',
           background: size === 'lg' ? 'var(--color-gray-inverse)' : undefined,
         }}
       >
-        {submitting ? <Loader2 size={size === 'lg' ? 22 : 12} className="animate-spin" /> : <CalendarPlus size={size === 'lg' ? 22 : 12} />}
+        <CalendarPlus size={size === 'lg' ? 22 : 12} />
         캘린더에 등록
       </button>
-      {error && (
-        <p
-          className={size === 'lg' ? 'text-[var(--color-urgent-500)]' : 'max-w-[180px] text-right text-[var(--color-urgent-500)]'}
-          style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-5xs)' }}
-        >
-          {error}
-          {notConnected && (
-            <>
-              {' '}
-              <Link
-                href="/settings"
-                onClick={(e) => e.stopPropagation()}
-                className="font-medium underline"
-              >
-                설정에서 연동하기
-              </Link>
-            </>
-          )}
-        </p>
+      {showTimeModal && (
+        <CalendarEventTimeModal
+          defaultStartTime={createdAt}
+          submitting={submitting}
+          error={error}
+          showSettingsLink={notConnected}
+          onCancel={() => setShowTimeModal(false)}
+          onConfirm={handleConfirmRegister}
+        />
       )}
-    </div>
+    </>
   )
 }

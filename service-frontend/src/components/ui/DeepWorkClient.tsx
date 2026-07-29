@@ -377,6 +377,7 @@ function UrgentNotificationItem({ notification }: { notification: Notification }
             isScheduleRelated={isScheduleRelated}
             calendarStatus={calendarStatus}
             calendarEventUrl={calendarEventUrl}
+            createdAt={createdAt}
           />
         </div>
       </div>

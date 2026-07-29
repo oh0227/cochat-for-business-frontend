@@ -4,6 +4,7 @@ export interface CalendarPromptItem {
   notificationId: string
   title: string
   summary: string
+  occurredAt: string // 일정 시간 확인 모달의 기본값 시드 (실제 일정 시간과 다를 수 있어 사용자가 조정)
 }
 
 interface CalendarPromptState {

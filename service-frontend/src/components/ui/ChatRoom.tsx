@@ -189,6 +189,7 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
                   isScheduleRelated={selectedNotif.isScheduleRelated}
                   calendarStatus={selectedNotif.calendarStatus}
                   calendarEventUrl={selectedNotif.calendarEventUrl}
+                  createdAt={selectedNotif.createdAt}
                   size="lg"
                 />
               )}
