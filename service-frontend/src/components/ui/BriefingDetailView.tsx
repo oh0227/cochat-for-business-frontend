@@ -7,6 +7,7 @@ import { ArrowLeft, ChevronDown, MessageSquare } from 'lucide-react'
 import type { Briefing, Notification, NotificationPriority, NotificationProvider } from '@/types'
 import { formatRelativeTime } from '@/utils'
 import MarkdownContent from './MarkdownContent'
+import CalendarEventAction from './CalendarEventAction'
 
 const PROVIDER_HEX: Record<NotificationProvider, string> = {
   slack: '#4a154b',
@@ -166,13 +167,22 @@ export default function BriefingDetailView({ briefing, notifications }: Briefing
           {sorted.map((notification, i) => (
             <div key={notification.id}>
               {i > 0 && <div className="mx-[var(--spacing-sm)] border-t border-[var(--color-gray-80)]" />}
-              <button
-                type="button"
+              {/* CalendarEventAction이 자체 버튼/링크를 렌더링하므로, 아이템은 button이 아닌
+                  role="button" div로 두어 인터랙티브 요소 중첩(invalid HTML)을 피한다. */}
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => {
                   const channelId = `${notification.integrationId}:${notification.channel ?? '__dm__'}`
                   router.push(`/messages/${encodeURIComponent(channelId)}?notif=${notification.id}`)
                 }}
-                className="flex w-full items-start gap-[var(--spacing-xs)] px-[var(--spacing-sm)] py-[var(--spacing-sm)] text-left transition-colors hover:bg-[var(--color-gray-20)]"
+                onKeyDown={(e) => {
+                  if (e.key !== 'Enter' && e.key !== ' ') return
+                  e.preventDefault()
+                  const channelId = `${notification.integrationId}:${notification.channel ?? '__dm__'}`
+                  router.push(`/messages/${encodeURIComponent(channelId)}?notif=${notification.id}`)
+                }}
+                className="flex w-full cursor-pointer items-start gap-[var(--spacing-xs)] px-[var(--spacing-sm)] py-[var(--spacing-sm)] text-left transition-colors hover:bg-[var(--color-gray-20)]"
               >
                 {/* 프로바이더 아이콘 */}
                 <span
@@ -212,11 +222,17 @@ export default function BriefingDetailView({ briefing, notifications }: Briefing
                   </p>
                 </div>
 
-                {/* 우선순위 배지 */}
-                <div className="flex shrink-0 items-center gap-[var(--spacing-xs)]">
+                {/* 우선순위 배지 + 캘린더 등록 액션 */}
+                <div className="flex shrink-0 flex-col items-end gap-[var(--spacing-2xs)]">
                   <DetailPriorityBadge priority={notification.priority} />
+                  <CalendarEventAction
+                    notificationId={notification.id}
+                    isScheduleRelated={notification.isScheduleRelated}
+                    calendarStatus={notification.calendarStatus}
+                    calendarEventUrl={notification.calendarEventUrl}
+                  />
                 </div>
-              </button>
+              </div>
             </div>
           ))}
         </div>

@@ -4,12 +4,14 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
 import { TEMP_USER_ID } from '@/lib/api'
+import { useCalendarPromptStore } from '@/store/calendarPromptStore'
 
 interface StreamNotificationPayload {
   id: number
   title: string
   sender_name: string | null
   summary: string
+  calendar_status?: string
 }
 
 function isStreamNotificationPayload(value: unknown): value is StreamNotificationPayload {
@@ -63,6 +65,13 @@ export default function NotificationStream() {
         }
 
         if (isStreamNotificationPayload(payload)) {
+          if (payload.calendar_status === 'prompted') {
+            useCalendarPromptStore.getState().enqueue({
+              notificationId: String(payload.id),
+              title: payload.title,
+              summary: payload.summary,
+            })
+          }
           try {
             showDesktopNotification(payload, () => router.push('/messages'))
           } catch (error) {

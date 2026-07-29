@@ -1,6 +1,7 @@
 import AppShell from '@/components/layout/AppShell'
 import DeepWorkTimer from '@/components/layout/DeepWorkTimer'
 import NotificationStream from '@/components/layout/NotificationStream'
+import CalendarPromptModal from '@/components/layout/CalendarPromptModal'
 import { getNotifications } from '@/lib/api'
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
@@ -11,6 +12,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     <>
       <NotificationStream />
       <DeepWorkTimer />
+      <CalendarPromptModal />
       <AppShell unreadCount={unreadCount}>{children}</AppShell>
     </>
   )

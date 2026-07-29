@@ -7,6 +7,7 @@ import type { Notification, NotificationProvider } from '@/types'
 import { formatRelativeTime } from '@/utils'
 import { useDeepWorkStore } from '@/store/deepWorkStore'
 import { endFocusSession } from '@/lib/focusSession'
+import CalendarEventAction from './CalendarEventAction'
 
 type Duration = 30 | 60 | 90
 
@@ -340,7 +341,7 @@ export default function DeepWorkClient({
 // ── 서브 컴포넌트 ──────────────────────────────────────────────────────────
 
 function UrgentNotificationItem({ notification }: { notification: Notification }) {
-  const { provider, channel, summary, actor, createdAt } = notification
+  const { id, provider, channel, summary, actor, createdAt, isScheduleRelated, calendarStatus, calendarEventUrl } = notification
   return (
     <div className="flex items-start gap-[var(--spacing-xs)] rounded-[var(--radius-xs)] bg-[var(--color-urgent-50)] px-[var(--spacing-sm)] py-[var(--spacing-xs)]">
       <span
@@ -370,6 +371,14 @@ function UrgentNotificationItem({ notification }: { notification: Notification }
         >
           {actor ?? '알 수 없음'} · {formatRelativeTime(createdAt)}
         </p>
+        <div className="self-start">
+          <CalendarEventAction
+            notificationId={id}
+            isScheduleRelated={isScheduleRelated}
+            calendarStatus={calendarStatus}
+            calendarEventUrl={calendarEventUrl}
+          />
+        </div>
       </div>
     </div>
   )
