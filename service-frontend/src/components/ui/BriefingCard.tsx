@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { MessageSquare } from 'lucide-react'
 import type { Briefing, NotificationProvider } from '@/types'
-import { formatDate, formatTime } from '@/utils'
+import { formatDate, formatTime, stripMarkdown } from '@/utils'
 
 const PROVIDER_COLOR: Record<NotificationProvider, string> = {
   slack: 'bg-[#4a154b]',
@@ -49,7 +49,7 @@ export default function BriefingCard({ briefing, providerCounts }: BriefingCardP
           AI 요약
         </p>
         <p className="line-clamp-2 text-[var(--color-gray-900)]" style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}>
-          {content}
+          {stripMarkdown(content)}
         </p>
       </div>
 

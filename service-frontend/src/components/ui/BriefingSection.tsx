@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Sparkles } from 'lucide-react'
 import type { Briefing } from '@/types'
+import { stripMarkdown } from '@/utils'
 
 interface BriefingSectionProps {
   briefings: Briefing[]
@@ -69,7 +70,7 @@ function BriefingCard({ briefing }: { briefing: Briefing }) {
           className="truncate text-[var(--color-gray-700)]"
           style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
         >
-          {content}
+          {stripMarkdown(content)}
         </p>
       </div>
 
