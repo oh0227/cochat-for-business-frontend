@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CalendarPlus, CalendarCheck, ExternalLink, Loader2 } from 'lucide-react'
 import type { CalendarStatus } from '@/types'
@@ -24,6 +25,8 @@ export default function CalendarEventAction({
 }: CalendarEventActionProps) {
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const notConnected = error?.includes('연동') ?? false
 
   if (!isScheduleRelated || calendarStatus === 'none' || calendarStatus === 'dismissed') return null
 
@@ -47,30 +50,59 @@ export default function CalendarEventAction({
   async function handleRegister(e: React.MouseEvent) {
     e.stopPropagation()
     setSubmitting(true)
+    setError(null)
     try {
       const res = await fetch(`/api/notifications/${notificationId}/calendar-event`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
       })
-      if (!res.ok) throw new Error(`캘린더 등록 실패 (status=${res.status})`)
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      if (!res.ok) {
+        setError(data.error ?? '캘린더 등록에 실패했습니다.')
+        return
+      }
       router.refresh()
-    } catch (error) {
-      console.error('[CalendarEventAction] 캘린더 등록 실패', error)
+    } catch (err) {
+      console.error('[CalendarEventAction] 캘린더 등록 실패', err)
+      setError('캘린더 등록에 실패했습니다.')
+    } finally {
       setSubmitting(false)
     }
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleRegister}
-      disabled={submitting}
-      className="flex shrink-0 items-center gap-[var(--spacing-4xs)] rounded-[var(--radius-8xl)] border border-[var(--color-gray-100)] px-[var(--spacing-xs)] py-[var(--spacing-4xs)] font-medium text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)] disabled:cursor-not-allowed disabled:opacity-60"
-      style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-5xs)' }}
-    >
-      {submitting ? <Loader2 size={12} className="animate-spin" /> : <CalendarPlus size={12} />}
-      캘린더에 등록
-    </button>
+    <div className="flex flex-col items-end gap-[var(--spacing-4xs)]">
+      <button
+        type="button"
+        onClick={handleRegister}
+        disabled={submitting}
+        className="flex shrink-0 items-center gap-[var(--spacing-4xs)] rounded-[var(--radius-8xl)] border border-[var(--color-gray-100)] px-[var(--spacing-xs)] py-[var(--spacing-4xs)] font-medium text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)] disabled:cursor-not-allowed disabled:opacity-60"
+        style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-5xs)' }}
+      >
+        {submitting ? <Loader2 size={12} className="animate-spin" /> : <CalendarPlus size={12} />}
+        캘린더에 등록
+      </button>
+      {error && (
+        <p
+          className="max-w-[180px] text-right text-[var(--color-urgent-500)]"
+          style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-5xs)' }}
+        >
+          {error}
+          {notConnected && (
+            <>
+              {' '}
+              <Link
+                href="/settings"
+                onClick={(e) => e.stopPropagation()}
+                className="font-medium underline"
+              >
+                설정에서 연동하기
+              </Link>
+            </>
+          )}
+        </p>
+      )}
+    </div>
   )
 }

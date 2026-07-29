@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CalendarPlus, X, Loader2 } from 'lucide-react'
 import { useCalendarPromptStore } from '@/store/calendarPromptStore'
@@ -20,6 +21,13 @@ export default function CalendarPromptModal() {
   const router = useRouter()
   const { queue, enqueue, dequeue } = useCalendarPromptStore()
   const [submitting, setSubmitting] = useState<'register' | 'dismiss' | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const notConnected = error?.includes('연동') ?? false
+
+  function close() {
+    setError(null)
+    dequeue()
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -50,6 +58,7 @@ export default function CalendarPromptModal() {
   async function respond(action: 'register' | 'dismiss') {
     if (!current) return
     setSubmitting(action)
+    setError(null)
     try {
       const path = action === 'register'
         ? `/api/notifications/${current.notificationId}/calendar-event`
@@ -59,13 +68,18 @@ export default function CalendarPromptModal() {
         headers: action === 'register' ? { 'Content-Type': 'application/json' } : undefined,
         body: action === 'register' ? JSON.stringify({}) : undefined,
       })
-      if (!res.ok) throw new Error(`캘린더 ${action} 요청 실패 (status=${res.status})`)
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      if (!res.ok) {
+        setError(data.error ?? `캘린더 ${action === 'register' ? '등록' : '거절'}에 실패했습니다.`)
+        return
+      }
       router.refresh()
-    } catch (error) {
-      console.error(`[CalendarPromptModal] ${action} 실패`, error)
+      dequeue()
+    } catch (err) {
+      console.error(`[CalendarPromptModal] ${action} 실패`, err)
+      setError(`캘린더 ${action === 'register' ? '등록' : '거절'}에 실패했습니다.`)
     } finally {
       setSubmitting(null)
-      dequeue()
     }
   }
 
@@ -73,7 +87,7 @@ export default function CalendarPromptModal() {
     <div className="fixed inset-0 z-[80] flex items-end justify-center p-4 sm:items-center">
       <div
         className="fixed inset-0 -z-10 bg-black/40"
-        onClick={() => dequeue()}
+        onClick={close}
       />
       <div className="flex w-full max-w-[420px] flex-col gap-[var(--spacing-md)] rounded-[var(--radius-md)] border border-[var(--color-brand-100)] bg-[var(--color-gray-default)] p-[var(--spacing-lg)] shadow-lg">
         <div className="flex items-start justify-between gap-[var(--spacing-sm)]">
@@ -93,7 +107,7 @@ export default function CalendarPromptModal() {
           </div>
           <button
             type="button"
-            onClick={() => dequeue()}
+            onClick={close}
             className="flex size-7 shrink-0 items-center justify-center rounded-full text-[var(--color-gray-400)] transition-colors hover:bg-[var(--color-gray-50)]"
           >
             <X size={16} />
@@ -124,6 +138,23 @@ export default function CalendarPromptModal() {
             )}
           </div>
         </div>
+
+        {error && (
+          <p
+            className="rounded-[var(--radius-xs)] bg-[var(--color-urgent-50)] px-[var(--spacing-xs)] py-[var(--spacing-2xs)] text-[var(--color-urgent-500)]"
+            style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+          >
+            {error}
+            {notConnected && (
+              <>
+                {' '}
+                <Link href="/settings" onClick={close} className="font-medium underline">
+                  설정에서 연동하기
+                </Link>
+              </>
+            )}
+          </p>
+        )}
 
         <div className="flex justify-end gap-[var(--spacing-2xs)]">
           <button

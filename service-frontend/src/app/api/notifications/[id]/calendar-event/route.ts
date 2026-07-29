@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { TEMP_USER_ID } from '@/lib/api'
+import { readBackendErrorMessage } from '@/lib/backendError'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
@@ -21,8 +22,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   })
 
   if (!res.ok) {
-    const text = await res.text().catch(() => '캘린더 등록에 실패했습니다.')
-    return NextResponse.json({ error: text }, { status: res.status })
+    const message = await readBackendErrorMessage(res, '캘린더 등록에 실패했습니다.')
+    return NextResponse.json({ error: message }, { status: res.status })
   }
 
   const data = await res.json().catch(() => ({}))
