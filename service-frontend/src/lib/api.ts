@@ -120,6 +120,9 @@ export function toChatMessages(notifications: Notification[]): ChatMessage[] {
       createdAt: n.createdAt,
       notificationId: n.id,
       priorityBar: n.priority,
+      isScheduleRelated: n.isScheduleRelated,
+      calendarStatus: n.calendarStatus,
+      calendarEventUrl: n.calendarEventUrl,
     }))
 }
 

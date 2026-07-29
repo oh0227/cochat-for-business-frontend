@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { ArrowLeft, Bell, Hash, MessageSquare, CalendarPlus, Sparkles, ExternalLink, X } from 'lucide-react'
+import { ArrowLeft, Bell, Hash, MessageSquare, Sparkles, ExternalLink, X } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { ChannelSummary, ChatMessage, Notification } from '@/types'
 import ChatMessageRow from './ChatMessageRow'
 import AlertCard from './AlertCard'
+import CalendarEventAction from './CalendarEventAction'
 
 const PROVIDER_ICON: Record<string, { iconBg: string; textColor: string; Icon: React.ComponentType<{ size?: number; color?: string }> }> = {
   slack: {
@@ -182,14 +183,15 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
               후속 액션
             </span>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-              <button
-                type="button"
-                className="flex h-10 items-center gap-2 rounded-[var(--radius-sm)] px-4 font-medium text-white transition-opacity hover:opacity-80"
-                style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-gray-inverse)' }}
-              >
-                <CalendarPlus size={22} />
-                일정 등록
-              </button>
+              {selectedNotif && (
+                <CalendarEventAction
+                  notificationId={selectedNotif.id}
+                  isScheduleRelated={selectedNotif.isScheduleRelated}
+                  calendarStatus={selectedNotif.calendarStatus}
+                  calendarEventUrl={selectedNotif.calendarEventUrl}
+                  size="lg"
+                />
+              )}
               <button
                 type="button"
                 onClick={() => setShowAiDraft(true)}

@@ -11,6 +11,8 @@ interface CalendarEventActionProps {
   isScheduleRelated: boolean
   calendarStatus: CalendarStatus
   calendarEventUrl: string | null
+  // sm: 알림 카드 등 좁은 공간용 pill 배지(기본값) / lg: 채팅방 후속 액션 바처럼 다른 버튼과 나란히 놓이는 컨텍스트용
+  size?: 'sm' | 'lg'
 }
 
 /**
@@ -22,6 +24,7 @@ export default function CalendarEventAction({
   isScheduleRelated,
   calendarStatus,
   calendarEventUrl,
+  size = 'sm',
 }: CalendarEventActionProps) {
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
@@ -37,12 +40,16 @@ export default function CalendarEventAction({
         target="_blank"
         rel="noreferrer"
         onClick={(e) => e.stopPropagation()}
-        className="flex shrink-0 items-center gap-[var(--spacing-4xs)] rounded-[var(--radius-8xl)] border border-[var(--color-brand-100)] bg-[var(--color-brand-20)] px-[var(--spacing-xs)] py-[var(--spacing-4xs)] font-medium text-[var(--color-brand-500)] transition-colors hover:bg-[var(--color-brand-80)]"
-        style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-5xs)' }}
+        className={
+          size === 'lg'
+            ? 'flex h-10 items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-brand-100)] bg-[var(--color-brand-20)] px-4 font-medium text-[var(--color-brand-500)] transition-opacity hover:opacity-80'
+            : 'flex shrink-0 items-center gap-[var(--spacing-4xs)] rounded-[var(--radius-8xl)] border border-[var(--color-brand-100)] bg-[var(--color-brand-20)] px-[var(--spacing-xs)] py-[var(--spacing-4xs)] font-medium text-[var(--color-brand-500)] transition-colors hover:bg-[var(--color-brand-80)]'
+        }
+        style={{ fontSize: size === 'lg' ? 'var(--font-size-xs)' : 'var(--font-size-5xs)' }}
       >
-        <CalendarCheck size={12} />
+        <CalendarCheck size={size === 'lg' ? 22 : 12} />
         캘린더 등록됨
-        <ExternalLink size={10} />
+        <ExternalLink size={size === 'lg' ? 16 : 10} />
       </a>
     )
   }
@@ -72,20 +79,27 @@ export default function CalendarEventAction({
   }
 
   return (
-    <div className="flex flex-col items-end gap-[var(--spacing-4xs)]">
+    <div className={size === 'lg' ? 'flex flex-col gap-[var(--spacing-3xs)]' : 'flex flex-col items-end gap-[var(--spacing-4xs)]'}>
       <button
         type="button"
         onClick={handleRegister}
         disabled={submitting}
-        className="flex shrink-0 items-center gap-[var(--spacing-4xs)] rounded-[var(--radius-8xl)] border border-[var(--color-gray-100)] px-[var(--spacing-xs)] py-[var(--spacing-4xs)] font-medium text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)] disabled:cursor-not-allowed disabled:opacity-60"
-        style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-5xs)' }}
+        className={
+          size === 'lg'
+            ? 'flex h-10 items-center gap-2 rounded-[var(--radius-sm)] px-4 font-medium text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-60'
+            : 'flex shrink-0 items-center gap-[var(--spacing-4xs)] rounded-[var(--radius-8xl)] border border-[var(--color-gray-100)] px-[var(--spacing-xs)] py-[var(--spacing-4xs)] font-medium text-[var(--color-gray-700)] transition-colors hover:bg-[var(--color-gray-50)] disabled:cursor-not-allowed disabled:opacity-60'
+        }
+        style={{
+          fontSize: size === 'lg' ? 'var(--font-size-xs)' : 'var(--font-size-5xs)',
+          background: size === 'lg' ? 'var(--color-gray-inverse)' : undefined,
+        }}
       >
-        {submitting ? <Loader2 size={12} className="animate-spin" /> : <CalendarPlus size={12} />}
+        {submitting ? <Loader2 size={size === 'lg' ? 22 : 12} className="animate-spin" /> : <CalendarPlus size={size === 'lg' ? 22 : 12} />}
         캘린더에 등록
       </button>
       {error && (
         <p
-          className="max-w-[180px] text-right text-[var(--color-urgent-500)]"
+          className={size === 'lg' ? 'text-[var(--color-urgent-500)]' : 'max-w-[180px] text-right text-[var(--color-urgent-500)]'}
           style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-5xs)' }}
         >
           {error}

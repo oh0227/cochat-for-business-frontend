@@ -1,4 +1,4 @@
-import { Copy, ExternalLink, Sparkles } from 'lucide-react'
+import { Copy, ExternalLink, Sparkles, CalendarCheck, CalendarClock } from 'lucide-react'
 import type { ChatMessage, NotificationPriority } from '@/types'
 import { formatRelativeTime } from '@/utils'
 
@@ -18,7 +18,8 @@ interface ChatMessageRowProps {
 }
 
 export default function ChatMessageRow({ message, isSelected, aiDraft, provider, onCopy }: ChatMessageRowProps) {
-  const { author, content, createdAt, priorityBar } = message
+  const { author, content, createdAt, priorityBar, isScheduleRelated, calendarStatus } = message
+  const showScheduleBadge = isScheduleRelated && calendarStatus !== 'dismissed'
 
   return (
     <div
@@ -64,6 +65,19 @@ export default function ChatMessageRow({ message, isSelected, aiDraft, provider,
           >
             {formatRelativeTime(createdAt)}
           </span>
+          {showScheduleBadge && (
+            <span
+              title={calendarStatus === 'registered' ? '캘린더에 등록된 일정입니다' : '일정 등록이 가능한 메시지입니다'}
+              className="flex items-center gap-[2px] rounded-[var(--radius-8xl)] px-[6px] py-[1px]"
+              style={{
+                background: calendarStatus === 'registered' ? 'var(--color-brand-20)' : 'var(--color-gray-50)',
+                color: calendarStatus === 'registered' ? 'var(--color-brand-500)' : 'var(--color-gray-500)',
+              }}
+            >
+              {calendarStatus === 'registered' ? <CalendarCheck size={11} /> : <CalendarClock size={11} />}
+              <span style={{ fontSize: 'var(--font-size-5xs)', lineHeight: 'var(--line-height-5xs)' }}>일정</span>
+            </span>
+          )}
         </div>
         <p
           className="whitespace-pre-wrap text-[var(--color-gray-950)]"
