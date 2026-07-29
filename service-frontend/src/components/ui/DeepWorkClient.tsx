@@ -63,20 +63,17 @@ async function createBriefing(sessionId: number): Promise<{ ok: boolean }> {
 }
 
 interface DeepWorkClientProps {
-  // [백엔드 연결] 집중모드 진입 시 보류 중인 알림 수 (서버에서 주입)
-  initialPendingCount: number
-  // [백엔드 연결] 집중모드 진입 시 긴급 알림 목록 (서버에서 주입)
-  initialUrgentNotifications: Notification[]
+  // [백엔드 연결] 읽지 않은 알림 전체 (서버에서 주입, 세션 범위 필터링은 클라이언트에서 수행)
+  initialUnreadNotifications: Notification[]
 }
 
 export default function DeepWorkClient({
-  initialPendingCount,
-  initialUrgentNotifications,
+  initialUnreadNotifications,
 }: DeepWorkClientProps) {
   const router = useRouter()
 
   // 집중모드 전역 상태 (페이지 이동과 무관하게 유지)
-  const { isRunning, elapsed, selectedDuration, noNewAlerts, start, end, setNoNewAlerts, consumeModalPending } = useDeepWorkStore()
+  const { isRunning, elapsed, selectedDuration, sessionStartedAt, noNewAlerts, start, end, setNoNewAlerts, consumeModalPending } = useDeepWorkStore()
 
   // 모달·로딩은 이 페이지 내에서만 필요한 로컬 상태
   // 대시보드 [시작하기]로 진입한 경우 pendingOpenModal 플래그를 초기값으로 읽어 바로 모달 오픈
@@ -92,13 +89,14 @@ export default function DeepWorkClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // [백엔드 연결] 집중모드 진행 중 긴급 알림은 polling 또는 WebSocket으로 실시간 수신해야 합니다.
-  // 현재는 initialUrgentNotifications를 그대로 사용합니다.
-  const urgentNotifications = initialUrgentNotifications
+  // 세션 시작 이후 도착한 알림만 집중모드 화면에 노출한다.
+  // [백엔드 연결] 실시간 폴링/웹소켓으로 갱신하기 전까지는 페이지 로드 시점 스냅샷을 그대로 씀.
+  const sessionNotifications = sessionStartedAt
+    ? initialUnreadNotifications.filter((n) => n.createdAt >= sessionStartedAt)
+    : []
 
-  // [백엔드 연결] 보류 중인 알림 수도 실시간으로 갱신되어야 합니다.
-  // 현재는 initialPendingCount를 그대로 사용합니다.
-  const pendingCount = initialPendingCount
+  const urgentNotifications = sessionNotifications.filter((n) => n.priority === 'critical')
+  const pendingCount = sessionNotifications.filter((n) => n.priority !== 'critical').length
 
   async function handleStartSession() {
     const duration = selectedModalDuration
