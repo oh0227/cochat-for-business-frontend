@@ -1,26 +1,17 @@
-import { buildBriefingTitle, getLatestBriefing } from '@/lib/api'
+import { getLatestBriefing, getNotifications } from '@/lib/api'
+import { buildProviderCounts, getNotificationIds, toBriefing } from '@/lib/briefing'
 import BriefingListClient, { type BriefingItem } from '@/components/ui/BriefingListClient'
-import type { Briefing } from '@/types'
 
 export default async function BriefingPage() {
-  const latest = await getLatestBriefing()
+  const [latest, notifications] = await Promise.all([getLatestBriefing(), getNotifications()])
 
   const initialItems: BriefingItem[] = latest
     ? [
         {
-          briefing: {
-            id: String(latest.briefing_id),
-            sessionId: String(latest.session_id),
-            title: buildBriefingTitle(latest.generated_at),
-            content: latest.content,
-            actionItems: [],
-            highlights: [],
-            criticalCount: 0,
-            highCount: 0,
-            mediumCount: 0,
-            generatedAt: latest.generated_at,
-          } satisfies Briefing,
-          providerCounts: {},
+          briefing: toBriefing(latest),
+          providerCounts: buildProviderCounts(
+            notifications.filter((n) => getNotificationIds(latest).includes(Number(n.id)))
+          ),
         },
       ]
     : []

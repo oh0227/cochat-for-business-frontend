@@ -5,8 +5,8 @@
  * src/app/api/** 의 Next.js Route Handler를 프록시로 사용하세요.
  */
 
-import type { Notification, NotificationPriority, NotificationStatus, ChannelSummary, ChatMessage } from '@/types'
-import { formatDate } from '@/utils'
+import type { Notification, NotificationPriority, NotificationProvider, NotificationStatus, ChannelSummary, ChatMessage } from '@/types'
+import type { BackendBriefing } from './briefing'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
@@ -21,6 +21,8 @@ interface BackendNotification {
   sender_name: string | null
   channel_name: string | null
   source_type: string
+  provider: string | null
+  integration_id: number | null
   priority: string
   original_text: string
   summary: string
@@ -44,16 +46,10 @@ function normalizePriority(raw: string): NotificationPriority {
   return PRIORITY_MAP[raw.toLowerCase()] ?? 'low'
 }
 
-interface BackendBriefing {
-  briefing_id: number
-  session_id: number
-  content: string
-  generated_at: string
-}
+const VALID_PROVIDERS: readonly NotificationProvider[] = ['slack', 'jira', 'discord', 'gmail']
 
-/** 백엔드가 브리핑 제목을 내려주지 않아 생성 시각 기준으로 제목을 만든다 */
-export function buildBriefingTitle(generatedAt: string): string {
-  return `${formatDate(generatedAt)} 브리핑`
+function normalizeProvider(raw: string | null): NotificationProvider | undefined {
+  return VALID_PROVIDERS.includes(raw as NotificationProvider) ? (raw as NotificationProvider) : undefined
 }
 
 // ─── 변환 함수 ───────────────────────────────────────────────────────────────
@@ -61,7 +57,9 @@ export function buildBriefingTitle(generatedAt: string): string {
 function toNotification(raw: BackendNotification): Notification {
   return {
     id: String(raw.id),
-    // integrationId/rawEventId/provider: 백엔드가 아직 내려주지 않음 (issue #5)
+    integrationId: raw.integration_id != null ? String(raw.integration_id) : undefined,
+    title: raw.title,
+    provider: normalizeProvider(raw.provider),
     priority: normalizePriority(raw.priority),
     summary: raw.summary,
     originalContent: raw.original_text,

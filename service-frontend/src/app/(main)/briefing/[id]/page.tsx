@@ -1,26 +1,16 @@
 import { notFound } from 'next/navigation'
-import { buildBriefingTitle, getBriefingById } from '@/lib/api'
+import { getBriefingById, getNotifications } from '@/lib/api'
+import { getNotificationIds, toBriefing } from '@/lib/briefing'
 import BriefingDetailView from '@/components/ui/BriefingDetailView'
-import type { Briefing } from '@/types'
 
 export default async function BriefingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
 
-  const data = await getBriefingById(id)
+  const [data, notifications] = await Promise.all([getBriefingById(id), getNotifications()])
   if (!data) notFound()
 
-  const briefing: Briefing = {
-    id: String(data.briefing_id),
-    sessionId: String(data.session_id),
-    title: buildBriefingTitle(data.generated_at),
-    content: data.content,
-    actionItems: [],
-    highlights: [],
-    criticalCount: 0,
-    highCount: 0,
-    mediumCount: 0,
-    generatedAt: data.generated_at,
-  }
+  const briefing = toBriefing(data)
+  const relatedNotifications = notifications.filter((n) => getNotificationIds(data).includes(Number(n.id)))
 
-  return <BriefingDetailView briefing={briefing} notifications={[]} />
+  return <BriefingDetailView briefing={briefing} notifications={relatedNotifications} />
 }

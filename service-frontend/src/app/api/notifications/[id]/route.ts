@@ -2,11 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+
   const body = await req.json().catch(() => ({}))
 
   const res = await fetch(`${BASE_URL}/api/v1/notifications/${id}`, {

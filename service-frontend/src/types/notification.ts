@@ -11,12 +11,12 @@ export type NotificationStatus = 'unread' | 'read' | 'snoozed'
 export type NotificationProvider = 'slack' | 'jira' | 'discord' | 'gmail'
 
 // 알림 단건
-// NOTE: integrationId/rawEventId/provider는 백엔드 GET /notifications 응답에
-// 아직 포함되지 않아 optional로 둔다 (백엔드 작업 필요, oh0227/cochat-for-business-frontend#5 참고)
+// NOTE: rawEventId는 백엔드 GET /notifications 응답에 아직 포함되지 않아 optional로 둔다
 export interface Notification {
   id: string
   integrationId?: string
   rawEventId?: string
+  title: string             // 알림 제목 (백엔드 제공)
   priority: NotificationPriority
   summary: string           // AI 생성 한 줄 요약
   originalContent: string   // 원문 메시지 전체
