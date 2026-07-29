@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Hash, MessageSquare, Plus, Trash2, TriangleAlert } from 'lucide-react'
 import ThemeToggle from '@/components/ui/ThemeToggle'
+import NotificationPermissionButton from '@/components/ui/NotificationPermissionButton'
 import { TEMP_USER_ID } from '@/lib/api'
 
 type Provider = 'slack' | 'discord' | 'jira'
@@ -159,6 +160,25 @@ export default function SettingsPage() {
           화면 설정
         </span>
         <ThemeToggle />
+      </div>
+
+      {/* 알림 설정 */}
+      <div className="flex flex-col gap-4 rounded-[14px] border border-[var(--color-gray-80)] p-[21px]">
+        <div className="flex flex-col gap-1">
+          <span
+            className="font-semibold text-[var(--color-gray-950)]"
+            style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+          >
+            알림
+          </span>
+          <p
+            className="text-[var(--color-gray-700)]"
+            style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+          >
+            탭을 보고 있지 않을 때도 새 메시지를 데스크톱 알림으로 받아보세요.
+          </p>
+        </div>
+        <NotificationPermissionButton />
       </div>
 
       {/* 연동 섹션 목록 */}
