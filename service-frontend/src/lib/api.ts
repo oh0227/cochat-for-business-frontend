@@ -5,7 +5,7 @@
  * src/app/api/** 의 Next.js Route Handler를 프록시로 사용하세요.
  */
 
-import type { Notification, NotificationPriority, NotificationProvider, NotificationStatus, ChannelSummary, ChatMessage } from '@/types'
+import type { Notification, NotificationPriority, NotificationProvider, NotificationStatus, CalendarStatus, ChannelSummary, ChatMessage } from '@/types'
 import type { BackendBriefing } from './briefing'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL
@@ -31,6 +31,10 @@ interface BackendNotification {
   source_url: string | null
   is_direct_target: boolean
   status: NotificationStatus
+  is_schedule_related: boolean
+  calendar_status: string
+  calendar_event_id: string | null
+  calendar_event_url: string | null
   created_at: string
 }
 
@@ -52,6 +56,12 @@ function normalizeProvider(raw: string | null): NotificationProvider | undefined
   return VALID_PROVIDERS.includes(raw as NotificationProvider) ? (raw as NotificationProvider) : undefined
 }
 
+const VALID_CALENDAR_STATUSES: readonly CalendarStatus[] = ['none', 'pending', 'prompted', 'registered', 'dismissed']
+
+function normalizeCalendarStatus(raw: string): CalendarStatus {
+  return VALID_CALENDAR_STATUSES.includes(raw as CalendarStatus) ? (raw as CalendarStatus) : 'none'
+}
+
 // ─── 변환 함수 ───────────────────────────────────────────────────────────────
 
 function toNotification(raw: BackendNotification): Notification {
@@ -66,6 +76,10 @@ function toNotification(raw: BackendNotification): Notification {
     actor: raw.sender_name,
     channel: raw.channel_name,
     status: raw.status,
+    isScheduleRelated: raw.is_schedule_related,
+    calendarStatus: normalizeCalendarStatus(raw.calendar_status),
+    calendarEventId: raw.calendar_event_id,
+    calendarEventUrl: raw.calendar_event_url,
     createdAt: raw.created_at,
   }
 }

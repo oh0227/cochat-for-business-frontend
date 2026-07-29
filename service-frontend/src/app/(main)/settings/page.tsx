@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Hash, MessageSquare, Plus, Trash2, TriangleAlert } from 'lucide-react'
+import { Hash, MessageSquare, Calendar, Plus, Trash2, TriangleAlert } from 'lucide-react'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import NotificationPermissionButton from '@/components/ui/NotificationPermissionButton'
 import { TEMP_USER_ID } from '@/lib/api'
 
-type Provider = 'slack' | 'discord' | 'jira'
+type Provider = 'slack' | 'discord' | 'jira' | 'google_calendar'
 
 interface Integration {
   id: string
@@ -53,9 +53,15 @@ const PROVIDER_CONFIG: Record<
     iconColor: '#2c4ffb',
     Icon: Hash,
   },
+  google_calendar: {
+    name: 'Google Calendar',
+    iconBg: 'rgba(66,133,244,0.1)',
+    iconColor: '#4285f4',
+    Icon: Calendar,
+  },
 }
 
-const PROVIDERS: Provider[] = ['slack', 'discord', 'jira']
+const PROVIDERS: Provider[] = ['slack', 'discord', 'jira', 'google_calendar']
 
 async function fetchIntegrations(): Promise<Integration[]> {
   try {

@@ -10,6 +10,11 @@ export type NotificationStatus = 'unread' | 'read' | 'snoozed'
 // 연동 플랫폼
 export type NotificationProvider = 'slack' | 'jira' | 'discord' | 'gmail'
 
+// 캘린더 등록 상태
+// none: 일정 관련 아님 / pending: 일정 관련(낮은 긴급도), 조용히 누적 / prompted: 일정 관련(높은 긴급도), 즉시 등록 제안
+// registered: 캘린더에 등록됨 / dismissed: 등록 제안을 거절함
+export type CalendarStatus = 'none' | 'pending' | 'prompted' | 'registered' | 'dismissed'
+
 // 알림 단건
 // NOTE: rawEventId는 백엔드 GET /notifications 응답에 아직 포함되지 않아 optional로 둔다
 export interface Notification {
@@ -24,6 +29,10 @@ export interface Notification {
   channel: string | null    // 채널명, DM이면 null
   provider?: NotificationProvider
   status: NotificationStatus
+  isScheduleRelated: boolean        // 일정 등록 후보 여부 (백엔드 AI 판별)
+  calendarStatus: CalendarStatus
+  calendarEventId: string | null    // 구글 캘린더 이벤트 ID (registered일 때만 값 있음)
+  calendarEventUrl: string | null   // 구글 캘린더에서 보기 링크 (registered일 때만 값 있음)
   createdAt: string         // ISO 8601
 }
 

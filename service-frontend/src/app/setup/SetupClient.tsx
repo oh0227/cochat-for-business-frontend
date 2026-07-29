@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Hash, MessageSquare, Check, Loader2 } from 'lucide-react'
+import { Hash, MessageSquare, Calendar, Check, Loader2 } from 'lucide-react'
 import { TEMP_USER_ID } from '@/lib/api'
 
-type Provider = 'slack' | 'discord' | 'jira'
-const VALID_PROVIDERS: Provider[] = ['slack', 'discord', 'jira']
+type Provider = 'slack' | 'discord' | 'jira' | 'google_calendar'
+const VALID_PROVIDERS: Provider[] = ['slack', 'discord', 'jira', 'google_calendar']
 
 interface BackendIntegration {
   provider: string
@@ -70,6 +70,14 @@ const PROVIDERS: {
     iconBg: 'rgba(44,79,251,0.1)',
     Icon: Hash,
     iconColor: '#2c4ffb',
+  },
+  {
+    id: 'google_calendar',
+    name: 'Google Calendar',
+    description: '일정 관련 알림을 캘린더에 등록할 수 있어요.',
+    iconBg: 'rgba(66,133,244,0.1)',
+    Icon: Calendar,
+    iconColor: '#4285f4',
   },
 ]
 
@@ -163,8 +171,8 @@ export default function SetupClient({ initialConnected, initialError = null }: S
               </span>
             </div>
 
-            {/* 연결 카드 3개 */}
-            <div className="flex w-full flex-col gap-4 md:flex-row">
+            {/* 연결 카드 목록 */}
+            <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {PROVIDERS.map(({ id, name, description, iconBg, Icon, iconColor }) => {
                 const connectionCount = connectionCounts[id] ?? 0
                 const isConnected = connectionCount > 0
@@ -173,7 +181,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
                 return (
                   <div
                     key={id}
-                    className="relative flex flex-1 flex-col justify-between rounded-[20px] p-6"
+                    className="relative flex flex-col justify-between rounded-[20px] p-6"
                     style={{
                       height: 250,
                       border: `${isConnected ? '1.5px' : '1px'} solid ${isConnected ? 'var(--color-brand-400)' : 'var(--color-gray-80)'}`,
@@ -201,7 +209,7 @@ export default function SetupClient({ initialConnected, initialError = null }: S
                         </span>
 
                         <div className="flex flex-col gap-[2px]">
-                          <div className="flex items-center gap-1">
+                          <div className="flex flex-wrap items-center gap-1">
                             <span
                               className="font-semibold text-[var(--color-gray-950)]"
                               style={{ fontSize: 'var(--font-size-md)', lineHeight: 'var(--line-height-sm)' }}
