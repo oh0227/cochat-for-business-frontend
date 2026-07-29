@@ -39,10 +39,15 @@ async function startFocusSession(plannedDurationMinutes: number): Promise<number
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ plannedDurationMinutes }),
     })
-    if (!res.ok) return null
-    const data = await res.json() as { id: number }
-    return data.id ?? null
-  } catch {
+    if (!res.ok) {
+      const body = await res.text()
+      console.error(`[DeepWorkClient] 세션 시작 실패 (status=${res.status})`, body)
+      return null
+    }
+    const data = await res.json() as { session_id: number }
+    return data.session_id ?? null
+  } catch (error) {
+    console.error('[DeepWorkClient] 세션 시작 요청 실패', error)
     return null
   }
 }
@@ -78,6 +83,7 @@ export default function DeepWorkClient({
   const [showModal, setShowModal] = useState(() => useDeepWorkStore.getState().pendingOpenModal)
   const [selectedModalDuration, setSelectedModalDuration] = useState<Duration | null>(null)
   const [briefingLoading, setBriefingLoading] = useState(false)
+  const [startError, setStartError] = useState<string | null>(null)
 
   // pendingOpenModal 소비(store.set())는 렌더링 단계가 아닌 마운트 후 이펙트에서 처리
   // (렌더링 중 다른 컴포넌트의 setState를 트리거하면 React 경고가 발생함)
@@ -96,15 +102,28 @@ export default function DeepWorkClient({
 
   async function handleStartSession() {
     const duration = selectedModalDuration
-    const sessionId = duration ? await startFocusSession(duration) : null
-    start(duration, new Date().toISOString(), sessionId)
+    if (duration) {
+      const sessionId = await startFocusSession(duration)
+      if (!sessionId) {
+        setStartError('세션을 시작하지 못했습니다. 이미 진행 중인 세션이 있는지 확인해 주세요.')
+        return
+      }
+      start(duration, new Date().toISOString(), sessionId)
+    } else {
+      start(null, new Date().toISOString(), null)
+    }
+    setStartError(null)
     setShowModal(false)
     setSelectedModalDuration(null)
   }
 
   async function handleEndSession() {
     const sessionId = useDeepWorkStore.getState().sessionId
-    if (sessionId) await endFocusSession(sessionId)
+    if (sessionId) {
+      await endFocusSession(sessionId)
+    } else {
+      console.warn('[DeepWorkClient] sessionId가 없어 세션 종료 API를 호출하지 않음')
+    }
     end()
   }
 
@@ -163,7 +182,10 @@ export default function DeepWorkClient({
               </div>
               <button
                 type="button"
-                onClick={() => setShowModal(true)}
+                onClick={() => {
+                  setStartError(null)
+                  setShowModal(true)
+                }}
                 className="flex items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-xs)] bg-[var(--color-brand-500)] px-[var(--spacing-md)] py-[var(--spacing-2xs)] font-medium text-white transition-colors hover:bg-[var(--color-brand-600)]"
                 style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
               >
@@ -269,6 +291,14 @@ export default function DeepWorkClient({
                   시간을 설정하면 자동으로 종료됩니다
                 </p>
               </div>
+              {startError && (
+                <p
+                  className="rounded-[var(--radius-xs)] bg-[var(--color-urgent-50)] px-[var(--spacing-xs)] py-[var(--spacing-2xs)] text-[var(--color-urgent-500)]"
+                  style={{ fontSize: 'var(--font-size-4xs)', lineHeight: 'var(--line-height-4xs)' }}
+                >
+                  {startError}
+                </p>
+              )}
               <div className="grid grid-cols-3 gap-[var(--spacing-2xs)]">
                 {DURATIONS.map((d) => (
                   <button
