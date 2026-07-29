@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useDeepWorkStore } from '@/store/deepWorkStore'
+import { endFocusSession } from '@/lib/focusSession'
 
 /**
  * 집중모드 타이머를 전역에서 유지하는 컴포넌트.
@@ -16,9 +17,9 @@ export default function DeepWorkTimer() {
     if (!isRunning) return
 
     const id = setInterval(() => {
-      const { elapsed, selectedDuration, tick, end } = storeRef.current()
-      // [백엔드 연결] 타이머 자동 종료 시 세션 종료 API를 호출해야 합니다.
+      const { elapsed, selectedDuration, sessionId, tick, end } = storeRef.current()
       if (selectedDuration !== null && elapsed + 1 >= selectedDuration * 60) {
+        if (sessionId) void endFocusSession(sessionId)
         end()
         return
       }

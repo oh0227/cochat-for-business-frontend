@@ -6,6 +6,7 @@ import { Play, X, AlarmClock, Bell, Sparkles, Shield, MessageSquare, Loader2 } f
 import type { Notification, NotificationProvider } from '@/types'
 import { formatRelativeTime } from '@/utils'
 import { useDeepWorkStore } from '@/store/deepWorkStore'
+import { endFocusSession } from '@/lib/focusSession'
 
 type Duration = 30 | 60 | 90
 
@@ -43,14 +44,6 @@ async function startFocusSession(plannedDurationMinutes: number): Promise<number
     return data.id ?? null
   } catch {
     return null
-  }
-}
-
-async function endFocusSession(sessionId: number): Promise<void> {
-  try {
-    await fetch(`/api/focus-sessions/${sessionId}`, { method: 'PATCH' })
-  } catch {
-    // 종료 실패 시 조용히 처리
   }
 }
 
