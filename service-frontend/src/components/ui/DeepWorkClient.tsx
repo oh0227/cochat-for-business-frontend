@@ -73,7 +73,7 @@ export default function DeepWorkClient({
   const router = useRouter()
 
   // 집중모드 전역 상태 (페이지 이동과 무관하게 유지)
-  const { isRunning, elapsed, selectedDuration, sessionStartedAt, noNewAlerts, start, end, setNoNewAlerts, consumeModalPending } = useDeepWorkStore()
+  const { isRunning, elapsed, selectedDuration, sessionStartedAt, lastBriefingAt, noNewAlerts, start, end, setLastBriefingAt, setNoNewAlerts, consumeModalPending } = useDeepWorkStore()
 
   // 모달·로딩은 이 페이지 내에서만 필요한 로컬 상태
   // 대시보드 [시작하기]로 진입한 경우 pendingOpenModal 플래그를 초기값으로 읽어 바로 모달 오픈
@@ -90,9 +90,12 @@ export default function DeepWorkClient({
   }, [])
 
   // 세션 시작 이후 도착한 알림만 집중모드 화면에 노출한다.
+  // 브리핑을 한 번 받고 나면 그 시점까지의 알림은 이미 브리핑에 포함된 것이므로,
+  // 이후 새로 온 알림만 보류 중으로 카운트한다.
   // [백엔드 연결] 실시간 폴링/웹소켓으로 갱신하기 전까지는 페이지 로드 시점 스냅샷을 그대로 씀.
-  const sessionNotifications = sessionStartedAt
-    ? initialUnreadNotifications.filter((n) => n.createdAt >= sessionStartedAt)
+  const sinceTimestamp = lastBriefingAt ?? sessionStartedAt
+  const sessionNotifications = sinceTimestamp
+    ? initialUnreadNotifications.filter((n) => n.createdAt >= sinceTimestamp)
     : []
 
   const urgentNotifications = sessionNotifications.filter((n) => n.priority === 'critical')
@@ -132,8 +135,10 @@ export default function DeepWorkClient({
       return
     }
     setBriefingLoading(true)
+    const requestedAt = new Date().toISOString()
     try {
       await createBriefing(sessionId)
+      setLastBriefingAt(requestedAt)
       router.push('/briefing')
     } catch {
       setBriefingLoading(false)

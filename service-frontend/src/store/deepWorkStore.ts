@@ -7,12 +7,14 @@ interface DeepWorkState {
   selectedDuration: 30 | 60 | 90 | null
   sessionId: number | null            // 백엔드 focus session ID
   sessionStartedAt: string | null     // 세션 시작 시각 (ISO 8601)
+  lastBriefingAt: string | null       // 세션 내 마지막 브리핑 요청 시각 (ISO 8601) - 이 시점 이전 알림은 보류 카운트에서 제외
   noNewAlerts: boolean
   pendingOpenModal: boolean
 
   start: (duration: 30 | 60 | 90 | null, startedAt: string, sessionId: number | null) => void
   end: () => void
   tick: () => void
+  setLastBriefingAt: (value: string) => void
   setNoNewAlerts: (value: boolean) => void
   openModalOnEnter: () => void
   consumeModalPending: () => void
@@ -26,17 +28,21 @@ export const useDeepWorkStore = create<DeepWorkState>()(
       selectedDuration: null,
       sessionId: null,
       sessionStartedAt: null,
+      lastBriefingAt: null,
       noNewAlerts: false,
       pendingOpenModal: false,
 
       start: (duration, startedAt, sessionId) =>
-        set({ isRunning: true, elapsed: 0, selectedDuration: duration, sessionStartedAt: startedAt, sessionId, noNewAlerts: false }),
+        set({ isRunning: true, elapsed: 0, selectedDuration: duration, sessionStartedAt: startedAt, sessionId, lastBriefingAt: null, noNewAlerts: false }),
 
       end: () =>
-        set({ isRunning: false, elapsed: 0, selectedDuration: null, sessionStartedAt: null, sessionId: null, noNewAlerts: false }),
+        set({ isRunning: false, elapsed: 0, selectedDuration: null, sessionStartedAt: null, sessionId: null, lastBriefingAt: null, noNewAlerts: false }),
 
       tick: () =>
         set((state) => ({ elapsed: state.elapsed + 1 })),
+
+      setLastBriefingAt: (value) =>
+        set({ lastBriefingAt: value }),
 
       setNoNewAlerts: (value) =>
         set({ noNewAlerts: value }),
@@ -56,6 +62,7 @@ export const useDeepWorkStore = create<DeepWorkState>()(
         selectedDuration: state.selectedDuration,
         sessionId: state.sessionId,
         sessionStartedAt: state.sessionStartedAt,
+        lastBriefingAt: state.lastBriefingAt,
         noNewAlerts: state.noNewAlerts,
       }),
     }
