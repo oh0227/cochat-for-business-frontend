@@ -5,6 +5,8 @@
 // 이 파일은 백엔드가 OAuth redirect_uri로 프론트엔드 주소를 사용하는 경우를 위한 브릿지입니다.
 // 백엔드가 자체 콜백 URL을 사용한다면 이 파일은 사용되지 않습니다.
 
+import { toOAuthRouteSlug } from '@/lib/integrationProvider'
+
 type RouteParams = Promise<{ provider: string }>
 
 export async function GET(request: Request, { params }: { params: RouteParams }) {
@@ -27,7 +29,7 @@ export async function GET(request: Request, { params }: { params: RouteParams })
   try {
     // 백엔드 콜백 엔드포인트로 code 전달
     const res = await fetch(
-      `${backendUrl}/api/v1/integrations/${provider}/callback?code=${code}`,
+      `${backendUrl}/api/v1/integrations/${toOAuthRouteSlug(provider)}/callback?code=${code}`,
       { cache: 'no-store' }
     )
 

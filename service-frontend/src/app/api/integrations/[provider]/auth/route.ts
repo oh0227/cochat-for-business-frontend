@@ -2,6 +2,8 @@
 // 백엔드 엔드포인트: GET /api/v1/integrations/{provider}/oauth-url
 // 응답: { url: string }
 
+import { toOAuthRouteSlug } from '@/lib/integrationProvider'
+
 type RouteParams = Promise<{ provider: string }>
 
 export async function GET(request: Request, { params }: { params: RouteParams }) {
@@ -13,7 +15,7 @@ export async function GET(request: Request, { params }: { params: RouteParams })
   }
 
   try {
-    const res = await fetch(`${backendUrl}/api/v1/integrations/${provider}/oauth-url`, {
+    const res = await fetch(`${backendUrl}/api/v1/integrations/${toOAuthRouteSlug(provider)}/oauth-url`, {
       cache: 'no-store',
     })
 
