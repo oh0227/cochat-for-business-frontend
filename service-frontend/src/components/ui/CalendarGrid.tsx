@@ -146,7 +146,7 @@ export default function CalendarGrid({ events, initialYear, initialMonth, onEdit
                   <div
                     key={di}
                     className={[
-                      'flex flex-1 flex-col border-r border-[var(--color-gray-80)] last:border-r-0',
+                      'flex min-w-0 flex-1 flex-col border-r border-[var(--color-gray-80)] last:border-r-0',
                       !isCurrentMonth ? 'bg-[var(--color-gray-50)]' : '',
                     ].join(' ')}
                   >
