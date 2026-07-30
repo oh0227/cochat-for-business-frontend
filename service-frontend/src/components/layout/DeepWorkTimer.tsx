@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useDeepWorkStore } from '@/store/deepWorkStore'
-import { endFocusSession } from '@/lib/focusSession'
+import { endFocusSession, getActiveFocusSession } from '@/lib/focusSession'
 
 /**
  * 집중모드 타이머를 전역에서 유지하는 컴포넌트.
@@ -30,8 +30,20 @@ export default function DeepWorkTimer() {
       syncElapsed(Math.max(realElapsed, 0))
     }
 
+    // 로컬(localStorage)에 진행 중인 세션 정보가 없는 경우(다른 브라우저,
+    // 시크릿 모드, storage 삭제 등) 서버에 실제 활성 세션이 있는지 조회해 복원한다.
+    // 로컬에 이미 세션이 있으면 그게 최신 상태이므로 서버 재조회 없이 그대로 신뢰한다.
+    async function restoreFromServerIfNeeded() {
+      if (storeRef.current().isRunning) return
+      const active = await getActiveFocusSession()
+      if (!active) return
+      storeRef.current().start(active.selectedDuration, active.startedAt, active.sessionId)
+      reconcileSession()
+    }
+
     // 최초 진입(마운트) 시 1회 확인
     reconcileSession()
+    void restoreFromServerIfNeeded()
 
     // 화면이 다시 보일 때(화면 켜짐, 탭 포그라운드 복귀) 재확인
     function handleVisibilityChange() {
