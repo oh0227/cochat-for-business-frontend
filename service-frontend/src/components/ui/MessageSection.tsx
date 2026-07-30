@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Mail, ChevronRight } from 'lucide-react'
 import type { Notification } from '@/types'
 import NotificationCard from './NotificationCard'
@@ -8,6 +11,13 @@ interface MessageSectionProps {
 }
 
 export default function MessageSection({ notifications }: MessageSectionProps) {
+  const router = useRouter()
+
+  function goToMessage(notification: Notification) {
+    const channelId = `${notification.integrationId}:${notification.channel ?? '__dm__'}`
+    router.push(`/messages/${encodeURIComponent(channelId)}?notif=${notification.id}`)
+  }
+
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-md)] rounded-[14px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] p-[21px]">
       {/* 헤더 */}
@@ -39,7 +49,11 @@ export default function MessageSection({ notifications }: MessageSectionProps) {
       {/* 알림 카드 목록 */}
       <div className="flex flex-col gap-[var(--spacing-2xs)]">
         {notifications.map((notification) => (
-          <NotificationCard key={notification.id} notification={notification} />
+          <NotificationCard
+            key={notification.id}
+            notification={notification}
+            onClick={() => goToMessage(notification)}
+          />
         ))}
       </div>
     </div>

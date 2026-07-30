@@ -1,16 +1,18 @@
-import { getNotifications } from '@/lib/api'
+import { getNotifications, getBriefings } from '@/lib/api'
+import { toBriefing } from '@/lib/briefing'
 import SummaryCard from '@/components/ui/SummaryCard'
 import MessageSection from '@/components/ui/MessageSection'
 import BriefingSection from '@/components/ui/BriefingSection'
 
 export default async function DashboardPage() {
-  const notifications = await getNotifications()
+  const [notifications, briefings] = await Promise.all([getNotifications(), getBriefings()])
 
   const criticalCount = notifications.filter((n) => n.priority === 'critical').length
   const highCount = notifications.filter((n) => n.priority === 'high').length
   const mediumCount = notifications.filter((n) => n.priority === 'medium').length
 
   const recentNotifications = notifications.slice(0, 3)
+  const recentBriefings = briefings.slice(0, 2).map(toBriefing)
 
   return (
     <div className="flex flex-col gap-[var(--spacing-md)]">
@@ -41,7 +43,7 @@ export default async function DashboardPage() {
       {/* 콘텐츠 2열 */}
       <div className="flex flex-col gap-[20px] lg:flex-row">
         <MessageSection notifications={recentNotifications} />
-        <BriefingSection briefings={[]} />
+        <BriefingSection briefings={recentBriefings} />
       </div>
     </div>
   )
