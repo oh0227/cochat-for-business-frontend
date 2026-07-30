@@ -46,7 +46,7 @@ const PRIORITY_MAP: Record<string, NotificationPriority> = {
   low: 'low',
 }
 
-function normalizePriority(raw: string): NotificationPriority {
+export function normalizePriority(raw: string): NotificationPriority {
   return PRIORITY_MAP[raw.toLowerCase()] ?? 'low'
 }
 

@@ -3,14 +3,16 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
-import { TEMP_USER_ID } from '@/lib/api'
+import { TEMP_USER_ID, normalizePriority } from '@/lib/api'
 import { useCalendarPromptStore } from '@/store/calendarPromptStore'
+import { useDeepWorkStore } from '@/store/deepWorkStore'
 
 interface StreamNotificationPayload {
   id: number
   title: string
   sender_name: string | null
   summary: string
+  priority?: string
   calendar_status?: string
   occurred_at?: string
 }
@@ -66,18 +68,25 @@ export default function NotificationStream() {
         }
 
         if (isStreamNotificationPayload(payload)) {
-          if (payload.calendar_status === 'prompted') {
-            useCalendarPromptStore.getState().enqueue({
-              notificationId: String(payload.id),
-              title: payload.title,
-              summary: payload.summary,
-              occurredAt: payload.occurred_at ?? new Date().toISOString(),
-            })
-          }
-          try {
-            showDesktopNotification(payload, () => router.push('/messages'))
-          } catch (error) {
-            console.error('[NotificationStream] 데스크톱 알림 표시 실패', error)
+          // 집중모드 중에는 긴급(critical) 알림만 실시간으로 방해한다.
+          // 긴급도 낮은 알림은 팝업/데스크톱 알림 없이 조용히 쌓여서 나중에 목록/브리핑으로 확인한다.
+          const isCritical = payload.priority ? normalizePriority(payload.priority) === 'critical' : false
+          const shouldNotify = !useDeepWorkStore.getState().isRunning || isCritical
+
+          if (shouldNotify) {
+            if (payload.calendar_status === 'prompted') {
+              useCalendarPromptStore.getState().enqueue({
+                notificationId: String(payload.id),
+                title: payload.title,
+                summary: payload.summary,
+                occurredAt: payload.occurred_at ?? new Date().toISOString(),
+              })
+            }
+            try {
+              showDesktopNotification(payload, () => router.push('/messages'))
+            } catch (error) {
+              console.error('[NotificationStream] 데스크톱 알림 표시 실패', error)
+            }
           }
         }
       },
