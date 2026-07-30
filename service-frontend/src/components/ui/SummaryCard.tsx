@@ -1,5 +1,4 @@
 import { AlertCircle, Clock, Info } from 'lucide-react'
-import type { FocusSession } from '@/types'
 import { getPriorityLabel } from '@/utils'
 import FocusCard from './FocusCard'
 
@@ -14,7 +13,6 @@ interface PrioritySummaryCardProps {
 
 interface FocusSummaryCardProps {
   type: 'focus'
-  session: FocusSession | null
 }
 
 type SummaryCardProps = PrioritySummaryCardProps | FocusSummaryCardProps
@@ -52,7 +50,7 @@ const PRIORITY_ICON = {
 
 export default function SummaryCard(props: SummaryCardProps) {
   if (props.type === 'focus') {
-    return <FocusCard session={props.session} />
+    return <FocusCard />
   }
   return (
     <PriorityCard

@@ -37,7 +37,7 @@ export default async function DashboardPage() {
         <SummaryCard type="priority" priority="critical" count={criticalCount} subtext="즉시 조치 필요" />
         <SummaryCard type="priority" priority="high" count={highCount} subtext="오늘 안에 확인" />
         <SummaryCard type="priority" priority="medium" count={mediumCount} subtext="여유있게 확인" />
-        <SummaryCard type="focus" session={null} />
+        <SummaryCard type="focus" />
       </div>
 
       {/* 콘텐츠 2열 */}
