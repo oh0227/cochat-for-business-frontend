@@ -70,6 +70,9 @@
   --color-brand-600:  #5a5ddb;
   --color-brand-700:  #4648ab;
 
+  /* 대시보드 집중모드 카드(활성) 배경 그라데이션 */
+  --focus-card-gradient: linear-gradient(101deg, rgba(90,93,219,0.08) 14.656%, rgba(59,130,246,0.08) 85.344%);
+
   /* ─── Colors: Gray (Surface / Label / Stroke) ────────── */
   --color-gray-default: #ffffff;
   --color-gray-20:      #f3f4f5;
@@ -136,6 +139,10 @@
   --color-brand-50:  rgba(99, 102, 241, 0.12);
   --color-brand-80:  rgba(99, 102, 241, 0.2);
   --color-brand-100: rgba(99, 102, 241, 0.28);
+
+  /* 라이트모드의 8% 그라데이션은 다크 배경에서 거의 안 보여서, 다른
+     요약 카드(긴급/중요/보통)의 다크모드 배경 강도(16%)에 맞춰 올림 */
+  --focus-card-gradient: linear-gradient(101deg, rgba(90,93,219,0.16) 14.656%, rgba(59,130,246,0.16) 85.344%);
 
   --color-urgent-50:  rgba(239, 68, 68, 0.16);
   --color-urgent-300: rgba(239, 68, 68, 0.5);

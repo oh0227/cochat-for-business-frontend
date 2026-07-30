@@ -40,7 +40,7 @@ export default function FocusCard() {
       }
       style={
         isActive
-          ? { height: '170px', backgroundImage: 'linear-gradient(101deg, rgba(90,93,219,0.08) 14.656%, rgba(59,130,246,0.08) 85.344%)' }
+          ? { height: '170px', backgroundImage: 'var(--focus-card-gradient)' }
           : { height: '170px' }
       }
     >
