@@ -68,7 +68,7 @@ export default function EventDetailPanel({ event, onClose, onEdit }: EventDetail
         {/* 본문 스크롤 영역 */}
         <div className="flex flex-1 flex-col gap-[var(--spacing-sm)] overflow-y-auto px-[var(--spacing-sm)] py-[var(--spacing-sm)] sm:px-[var(--spacing-xl)]">
           {/* 일정 요약 */}
-          <div className="flex flex-col gap-[var(--spacing-4xs)] rounded-[10px] border border-[#b85af5] bg-[rgba(166,49,243,0.08)] p-[var(--spacing-xs)]">
+          <div className="flex flex-col gap-[var(--spacing-4xs)] rounded-[10px] border border-[rgba(166,49,243,0.35)] bg-[rgba(166,49,243,0.08)] p-[var(--spacing-xs)]">
             <p
               className="font-semibold text-[#972ddd]"
               style={{ fontSize: 'var(--font-size-xs)', lineHeight: 'var(--line-height-2xs)' }}
@@ -76,7 +76,7 @@ export default function EventDetailPanel({ event, onClose, onEdit }: EventDetail
               일정 요약
             </p>
             <p
-              className="text-[#1e2939]"
+              className="text-[var(--color-gray-950)]"
               style={{ fontSize: 'var(--font-size-xs)', lineHeight: 'var(--line-height-3xs)' }}
             >
               {event.attendees.length > 0

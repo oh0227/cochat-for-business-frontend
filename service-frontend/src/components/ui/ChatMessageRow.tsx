@@ -103,7 +103,7 @@ export default function ChatMessageRow({ message, isSelected, aiDraft, provider,
             {/* 초안 텍스트 박스 */}
             <div
               className="flex h-[42px] items-center justify-between rounded-[10px] border px-[13px]"
-              style={{ background: '#f6eafe', borderColor: '#b85af5' }}
+              style={{ background: 'rgba(166,49,243,0.08)', borderColor: 'rgba(166,49,243,0.35)' }}
             >
               <p
                 className="flex-1 truncate text-[var(--color-gray-950)]"
