@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { CalendarEvent } from '@/types'
 import EventDetailPanel from './EventDetailPanel'
@@ -12,6 +12,8 @@ interface CalendarGridProps {
   initialYear: number
   initialMonth: number // 0-indexed
   onEditEvent?: (event: CalendarEvent) => void
+  // 표시 중인 월이 바뀔 때(마운트 시 최초 1회 포함) 호출 — 부모가 해당 월 범위로 데이터를 재조회하는 용도
+  onMonthChange?: (year: number, month: number) => void
 }
 
 /** YYYY-MM-DD 형식으로 날짜 키 생성 (로컬 기준) */
@@ -25,7 +27,7 @@ function eventDateKey(isoString: string): string {
 }
 
 /** 해당 월의 캘린더 그리드를 구성하는 날짜 배열 반환 (42칸, 월요일 시작) */
-function buildCalendarDays(year: number, month: number): Date[] {
+export function buildCalendarDays(year: number, month: number): Date[] {
   const firstDay = new Date(year, month, 1)
   const startOffset = (firstDay.getDay() + 6) % 7
   const start = new Date(firstDay)
@@ -49,10 +51,16 @@ function formatTime(isoString: string): string {
   }).format(new Date(isoString))
 }
 
-export default function CalendarGrid({ events, initialYear, initialMonth, onEditEvent }: CalendarGridProps) {
+export default function CalendarGrid({ events, initialYear, initialMonth, onEditEvent, onMonthChange }: CalendarGridProps) {
   const [year, setYear] = useState(initialYear)
   const [month, setMonth] = useState(initialMonth)
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
+
+  // 마운트 시 최초 1회 + 이후 월 이동마다 부모에게 알려 해당 범위 데이터를 재조회하게 한다.
+  useEffect(() => {
+    onMonthChange?.(year, month)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [year, month])
 
   const today = new Date()
   const todayKey = toDateKey(today)

@@ -26,6 +26,8 @@ export interface EventFormData {
 
 interface EventFormModalProps {
   event?: CalendarEvent | null
+  submitting?: boolean
+  error?: string | null
   onClose: () => void
   onSubmit: (data: EventFormData) => void
 }
@@ -41,7 +43,7 @@ function isoToHHMM(isoString: string): string {
   return `${h}:${mRounded}`
 }
 
-export default function EventFormModal({ event, onClose, onSubmit }: EventFormModalProps) {
+export default function EventFormModal({ event, submitting = false, error = null, onClose, onSubmit }: EventFormModalProps) {
   const isEdit = !!event
 
   const [title, setTitle] = useState(event?.title ?? '')
@@ -62,19 +64,20 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
     (c) =>
       shareInput.length > 0 &&
       (c.name.includes(shareInput) || c.email.includes(shareInput)) &&
-      !attendees.includes(c.name),
+      !attendees.includes(c.email),
   )
 
   const isValid = title.trim().length > 0 && date !== null
 
-  function addAttendee(name: string) {
-    setAttendees((prev) => [...prev, name])
+  // 참석자는 이메일로 저장한다 (Google Calendar 초대에 필요한 값).
+  function addAttendee(email: string) {
+    setAttendees((prev) => [...prev, email])
     setShareInput('')
     setDropdownVisible(false)
   }
 
-  function removeAttendee(name: string) {
-    setAttendees((prev) => prev.filter((a) => a !== name))
+  function removeAttendee(email: string) {
+    setAttendees((prev) => prev.filter((a) => a !== email))
   }
 
   useEffect(() => {
@@ -181,16 +184,16 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
                     className="mb-2 flex flex-wrap gap-2 rounded-[10px] p-2"
                     style={{ background: 'var(--color-brand-20)', border: '1px solid var(--color-brand-80)' }}
                   >
-                    {attendees.map((name) => (
+                    {attendees.map((email) => (
                       <div
-                        key={name}
+                        key={email}
                         className="flex h-[34px] items-center gap-1 rounded-[10px] px-3"
                         style={{ background: 'var(--color-brand-50)', border: '1px solid var(--color-brand-400)' }}
                       >
-                        <span style={{ fontSize: 14, color: 'var(--color-gray-950)' }}>{name}</span>
+                        <span style={{ fontSize: 14, color: 'var(--color-gray-950)' }}>{email}</span>
                         <button
                           type="button"
-                          onClick={() => removeAttendee(name)}
+                          onClick={() => removeAttendee(email)}
                           className="ml-1 text-[var(--color-brand-400)] transition-opacity hover:opacity-70"
                         >
                           <X size={12} />
@@ -224,7 +227,7 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
                       <button
                         key={contact.name}
                         type="button"
-                        onMouseDown={() => addAttendee(contact.name)}
+                        onMouseDown={() => addAttendee(contact.email)}
                         className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--color-gray-20)]"
                       >
                         <span
@@ -279,24 +282,34 @@ export default function EventFormModal({ event, onClose, onSubmit }: EventFormMo
           </div>
 
           {/* 푸터 */}
-          <div className="flex justify-end border-t border-[var(--color-gray-80)] px-6 py-6">
-            <button
-              type="button"
-              onClick={() => {
-                if (isValid) onSubmit({ title, date, time, attendees, memo })
-              }}
-              disabled={!isValid}
-              className="flex h-[44px] items-center gap-2 rounded-[12px] px-5 font-medium transition-colors"
-              style={{
-                fontSize: 14,
-                background: isValid ? 'var(--color-brand-500)' : 'var(--color-gray-50)',
-                color: isValid ? 'white' : 'var(--color-gray-400)',
-                cursor: isValid ? 'pointer' : 'not-allowed',
-              }}
-            >
-              <CalendarPlus size={18} />
-              {isEdit ? '일정 수정' : '캘린더 추가'}
-            </button>
+          <div className="flex flex-col gap-3 border-t border-[var(--color-gray-80)] px-6 py-6">
+            {error && (
+              <p
+                className="rounded-[10px] bg-[var(--color-urgent-50)] px-4 py-[10px] text-[var(--color-urgent-500)]"
+                style={{ fontSize: 13 }}
+              >
+                {error}
+              </p>
+            )}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  if (isValid && !submitting) onSubmit({ title, date, time, attendees, memo })
+                }}
+                disabled={!isValid || submitting}
+                className="flex h-[44px] items-center gap-2 rounded-[12px] px-5 font-medium transition-colors"
+                style={{
+                  fontSize: 14,
+                  background: isValid && !submitting ? 'var(--color-brand-500)' : 'var(--color-gray-50)',
+                  color: isValid && !submitting ? 'white' : 'var(--color-gray-400)',
+                  cursor: isValid && !submitting ? 'pointer' : 'not-allowed',
+                }}
+              >
+                <CalendarPlus size={18} />
+                {submitting ? '처리 중...' : isEdit ? '일정 수정' : '캘린더 추가'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
