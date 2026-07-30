@@ -122,3 +122,18 @@ export async function updateCalendarEvent(id: string, input: CalendarEventInput)
     return { ok: false, notConnected: false, error: '캘린더 일정 수정에 실패했습니다.' }
   }
 }
+
+type CalendarEventDeleteResult = { ok: true } | { ok: false; error: string }
+
+/** 캘린더 일정 삭제 */
+export async function deleteCalendarEvent(id: string): Promise<CalendarEventDeleteResult> {
+  try {
+    const res = await fetch(`/api/calendar-events/${id}`, { method: 'DELETE' })
+    if (res.status === 204 || res.ok) return { ok: true }
+    const data = await res.json().catch(() => ({})) as { detail?: string }
+    return { ok: false, error: data.detail ?? '캘린더 일정 삭제에 실패했습니다.' }
+  } catch (error) {
+    console.error('[calendarEvents] 삭제 요청 실패', error)
+    return { ok: false, error: '캘린더 일정 삭제에 실패했습니다.' }
+  }
+}

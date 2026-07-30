@@ -12,6 +12,7 @@ interface CalendarGridProps {
   initialYear: number
   initialMonth: number // 0-indexed
   onEditEvent?: (event: CalendarEvent) => void
+  onDeleteEvent?: (event: CalendarEvent) => void
   // 표시 중인 월이 바뀔 때(마운트 시 최초 1회 포함) 호출 — 부모가 해당 월 범위로 데이터를 재조회하는 용도
   onMonthChange?: (year: number, month: number) => void
 }
@@ -51,7 +52,7 @@ function formatTime(isoString: string): string {
   }).format(new Date(isoString))
 }
 
-export default function CalendarGrid({ events, initialYear, initialMonth, onEditEvent, onMonthChange }: CalendarGridProps) {
+export default function CalendarGrid({ events, initialYear, initialMonth, onEditEvent, onDeleteEvent, onMonthChange }: CalendarGridProps) {
   const [year, setYear] = useState(initialYear)
   const [month, setMonth] = useState(initialMonth)
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
@@ -209,6 +210,10 @@ export default function CalendarGrid({ events, initialYear, initialMonth, onEdit
           onEdit={() => {
             setSelectedEvent(null)
             onEditEvent?.(selectedEvent)
+          }}
+          onDelete={() => {
+            setSelectedEvent(null)
+            onDeleteEvent?.(selectedEvent)
           }}
         />
       )}

@@ -6,7 +6,7 @@ import { CalendarDays, CalendarPlus, Loader2, TriangleAlert } from 'lucide-react
 import CalendarGrid, { buildCalendarDays } from '@/components/ui/CalendarGrid'
 import TodayPanel from '@/components/ui/TodayPanel'
 import EventFormModal, { type EventFormData } from '@/components/ui/EventFormModal'
-import { listCalendarEvents, createCalendarEvent, updateCalendarEvent, type CalendarEventInput } from '@/lib/calendarEvents'
+import { listCalendarEvents, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent, type CalendarEventInput } from '@/lib/calendarEvents'
 import type { CalendarEvent } from '@/types'
 
 const pad = (n: number) => String(n).padStart(2, '0')
@@ -44,6 +44,10 @@ export default function CalendarPage() {
   const [editEvent, setEditEvent] = useState<CalendarEvent | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
+
+  const [deleteTarget, setDeleteTarget] = useState<CalendarEvent | null>(null)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const todayEvents = events.filter((e) => e.startAt.startsWith(todayStr))
 
@@ -118,6 +122,21 @@ export default function CalendarPage() {
         : [...prev, result.event],
     )
     closeModal()
+  }
+
+  async function handleConfirmDelete() {
+    if (!deleteTarget) return
+    setDeleting(true)
+    setDeleteError(null)
+    const result = await deleteCalendarEvent(deleteTarget.id)
+    setDeleting(false)
+
+    if (!result.ok) {
+      setDeleteError(result.error)
+      return
+    }
+    setEvents((prev) => prev.filter((e) => e.id !== deleteTarget.id))
+    setDeleteTarget(null)
   }
 
   return (
@@ -199,6 +218,10 @@ export default function CalendarPage() {
           initialYear={today.getFullYear()}
           initialMonth={today.getMonth()}
           onEditEvent={openEditModal}
+          onDeleteEvent={(event) => {
+            setDeleteError(null)
+            setDeleteTarget(event)
+          }}
           onMonthChange={handleMonthChange}
         />
         <TodayPanel events={todayEvents} date={today} />
@@ -212,6 +235,71 @@ export default function CalendarPage() {
           onClose={closeModal}
           onSubmit={handleSubmit}
         />
+      )}
+
+      {/* 삭제 확인 다이얼로그 */}
+      {deleteTarget && (
+        <>
+          <div
+            className="fixed inset-0 z-[60] bg-black/50"
+            onClick={() => !deleting && setDeleteTarget(null)}
+          />
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <div className="flex w-full max-w-[380px] flex-col gap-5 rounded-[16px] border border-[var(--color-gray-80)] bg-[var(--color-gray-default)] p-6">
+              <div className="flex items-start gap-3">
+                <span
+                  className="flex shrink-0 items-center justify-center rounded-full"
+                  style={{ width: 36, height: 36, background: 'rgba(239,68,68,0.1)' }}
+                >
+                  <TriangleAlert size={18} className="text-[var(--color-urgent-500)]" />
+                </span>
+                <div className="flex flex-col gap-1">
+                  <span
+                    className="font-semibold text-[var(--color-gray-950)]"
+                    style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+                  >
+                    일정을 삭제할까요?
+                  </span>
+                  <p
+                    className="text-[var(--color-gray-700)]"
+                    style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+                  >
+                    &quot;{deleteTarget.title}&quot; 일정이 Google Calendar에서 삭제되고, 되돌릴 수 없습니다.
+                  </p>
+                  {deleteError && (
+                    <p
+                      className="text-[var(--color-urgent-500)]"
+                      style={{ fontSize: 'var(--font-size-4xs)' }}
+                    >
+                      {deleteError}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(null)}
+                  disabled={deleting}
+                  className="flex h-10 items-center justify-center rounded-[10px] border border-[var(--color-gray-80)] px-4 font-medium text-[var(--color-gray-950)] transition-opacity hover:opacity-80 disabled:opacity-60"
+                  style={{ fontSize: 'var(--font-size-xs)' }}
+                >
+                  취소
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmDelete}
+                  disabled={deleting}
+                  className="flex h-10 items-center justify-center rounded-[10px] px-4 font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-60"
+                  style={{ fontSize: 'var(--font-size-xs)', background: 'var(--color-urgent-500)' }}
+                >
+                  삭제
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   )

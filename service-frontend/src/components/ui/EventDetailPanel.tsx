@@ -1,12 +1,13 @@
 'use client'
 
-import { X, Calendar, SquarePen, CircleCheckBig, ExternalLink, User } from 'lucide-react'
+import { X, Calendar, SquarePen, CircleCheckBig, ExternalLink, User, Trash2 } from 'lucide-react'
 import type { CalendarEvent } from '@/types'
 
 interface EventDetailPanelProps {
   event: CalendarEvent
   onClose: () => void
   onEdit: () => void
+  onDelete: () => void
 }
 
 function formatDateTime(isoString: string): string {
@@ -21,7 +22,7 @@ function formatDateTime(isoString: string): string {
   return `${date} · ${time}`
 }
 
-export default function EventDetailPanel({ event, onClose, onEdit }: EventDetailPanelProps) {
+export default function EventDetailPanel({ event, onClose, onEdit, onDelete }: EventDetailPanelProps) {
   return (
     <>
       {/* 딤 배경 */}
@@ -171,6 +172,15 @@ export default function EventDetailPanel({ event, onClose, onEdit }: EventDetail
               >
                 <CircleCheckBig size={22} />
                 완료
+              </button>
+              <button
+                type="button"
+                onClick={onDelete}
+                className="flex h-[44px] w-full items-center justify-center gap-[var(--spacing-2xs)] rounded-[var(--radius-sm)] font-medium text-[var(--color-urgent-500)] transition-colors hover:bg-[var(--color-urgent-50)]"
+                style={{ fontSize: 'var(--font-size-xs)' }}
+              >
+                <Trash2 size={22} />
+                일정 삭제
               </button>
             </div>
           </div>
