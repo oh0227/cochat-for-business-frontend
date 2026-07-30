@@ -14,6 +14,7 @@ interface DeepWorkState {
   start: (duration: 30 | 60 | 90 | null, startedAt: string, sessionId: number | null) => void
   end: () => void
   tick: () => void
+  syncElapsed: (value: number) => void
   setLastBriefingAt: (value: string) => void
   setNoNewAlerts: (value: boolean) => void
   openModalOnEnter: () => void
@@ -40,6 +41,11 @@ export const useDeepWorkStore = create<DeepWorkState>()(
 
       tick: () =>
         set((state) => ({ elapsed: state.elapsed + 1 })),
+
+      // 화면 꺼짐/탭 백그라운드로 setInterval이 멈췄다가 재진입했을 때,
+      // sessionStartedAt 기준으로 재계산한 실제 경과 시간으로 보정하기 위한 액션
+      syncElapsed: (value) =>
+        set({ elapsed: value }),
 
       setLastBriefingAt: (value) =>
         set({ lastBriefingAt: value }),
