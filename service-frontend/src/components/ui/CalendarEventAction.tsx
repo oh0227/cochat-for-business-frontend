@@ -34,7 +34,9 @@ export default function CalendarEventAction({
   const [error, setError] = useState<string | null>(null)
   const notConnected = error?.includes('연동') ?? false
 
-  if (!isScheduleRelated || calendarStatus === 'none' || calendarStatus === 'dismissed') return null
+  // dismissed는 "실시간 팝업을 다시 띄우지 않는다"는 의미일 뿐, 일정 관련 표시와
+  // 수동 등록 버튼은 계속 노출되어야 한다 (일정 무관인 none만 렌더링을 막는다).
+  if (!isScheduleRelated || calendarStatus === 'none') return null
 
   if (calendarStatus === 'registered') {
     return (
