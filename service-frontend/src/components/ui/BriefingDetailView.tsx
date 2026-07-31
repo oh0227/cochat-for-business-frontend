@@ -231,6 +231,10 @@ export default function BriefingDetailView({ briefing, notifications }: Briefing
                     calendarStatus={notification.calendarStatus}
                     calendarEventUrl={notification.calendarEventUrl}
                     createdAt={notification.createdAt}
+                    suggestedStartTime={notification.suggestedStartTime}
+                    suggestedDurationMinutes={notification.suggestedDurationMinutes}
+                    calendarEventStartTime={notification.calendarEventStartTime}
+                    calendarEventEndTime={notification.calendarEventEndTime}
                   />
                 </div>
               </div>

@@ -190,6 +190,10 @@ export default function ChatRoom({ channel, messages, notifications }: ChatRoomP
                   calendarStatus={selectedNotif.calendarStatus}
                   calendarEventUrl={selectedNotif.calendarEventUrl}
                   createdAt={selectedNotif.createdAt}
+                  suggestedStartTime={selectedNotif.suggestedStartTime}
+                  suggestedDurationMinutes={selectedNotif.suggestedDurationMinutes}
+                  calendarEventStartTime={selectedNotif.calendarEventStartTime}
+                  calendarEventEndTime={selectedNotif.calendarEventEndTime}
                   size="lg"
                 />
               )}

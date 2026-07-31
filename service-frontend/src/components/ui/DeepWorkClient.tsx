@@ -378,6 +378,10 @@ function UrgentNotificationItem({ notification }: { notification: Notification }
             calendarStatus={calendarStatus}
             calendarEventUrl={calendarEventUrl}
             createdAt={createdAt}
+            suggestedStartTime={notification.suggestedStartTime}
+            suggestedDurationMinutes={notification.suggestedDurationMinutes}
+            calendarEventStartTime={notification.calendarEventStartTime}
+            calendarEventEndTime={notification.calendarEventEndTime}
           />
         </div>
       </div>

@@ -6,7 +6,8 @@ import { X, CalendarPlus, Loader2 } from 'lucide-react'
 import { toDatetimeLocalValue } from '@/lib/datetime'
 
 interface CalendarEventTimeModalProps {
-  defaultStartTime: string // ISO 8601 - 시작값(사용자가 실제 일정 시간으로 조정해야 함)
+  defaultStartTime: string // ISO 8601 - 시작값(AI가 추출한 일정 시간, 없으면 메시지 도착 시각)
+  defaultDurationMinutes?: number | null // AI가 추출한 예상 소요 시간(분), 없으면 30분
   submitting: boolean
   error?: string | null
   showSettingsLink?: boolean
@@ -15,12 +16,12 @@ interface CalendarEventTimeModalProps {
 }
 
 /**
- * 백엔드는 start_time 생략 시 메시지 도착 시각(occurred_at)을 그대로 쓰기 때문에,
- * 실제 일정 시간(메시지 본문에 적힌 시간)과 다를 수 있다. 등록 전에 사용자가
- * 직접 확인/수정하도록 하는 모달.
+ * AI가 메시지에서 실제 일정 시간을 추출하지 못한 경우 메시지 도착 시각으로 폴백되므로,
+ * 실제 일정 시간과 다를 수 있다. 등록 전에 사용자가 직접 확인/수정하도록 하는 모달.
  */
 export default function CalendarEventTimeModal({
   defaultStartTime,
+  defaultDurationMinutes,
   submitting,
   error,
   showSettingsLink,
@@ -28,7 +29,7 @@ export default function CalendarEventTimeModal({
   onConfirm,
 }: CalendarEventTimeModalProps) {
   const [value, setValue] = useState(() => toDatetimeLocalValue(defaultStartTime))
-  const [duration, setDuration] = useState(30)
+  const [duration, setDuration] = useState(() => defaultDurationMinutes ?? 30)
 
   function handleConfirm() {
     if (!value) return

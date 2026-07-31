@@ -94,6 +94,10 @@ export default function NotificationCard({ notification, onClick }: Notification
           calendarStatus={calendarStatus}
           calendarEventUrl={calendarEventUrl}
           createdAt={createdAt}
+          suggestedStartTime={notification.suggestedStartTime}
+          suggestedDurationMinutes={notification.suggestedDurationMinutes}
+          calendarEventStartTime={notification.calendarEventStartTime}
+          calendarEventEndTime={notification.calendarEventEndTime}
         />
       </div>
     </div>

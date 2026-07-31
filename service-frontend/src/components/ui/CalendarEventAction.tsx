@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { CalendarPlus, CalendarCheck, ExternalLink } from 'lucide-react'
 import type { CalendarStatus } from '@/types'
+import { formatDate, formatTime } from '@/utils'
 import CalendarEventTimeModal from './CalendarEventTimeModal'
 
 interface CalendarEventActionProps {
@@ -11,7 +12,11 @@ interface CalendarEventActionProps {
   isScheduleRelated: boolean
   calendarStatus: CalendarStatus
   calendarEventUrl: string | null
-  createdAt: string // 시간 확인 모달의 기본값 시드 (실제 일정 시간과 다를 수 있어 사용자가 조정)
+  createdAt: string // 시간 확인 모달의 기본값 시드 폴백 (suggestedStartTime이 없을 때만 사용)
+  suggestedStartTime?: string | null       // AI가 추출한 실제 일정 시작 시각 (있으면 createdAt 대신 기본값으로 사용)
+  suggestedDurationMinutes?: number | null // AI가 추출한 예상 소요 시간(분)
+  calendarEventStartTime?: string | null   // registered일 때 실제 등록된 이벤트 시작 시각
+  calendarEventEndTime?: string | null     // registered일 때 실제 등록된 이벤트 종료 시각
   // sm: 알림 카드 등 좁은 공간용 pill 배지(기본값) / lg: 채팅방 후속 액션 바처럼 다른 버튼과 나란히 놓이는 컨텍스트용
   size?: 'sm' | 'lg'
 }
@@ -26,6 +31,10 @@ export default function CalendarEventAction({
   calendarStatus,
   calendarEventUrl,
   createdAt,
+  suggestedStartTime,
+  suggestedDurationMinutes,
+  calendarEventStartTime,
+  calendarEventEndTime,
   size = 'sm',
 }: CalendarEventActionProps) {
   const router = useRouter()
@@ -39,12 +48,16 @@ export default function CalendarEventAction({
   if (!isScheduleRelated || calendarStatus === 'none') return null
 
   if (calendarStatus === 'registered') {
+    const eventTimeLabel = calendarEventStartTime
+      ? `등록된 일정: ${formatDate(calendarEventStartTime)} ${formatTime(calendarEventStartTime)}${calendarEventEndTime ? ` ~ ${formatTime(calendarEventEndTime)}` : ''}`
+      : undefined
     return (
       <a
         href={calendarEventUrl ?? undefined}
         target="_blank"
         rel="noreferrer"
         onClick={(e) => e.stopPropagation()}
+        title={eventTimeLabel}
         className={
           size === 'lg'
             ? 'flex h-10 items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-brand-100)] bg-[var(--color-brand-20)] px-4 font-medium text-[var(--color-brand-500)] transition-opacity hover:opacity-80'
@@ -109,7 +122,8 @@ export default function CalendarEventAction({
       </button>
       {showTimeModal && (
         <CalendarEventTimeModal
-          defaultStartTime={createdAt}
+          defaultStartTime={suggestedStartTime ?? createdAt}
+          defaultDurationMinutes={suggestedDurationMinutes}
           submitting={submitting}
           error={error}
           showSettingsLink={notConnected}
