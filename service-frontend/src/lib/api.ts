@@ -35,6 +35,10 @@ interface BackendNotification {
   calendar_status: string
   calendar_event_id: string | null
   calendar_event_url: string | null
+  suggested_start_time: string | null
+  suggested_duration_minutes: number | null
+  calendar_event_start_time: string | null
+  calendar_event_end_time: string | null
   created_at: string
 }
 
@@ -80,6 +84,10 @@ function toNotification(raw: BackendNotification): Notification {
     calendarStatus: normalizeCalendarStatus(raw.calendar_status),
     calendarEventId: raw.calendar_event_id,
     calendarEventUrl: raw.calendar_event_url,
+    suggestedStartTime: raw.suggested_start_time,
+    suggestedDurationMinutes: raw.suggested_duration_minutes,
+    calendarEventStartTime: raw.calendar_event_start_time,
+    calendarEventEndTime: raw.calendar_event_end_time,
     createdAt: raw.created_at,
   }
 }

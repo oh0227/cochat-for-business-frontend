@@ -33,6 +33,10 @@ export interface Notification {
   calendarStatus: CalendarStatus
   calendarEventId: string | null    // 구글 캘린더 이벤트 ID (registered일 때만 값 있음)
   calendarEventUrl: string | null   // 구글 캘린더에서 보기 링크 (registered일 때만 값 있음)
+  suggestedStartTime: string | null       // AI가 메시지 본문에서 추출한 실제 일정 시작 시각 (없으면 메시지 도착 시각으로 폴백)
+  suggestedDurationMinutes: number | null // AI가 추출한 예상 소요 시간(분)
+  calendarEventStartTime: string | null   // registered일 때 실제로 등록된 캘린더 이벤트 시작 시각
+  calendarEventEndTime: string | null     // registered일 때 실제로 등록된 캘린더 이벤트 종료 시각
   createdAt: string         // ISO 8601
 }
 
