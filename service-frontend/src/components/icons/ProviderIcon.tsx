@@ -1,8 +1,19 @@
 import type { IconType } from 'react-icons'
 import { FaSlack } from 'react-icons/fa6'
-import { SiDiscord, SiJira, SiGooglecalendar, SiGmail } from 'react-icons/si'
+import { SiDiscord, SiJira, SiGooglecalendar, SiGmail, SiKakaotalk, SiLine, SiTelegram, SiNaver, SiApple } from 'react-icons/si'
 
-export type ProviderKey = 'slack' | 'discord' | 'jira' | 'google_calendar' | 'gmail'
+export type ProviderKey =
+  | 'slack'
+  | 'discord'
+  | 'jira'
+  | 'google_calendar'
+  | 'gmail'
+  // 추후지원 예정(아직 실제 연동은 안 되고 셋업 온보딩에 노출만 됨)
+  | 'kakaowork'
+  | 'naverworks'
+  | 'telegram'
+  | 'naver_calendar'
+  | 'apple_calendar'
 
 interface ProviderMeta {
   name: string
@@ -19,6 +30,11 @@ export const PROVIDER_ICON_META: Record<ProviderKey, ProviderMeta> = {
   jira: { name: 'Jira', Icon: SiJira, color: '#0052CC', bg: 'rgba(0,82,204,0.1)' },
   google_calendar: { name: 'Google Calendar', Icon: SiGooglecalendar, color: '#4285F4', bg: 'rgba(66,133,244,0.1)' },
   gmail: { name: 'Gmail', Icon: SiGmail, color: '#EA4335', bg: 'rgba(234,67,53,0.1)' },
+  kakaowork: { name: '카카오워크', Icon: SiKakaotalk, color: '#3C1E1E', bg: 'rgba(254,229,0,0.35)' },
+  naverworks: { name: '네이버웍스', Icon: SiLine, color: '#06C755', bg: 'rgba(6,199,85,0.1)' },
+  telegram: { name: 'Telegram', Icon: SiTelegram, color: '#26A5E4', bg: 'rgba(38,165,228,0.1)' },
+  naver_calendar: { name: '네이버 캘린더', Icon: SiNaver, color: '#03C75A', bg: 'rgba(3,199,90,0.1)' },
+  apple_calendar: { name: 'Apple Calendar', Icon: SiApple, color: '#86868B', bg: 'rgba(134,134,139,0.16)' },
 }
 
 interface ProviderIconProps {

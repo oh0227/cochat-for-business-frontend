@@ -70,7 +70,7 @@ export default function CalendarStep({ connectionCounts, loading, error, canFini
         ))}
       </div>
 
-      <div className="w-full max-w-[340px]">
+      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
         <IntegrationCard
           name="Google Calendar"
           description="일정 관련 알림을 캘린더에 등록할 수 있어요."
@@ -81,6 +81,30 @@ export default function CalendarStep({ connectionCounts, loading, error, canFini
           connectionCount={connectionCount}
           isLoading={loading === 'google_calendar'}
           onConnect={() => onConnect('google_calendar')}
+        />
+        <IntegrationCard
+          name={PROVIDER_ICON_META.naver_calendar.name}
+          description="추후 지원 예정입니다."
+          iconBg={PROVIDER_ICON_META.naver_calendar.bg}
+          Icon={PROVIDER_ICON_META.naver_calendar.Icon}
+          iconColor={PROVIDER_ICON_META.naver_calendar.color}
+          isConnected={false}
+          connectionCount={0}
+          isLoading={false}
+          comingSoon
+          onConnect={() => {}}
+        />
+        <IntegrationCard
+          name={PROVIDER_ICON_META.apple_calendar.name}
+          description="추후 지원 예정입니다."
+          iconBg={PROVIDER_ICON_META.apple_calendar.bg}
+          Icon={PROVIDER_ICON_META.apple_calendar.Icon}
+          iconColor={PROVIDER_ICON_META.apple_calendar.color}
+          isConnected={false}
+          connectionCount={0}
+          isLoading={false}
+          comingSoon
+          onConnect={() => {}}
         />
       </div>
 

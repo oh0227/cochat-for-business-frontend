@@ -21,7 +21,7 @@ const WHY_MESSENGER = [
 ]
 
 const MESSENGER_PROVIDERS: {
-  id: Provider
+  id: Provider | 'kakaowork' | 'naverworks' | 'telegram'
   name: string
   description: string
   iconBg: string
@@ -52,6 +52,33 @@ const MESSENGER_PROVIDERS: {
     iconBg: PROVIDER_ICON_META.jira.bg,
     Icon: PROVIDER_ICON_META.jira.Icon,
     iconColor: PROVIDER_ICON_META.jira.color,
+    comingSoon: true,
+  },
+  {
+    id: 'kakaowork',
+    name: PROVIDER_ICON_META.kakaowork.name,
+    description: '추후 지원 예정입니다.',
+    iconBg: PROVIDER_ICON_META.kakaowork.bg,
+    Icon: PROVIDER_ICON_META.kakaowork.Icon,
+    iconColor: PROVIDER_ICON_META.kakaowork.color,
+    comingSoon: true,
+  },
+  {
+    id: 'naverworks',
+    name: PROVIDER_ICON_META.naverworks.name,
+    description: '추후 지원 예정입니다.',
+    iconBg: PROVIDER_ICON_META.naverworks.bg,
+    Icon: PROVIDER_ICON_META.naverworks.Icon,
+    iconColor: PROVIDER_ICON_META.naverworks.color,
+    comingSoon: true,
+  },
+  {
+    id: 'telegram',
+    name: PROVIDER_ICON_META.telegram.name,
+    description: '추후 지원 예정입니다.',
+    iconBg: PROVIDER_ICON_META.telegram.bg,
+    Icon: PROVIDER_ICON_META.telegram.Icon,
+    iconColor: PROVIDER_ICON_META.telegram.color,
     comingSoon: true,
   },
 ]
@@ -105,7 +132,7 @@ export default function MessengerStep({ connectionCounts, loading, error, onConn
 
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
         {MESSENGER_PROVIDERS.map(({ id, name, description, iconBg, Icon, iconColor, comingSoon }) => {
-          const connectionCount = connectionCounts[id] ?? 0
+          const connectionCount = connectionCounts[id as Provider] ?? 0
           return (
             <IntegrationCard
               key={id}
@@ -118,7 +145,7 @@ export default function MessengerStep({ connectionCounts, loading, error, onConn
               connectionCount={connectionCount}
               isLoading={loading === id}
               comingSoon={comingSoon}
-              onConnect={() => onConnect(id)}
+              onConnect={() => onConnect(id as Provider)}
             />
           )
         })}
