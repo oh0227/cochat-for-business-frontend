@@ -62,12 +62,25 @@ const PROVIDER_CONFIG: Record<
   },
 }
 
-const MESSENGER_PROVIDERS: Provider[] = ['slack', 'discord', 'jira']
-const CALENDAR_PROVIDERS: Provider[] = ['google_calendar']
+interface ProviderEntry {
+  key: ProviderKey
+  comingSoon: boolean
+}
 
-// 아직 실제 연동은 안 되고 "추후지원 예정"으로만 노출되는 항목
-const COMING_SOON_MESSENGERS: ProviderKey[] = ['kakaowork', 'naverworks', 'telegram']
-const COMING_SOON_CALENDARS: ProviderKey[] = ['naver_calendar', 'apple_calendar']
+// jira는 아직 실제 연동이 안 되고 "추후지원 예정"으로만 노출됨 (온보딩과 동일)
+const MESSENGER_ENTRIES: ProviderEntry[] = [
+  { key: 'slack', comingSoon: false },
+  { key: 'discord', comingSoon: false },
+  { key: 'jira', comingSoon: true },
+  { key: 'kakaowork', comingSoon: true },
+  { key: 'naverworks', comingSoon: true },
+  { key: 'telegram', comingSoon: true },
+]
+const CALENDAR_ENTRIES: ProviderEntry[] = [
+  { key: 'google_calendar', comingSoon: false },
+  { key: 'naver_calendar', comingSoon: true },
+  { key: 'apple_calendar', comingSoon: true },
+]
 
 async function fetchIntegrations(): Promise<Integration[]> {
   try {
@@ -146,7 +159,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-6">
       {/* 헤더 */}
       <div className="flex flex-col gap-1">
         <h1
@@ -164,7 +177,7 @@ export default function SettingsPage() {
       </div>
 
       {/* 화면 설정 */}
-      <div className="flex flex-col gap-4 rounded-[14px] border border-[var(--color-gray-80)] p-[21px]">
+      <div className="flex flex-col gap-3 rounded-[14px] border border-[var(--color-gray-80)] p-4">
         <span
           className="font-semibold text-[var(--color-gray-950)]"
           style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
@@ -175,7 +188,7 @@ export default function SettingsPage() {
       </div>
 
       {/* 알림 설정 */}
-      <div className="flex flex-col gap-4 rounded-[14px] border border-[var(--color-gray-80)] p-[21px]">
+      <div className="flex flex-col gap-3 rounded-[14px] border border-[var(--color-gray-80)] p-4">
         <div className="flex flex-col gap-1">
           <span
             className="font-semibold text-[var(--color-gray-950)]"
@@ -194,51 +207,51 @@ export default function SettingsPage() {
       </div>
 
       {/* 연동 섹션: 메신저 */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         <h2
           className="font-semibold text-[var(--color-gray-900)]"
           style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
         >
           메신저
         </h2>
-        {MESSENGER_PROVIDERS.map((provider) => (
-          <ConnectedProviderSection
-            key={provider}
-            provider={provider}
-            accounts={getProviderAccounts(provider)}
-            loading={loading}
-            isAdding={addingProvider === provider}
-            onAdd={() => handleAdd(provider)}
-            onDelete={setDeleteTarget}
-          />
-        ))}
-        {COMING_SOON_MESSENGERS.map((id) => (
-          <ComingSoonSection key={id} id={id} />
-        ))}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {MESSENGER_ENTRIES.map(({ key, comingSoon }) => (
+            <ProviderSection
+              key={key}
+              id={key}
+              comingSoon={comingSoon}
+              accounts={comingSoon ? [] : getProviderAccounts(key as Provider)}
+              loading={loading}
+              isAdding={!comingSoon && addingProvider === key}
+              onAdd={comingSoon ? () => {} : () => handleAdd(key as Provider)}
+              onDelete={setDeleteTarget}
+            />
+          ))}
+        </div>
       </div>
 
       {/* 연동 섹션: 캘린더 */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         <h2
           className="font-semibold text-[var(--color-gray-900)]"
           style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
         >
           캘린더
         </h2>
-        {CALENDAR_PROVIDERS.map((provider) => (
-          <ConnectedProviderSection
-            key={provider}
-            provider={provider}
-            accounts={getProviderAccounts(provider)}
-            loading={loading}
-            isAdding={addingProvider === provider}
-            onAdd={() => handleAdd(provider)}
-            onDelete={setDeleteTarget}
-          />
-        ))}
-        {COMING_SOON_CALENDARS.map((id) => (
-          <ComingSoonSection key={id} id={id} />
-        ))}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {CALENDAR_ENTRIES.map(({ key, comingSoon }) => (
+            <ProviderSection
+              key={key}
+              id={key}
+              comingSoon={comingSoon}
+              accounts={comingSoon ? [] : getProviderAccounts(key as Provider)}
+              loading={loading}
+              isAdding={!comingSoon && addingProvider === key}
+              onAdd={comingSoon ? () => {} : () => handleAdd(key as Provider)}
+              onDelete={setDeleteTarget}
+            />
+          ))}
+        </div>
       </div>
 
       {/* 삭제 확인 다이얼로그 */}
@@ -301,10 +314,11 @@ export default function SettingsPage() {
   )
 }
 
-/* ─── 연동된 provider 섹션 (워크스페이스/서버 등 하위 연동 목록 포함) ──────── */
+/* ─── provider 카드 (연동 가능 / 추후지원 예정 공통) ───────────────────────── */
 
-interface ConnectedProviderSectionProps {
-  provider: Provider
+interface ProviderSectionProps {
+  id: ProviderKey
+  comingSoon: boolean
   accounts: Integration[]
   loading: boolean
   isAdding: boolean
@@ -312,99 +326,71 @@ interface ConnectedProviderSectionProps {
   onDelete: (account: Integration) => void
 }
 
-function ConnectedProviderSection({ provider, accounts, loading, isAdding, onAdd, onDelete }: ConnectedProviderSectionProps) {
-  const { name, iconBg, iconColor, Icon } = PROVIDER_CONFIG[provider]
+function ProviderSection({ id, comingSoon, accounts, loading, isAdding, onAdd, onDelete }: ProviderSectionProps) {
+  const { name, bg, color, Icon } = PROVIDER_ICON_META[id]
 
   return (
-    <div className="flex flex-col gap-6 rounded-[14px] border border-[var(--color-gray-80)] p-[21px]">
+    <div
+      className="flex flex-col gap-3 rounded-[14px] border border-[var(--color-gray-80)] p-4"
+      style={{ opacity: comingSoon ? 0.6 : 1 }}
+    >
       {/* 섹션 헤더 */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex min-w-0 items-center gap-4">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-3">
           <span
             className="flex shrink-0 items-center justify-center rounded-[10px]"
-            style={{ width: 36, height: 36, background: iconBg }}
+            style={{ width: 30, height: 30, background: bg }}
           >
-            <Icon size={20} color={iconColor} />
+            <Icon size={16} color={color} />
           </span>
           <span
             className="truncate font-semibold text-[var(--color-gray-950)]"
-            style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+            style={{ fontSize: 'var(--font-size-xs)', lineHeight: 'var(--line-height-2xs)' }}
           >
             {name} 연동
           </span>
         </div>
 
-        <button
-          type="button"
-          onClick={onAdd}
-          disabled={isAdding}
-          className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-[12px] px-3 font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-60"
-          style={{ fontSize: 'var(--font-size-3xs)', background: 'var(--color-gray-inverse)' }}
-        >
-          <Plus size={18} />
-          연동 추가하기
-        </button>
+        {/* title은 disabled 버튼 자체보다 감싸는 span에 둬야 일부 브라우저에서도 호버 툴팁이 항상 뜬다 */}
+        <span title={comingSoon ? '추후 지원 예정입니다.' : undefined}>
+          <button
+            type="button"
+            onClick={onAdd}
+            disabled={comingSoon || isAdding}
+            aria-label="연동 추가하기"
+            className="flex size-8 shrink-0 items-center justify-center rounded-[10px] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:hover:opacity-100"
+            style={{ background: comingSoon ? 'var(--color-gray-50)' : 'var(--color-gray-inverse)' }}
+          >
+            <Plus size={16} className={comingSoon ? 'text-[var(--color-gray-400)]' : 'text-white'} />
+          </button>
+        </span>
       </div>
 
       {/* 연동 목록 (워크스페이스/서버/사이트 등, provider마다 부르는 이름은 달라도 개념은 동일) */}
-      {!loading && accounts.length > 0 && (
-        <div className="flex flex-col gap-3">
+      {!comingSoon && !loading && accounts.length > 0 && (
+        <div className="flex flex-col gap-2">
           {accounts.map((account) => (
             <div
               key={account.id}
-              className="flex h-[72px] items-center justify-between gap-3 rounded-[10px] border border-[var(--color-gray-80)] px-[17px]"
+              className="flex h-[46px] items-center justify-between gap-3 rounded-[10px] border border-[var(--color-gray-80)] px-3"
             >
               <span
                 className="min-w-0 truncate font-semibold text-[var(--color-gray-950)]"
-                style={{ fontSize: 'var(--font-size-xs)', lineHeight: 'var(--line-height-2xs)' }}
+                style={{ fontSize: 'var(--font-size-4xs)', lineHeight: 'var(--line-height-4xs)' }}
               >
                 {account.identifier}
               </span>
               <button
                 type="button"
                 onClick={() => onDelete(account)}
-                className="flex size-8 items-center justify-center rounded-[10px] transition-colors hover:bg-[rgba(239,68,68,0.08)]"
+                className="flex size-7 items-center justify-center rounded-[8px] transition-colors hover:bg-[rgba(239,68,68,0.08)]"
               >
-                <Trash2 size={18} className="text-[var(--color-urgent-500)]" />
+                <Trash2 size={15} className="text-[var(--color-urgent-500)]" />
               </button>
             </div>
           ))}
         </div>
       )}
-    </div>
-  )
-}
-
-/* ─── 추후지원 예정 provider 섹션 ──────────────────────────────────────── */
-
-function ComingSoonSection({ id }: { id: ProviderKey }) {
-  const { name, bg, color, Icon } = PROVIDER_ICON_META[id]
-
-  return (
-    <div
-      className="flex flex-col gap-3 rounded-[14px] border border-[var(--color-gray-80)] p-[21px] sm:flex-row sm:items-center sm:justify-between"
-      style={{ opacity: 0.6 }}
-    >
-      <div className="flex min-w-0 items-center gap-4">
-        <span
-          className="flex shrink-0 items-center justify-center rounded-[10px]"
-          style={{ width: 36, height: 36, background: bg }}
-        >
-          <Icon size={20} color={color} />
-        </span>
-        <span
-          className="truncate font-semibold text-[var(--color-gray-950)]"
-          style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
-        >
-          {name}
-        </span>
-      </div>
-      <span
-        className="flex h-9 shrink-0 items-center justify-center rounded-[12px] px-3 font-medium"
-        style={{ fontSize: 'var(--font-size-3xs)', background: 'var(--color-gray-50)', color: 'var(--color-gray-500)' }}
-      >
-        추후지원 예정
-      </span>
     </div>
   )
 }
