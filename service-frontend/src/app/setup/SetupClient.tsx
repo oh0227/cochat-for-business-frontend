@@ -107,7 +107,7 @@ export default function SetupClient({ initialProvider, initialConnected, initial
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--color-gray-default)]">
-      <div className="flex flex-1 flex-col items-center gap-10 px-[var(--spacing-md)] pt-12 sm:px-[var(--spacing-xl)] sm:pt-20">
+      <div className="flex flex-1 flex-col items-center gap-6 px-[var(--spacing-md)] py-6 sm:gap-8 sm:px-[var(--spacing-xl)] sm:py-10">
         <StepIndicator currentStep={step} />
 
         {step === 0 && <IntroStep onNext={() => goToStep(1)} />}

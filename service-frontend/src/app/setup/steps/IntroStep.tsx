@@ -27,8 +27,8 @@ interface IntroStepProps {
 
 export default function IntroStep({ onNext }: IntroStepProps) {
   return (
-    <div className="flex w-full max-w-[640px] flex-col items-center gap-10 sm:gap-14">
-      <div className="flex w-full flex-col items-center gap-6 sm:gap-10">
+    <div className="flex w-full max-w-[640px] flex-col items-center gap-5 sm:gap-8">
+      <div className="flex w-full flex-col items-center gap-4 sm:gap-6">
         <Image src="/icon.png" alt="CoChat" width={72} height={72} />
 
         <div className="flex flex-col items-center gap-1 text-center">
@@ -53,7 +53,7 @@ export default function IntroStep({ onNext }: IntroStepProps) {
         {HIGHLIGHTS.map(({ Icon, title, description }) => (
           <div
             key={title}
-            className="flex flex-col items-start gap-3 rounded-[16px] border border-[var(--color-gray-80)] p-5"
+            className="flex flex-col items-start gap-2 rounded-[14px] border border-[var(--color-gray-80)] p-4"
           >
             <span
               className="flex size-10 items-center justify-center rounded-[10px]"

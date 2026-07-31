@@ -34,7 +34,7 @@ export default function CalendarStep({ connectionCounts, loading, error, canFini
   const connectionCount = connectionCounts.google_calendar ?? 0
 
   return (
-    <div className="flex w-full max-w-[1000px] flex-col items-center gap-8 sm:gap-10">
+    <div className="flex w-full max-w-[1000px] flex-col items-center gap-4 sm:gap-5">
       <div className="flex flex-col items-center gap-1 text-center">
         <h2
           className="font-bold text-[var(--color-gray-950)]"
@@ -51,14 +51,14 @@ export default function CalendarStep({ connectionCounts, loading, error, canFini
       </div>
 
       {/* 왜 필요한지 / 어떤 기능을 쓸 수 있는지 간략 설명 */}
-      <div className="flex w-full max-w-[560px] flex-col gap-3 rounded-[16px] border border-[var(--color-gray-80)] p-5">
+      <div className="flex w-full max-w-[560px] flex-col gap-2 rounded-[14px] border border-[var(--color-gray-80)] p-4">
         {WHY_CALENDAR.map(({ Icon, text }) => (
           <div key={text} className="flex items-center gap-3">
             <span
-              className="flex size-8 shrink-0 items-center justify-center rounded-[10px]"
+              className="flex size-7 shrink-0 items-center justify-center rounded-[10px]"
               style={{ background: 'var(--color-brand-20)' }}
             >
-              <Icon size={16} className="text-[var(--color-brand-500)]" />
+              <Icon size={14} className="text-[var(--color-brand-500)]" />
             </span>
             <p
               className="text-[var(--color-gray-700)]"
@@ -70,7 +70,7 @@ export default function CalendarStep({ connectionCounts, loading, error, canFini
         ))}
       </div>
 
-      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
         <IntegrationCard
           name="Google Calendar"
           description="일정 관련 알림을 캘린더에 등록할 수 있어요."
