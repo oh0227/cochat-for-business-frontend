@@ -5,7 +5,7 @@ import { Plus, Trash2, TriangleAlert } from 'lucide-react'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import NotificationPermissionButton from '@/components/ui/NotificationPermissionButton'
 import { TEMP_USER_ID } from '@/lib/api'
-import { PROVIDER_ICON_META } from '@/components/icons/ProviderIcon'
+import { PROVIDER_ICON_META, type ProviderKey } from '@/components/icons/ProviderIcon'
 
 type Provider = 'slack' | 'discord' | 'jira' | 'google_calendar'
 
@@ -62,7 +62,12 @@ const PROVIDER_CONFIG: Record<
   },
 }
 
-const PROVIDERS: Provider[] = ['slack', 'discord', 'jira', 'google_calendar']
+const MESSENGER_PROVIDERS: Provider[] = ['slack', 'discord', 'jira']
+const CALENDAR_PROVIDERS: Provider[] = ['google_calendar']
+
+// 아직 실제 연동은 안 되고 "추후지원 예정"으로만 노출되는 항목
+const COMING_SOON_MESSENGERS: ProviderKey[] = ['kakaowork', 'naverworks', 'telegram']
+const COMING_SOON_CALENDARS: ProviderKey[] = ['naver_calendar', 'apple_calendar']
 
 async function fetchIntegrations(): Promise<Integration[]> {
   try {
@@ -188,75 +193,52 @@ export default function SettingsPage() {
         <NotificationPermissionButton />
       </div>
 
-      {/* 연동 섹션 목록 */}
+      {/* 연동 섹션: 메신저 */}
       <div className="flex flex-col gap-4">
-        {PROVIDERS.map((provider) => {
-          const { name, iconBg, iconColor, Icon } = PROVIDER_CONFIG[provider]
-          const accounts = getProviderAccounts(provider)
-          const isAdding = addingProvider === provider
+        <h2
+          className="font-semibold text-[var(--color-gray-900)]"
+          style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+        >
+          메신저
+        </h2>
+        {MESSENGER_PROVIDERS.map((provider) => (
+          <ConnectedProviderSection
+            key={provider}
+            provider={provider}
+            accounts={getProviderAccounts(provider)}
+            loading={loading}
+            isAdding={addingProvider === provider}
+            onAdd={() => handleAdd(provider)}
+            onDelete={setDeleteTarget}
+          />
+        ))}
+        {COMING_SOON_MESSENGERS.map((id) => (
+          <ComingSoonSection key={id} id={id} />
+        ))}
+      </div>
 
-          return (
-            <div
-              key={provider}
-              className="flex flex-col gap-6 rounded-[14px] border border-[var(--color-gray-80)] p-[21px]"
-            >
-              {/* 섹션 헤더 */}
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex min-w-0 items-center gap-4">
-                  <span
-                    className="flex shrink-0 items-center justify-center rounded-[10px]"
-                    style={{ width: 36, height: 36, background: iconBg }}
-                  >
-                    <Icon size={20} color={iconColor} />
-                  </span>
-                  <span
-                    className="truncate font-semibold text-[var(--color-gray-950)]"
-                    style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
-                  >
-                    {name} 연결된 계정
-                  </span>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleAdd(provider)}
-                  disabled={isAdding}
-                  className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-[12px] px-3 font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-60"
-                  style={{ fontSize: 'var(--font-size-3xs)', background: 'var(--color-gray-inverse)' }}
-                >
-                  <Plus size={18} />
-                  계정 추가하기
-                </button>
-              </div>
-
-              {/* 계정 목록 */}
-              {!loading && accounts.length > 0 && (
-                <div className="flex flex-col gap-3">
-                  {accounts.map((account) => (
-                    <div
-                      key={account.id}
-                      className="flex h-[72px] items-center justify-between gap-3 rounded-[10px] border border-[var(--color-gray-80)] px-[17px]"
-                    >
-                      <span
-                        className="min-w-0 truncate font-semibold text-[var(--color-gray-950)]"
-                        style={{ fontSize: 'var(--font-size-xs)', lineHeight: 'var(--line-height-2xs)' }}
-                      >
-                        {account.identifier}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setDeleteTarget(account)}
-                        className="flex size-8 items-center justify-center rounded-[10px] transition-colors hover:bg-[rgba(239,68,68,0.08)]"
-                      >
-                        <Trash2 size={18} className="text-[var(--color-urgent-500)]" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )
-        })}
+      {/* 연동 섹션: 캘린더 */}
+      <div className="flex flex-col gap-4">
+        <h2
+          className="font-semibold text-[var(--color-gray-900)]"
+          style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+        >
+          캘린더
+        </h2>
+        {CALENDAR_PROVIDERS.map((provider) => (
+          <ConnectedProviderSection
+            key={provider}
+            provider={provider}
+            accounts={getProviderAccounts(provider)}
+            loading={loading}
+            isAdding={addingProvider === provider}
+            onAdd={() => handleAdd(provider)}
+            onDelete={setDeleteTarget}
+          />
+        ))}
+        {COMING_SOON_CALENDARS.map((id) => (
+          <ComingSoonSection key={id} id={id} />
+        ))}
       </div>
 
       {/* 삭제 확인 다이얼로그 */}
@@ -315,6 +297,114 @@ export default function SettingsPage() {
           </div>
         </>
       )}
+    </div>
+  )
+}
+
+/* ─── 연동된 provider 섹션 (워크스페이스/서버 등 하위 연동 목록 포함) ──────── */
+
+interface ConnectedProviderSectionProps {
+  provider: Provider
+  accounts: Integration[]
+  loading: boolean
+  isAdding: boolean
+  onAdd: () => void
+  onDelete: (account: Integration) => void
+}
+
+function ConnectedProviderSection({ provider, accounts, loading, isAdding, onAdd, onDelete }: ConnectedProviderSectionProps) {
+  const { name, iconBg, iconColor, Icon } = PROVIDER_CONFIG[provider]
+
+  return (
+    <div className="flex flex-col gap-6 rounded-[14px] border border-[var(--color-gray-80)] p-[21px]">
+      {/* 섹션 헤더 */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-4">
+          <span
+            className="flex shrink-0 items-center justify-center rounded-[10px]"
+            style={{ width: 36, height: 36, background: iconBg }}
+          >
+            <Icon size={20} color={iconColor} />
+          </span>
+          <span
+            className="truncate font-semibold text-[var(--color-gray-950)]"
+            style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+          >
+            {name} 연동
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onClick={onAdd}
+          disabled={isAdding}
+          className="flex h-9 shrink-0 items-center justify-center gap-2 rounded-[12px] px-3 font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-60"
+          style={{ fontSize: 'var(--font-size-3xs)', background: 'var(--color-gray-inverse)' }}
+        >
+          <Plus size={18} />
+          연동 추가하기
+        </button>
+      </div>
+
+      {/* 연동 목록 (워크스페이스/서버/사이트 등, provider마다 부르는 이름은 달라도 개념은 동일) */}
+      {!loading && accounts.length > 0 && (
+        <div className="flex flex-col gap-3">
+          {accounts.map((account) => (
+            <div
+              key={account.id}
+              className="flex h-[72px] items-center justify-between gap-3 rounded-[10px] border border-[var(--color-gray-80)] px-[17px]"
+            >
+              <span
+                className="min-w-0 truncate font-semibold text-[var(--color-gray-950)]"
+                style={{ fontSize: 'var(--font-size-xs)', lineHeight: 'var(--line-height-2xs)' }}
+              >
+                {account.identifier}
+              </span>
+              <button
+                type="button"
+                onClick={() => onDelete(account)}
+                className="flex size-8 items-center justify-center rounded-[10px] transition-colors hover:bg-[rgba(239,68,68,0.08)]"
+              >
+                <Trash2 size={18} className="text-[var(--color-urgent-500)]" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─── 추후지원 예정 provider 섹션 ──────────────────────────────────────── */
+
+function ComingSoonSection({ id }: { id: ProviderKey }) {
+  const { name, bg, color, Icon } = PROVIDER_ICON_META[id]
+
+  return (
+    <div
+      className="flex flex-col gap-3 rounded-[14px] border border-[var(--color-gray-80)] p-[21px] sm:flex-row sm:items-center sm:justify-between"
+      style={{ opacity: 0.6 }}
+    >
+      <div className="flex min-w-0 items-center gap-4">
+        <span
+          className="flex shrink-0 items-center justify-center rounded-[10px]"
+          style={{ width: 36, height: 36, background: bg }}
+        >
+          <Icon size={20} color={color} />
+        </span>
+        <span
+          className="truncate font-semibold text-[var(--color-gray-950)]"
+          style={{ fontSize: 'var(--font-size-sm)', lineHeight: 'var(--line-height-xs)' }}
+        >
+          {name}
+        </span>
+      </div>
+      <span
+        className="flex h-9 shrink-0 items-center justify-center rounded-[12px] px-3 font-medium"
+        style={{ fontSize: 'var(--font-size-3xs)', background: 'var(--color-gray-50)', color: 'var(--color-gray-500)' }}
+      >
+        추후지원 예정
+      </span>
     </div>
   )
 }
