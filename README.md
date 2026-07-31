@@ -1,5 +1,5 @@
 <div align="center">
-<img width="80" height="80" alt="CoChat" src="service-frontend/public/logo.png" />
+<img width="320" height="320" alt="Cochat for Business Logo" src="https://github.com/user-attachments/assets/5a41974b-ba70-4a8f-b1c6-5027efd6a26a" />
 </div>
 
 <p align="center">
