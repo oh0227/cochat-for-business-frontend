@@ -1,7 +1,8 @@
 <div align="center">
-<img width="320" height="320" alt="Cochat for Business Logo" src="https://github.com/user-attachments/assets/5a41974b-ba70-4a8f-b1c6-5027efd6a26a" />
-
+  
 # CoChat
+<img width="1983" height="793" alt="cochat banner" src="https://github.com/user-attachments/assets/5327ca40-9953-4506-8812-c89679a1d2ae" />
+
 
 </div>
 
