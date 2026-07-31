@@ -1,8 +1,24 @@
 'use client'
 
+import { Inbox, Sparkles, ShieldCheck } from 'lucide-react'
 import IntegrationCard from '../IntegrationCard'
 import type { Provider, ConnectionCounts } from '../types'
 import { PROVIDER_ICON_META } from '@/components/icons/ProviderIcon'
+
+const WHY_MESSENGER = [
+  {
+    Icon: Inbox,
+    text: '여러 메신저의 메시지를 CoChat 한곳에서 모아 볼 수 있어요.',
+  },
+  {
+    Icon: Sparkles,
+    text: 'AI가 메시지 중요도를 긴급/중요/보통/낮음으로 자동 분류해요.',
+  },
+  {
+    Icon: ShieldCheck,
+    text: '집중모드에서는 긴급 알림만 실시간으로 받아볼 수 있어요.',
+  },
+]
 
 const MESSENGER_PROVIDERS: {
   id: Provider
@@ -65,6 +81,26 @@ export default function MessengerStep({ connectionCounts, loading, error, onConn
         >
           업무에서 사용하는 메신저를 연동하면 모든 알림을 CoChat 한곳에서 확인할 수 있어요.
         </p>
+      </div>
+
+      {/* 왜 필요한지 / 어떤 기능을 쓸 수 있는지 간략 설명 */}
+      <div className="flex w-full max-w-[560px] flex-col gap-3 rounded-[16px] border border-[var(--color-gray-80)] p-5">
+        {WHY_MESSENGER.map(({ Icon, text }) => (
+          <div key={text} className="flex items-center gap-3">
+            <span
+              className="flex size-8 shrink-0 items-center justify-center rounded-[10px]"
+              style={{ background: 'var(--color-brand-20)' }}
+            >
+              <Icon size={16} className="text-[var(--color-brand-500)]" />
+            </span>
+            <p
+              className="text-[var(--color-gray-700)]"
+              style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+            >
+              {text}
+            </p>
+          </div>
+        ))}
       </div>
 
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
