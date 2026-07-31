@@ -15,6 +15,8 @@ interface StreamNotificationPayload {
   priority?: string
   calendar_status?: string
   occurred_at?: string
+  suggested_start_time?: string | null
+  suggested_duration_minutes?: number | null
 }
 
 function isStreamNotificationPayload(value: unknown): value is StreamNotificationPayload {
@@ -80,6 +82,8 @@ export default function NotificationStream() {
                 title: payload.title,
                 summary: payload.summary,
                 occurredAt: payload.occurred_at ?? new Date().toISOString(),
+                suggestedStartTime: payload.suggested_start_time,
+                suggestedDurationMinutes: payload.suggested_duration_minutes,
               })
             }
             try {

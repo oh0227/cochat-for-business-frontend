@@ -13,6 +13,8 @@ interface CalendarCandidateNotification {
   summary: string
   calendar_status: string
   occurred_at: string
+  suggested_start_time: string | null
+  suggested_duration_minutes: number | null
 }
 
 /**
@@ -40,7 +42,14 @@ export default function CalendarPromptModal() {
         if (cancelled || !data) return
         for (const n of data.notifications ?? []) {
           if (n.calendar_status === 'prompted') {
-            enqueue({ notificationId: String(n.id), title: n.title, summary: n.summary, occurredAt: n.occurred_at })
+            enqueue({
+              notificationId: String(n.id),
+              title: n.title,
+              summary: n.summary,
+              occurredAt: n.occurred_at,
+              suggestedStartTime: n.suggested_start_time,
+              suggestedDurationMinutes: n.suggested_duration_minutes,
+            })
           }
         }
       })
@@ -61,8 +70,8 @@ export default function CalendarPromptModal() {
   // 큐가 다음 항목으로 넘어가면 시간 입력을 그 항목의 값으로 초기화
   useEffect(() => {
     if (!current) return
-    setStartTime(toDatetimeLocalValue(current.occurredAt))
-    setDuration(30)
+    setStartTime(toDatetimeLocalValue(current.suggestedStartTime ?? current.occurredAt))
+    setDuration(current.suggestedDurationMinutes ?? 30)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current?.notificationId])
 
