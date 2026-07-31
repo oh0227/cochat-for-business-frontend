@@ -1,40 +1,23 @@
 import Link from 'next/link'
-import { MessageSquare, Hash, ChevronRight } from 'lucide-react'
+import { MessageSquare, ChevronRight } from 'lucide-react'
 import type { ChannelSummary, NotificationPriority, NotificationProvider } from '@/types'
 import { formatRelativeTime } from '@/utils'
+import { PROVIDER_ICON_META } from '@/components/icons/ProviderIcon'
 
 const PROVIDER_STYLE: Record<
   NotificationProvider,
   { iconBg: string; textColor: string; Icon: React.ComponentType<{ size?: number; color?: string }> }
 > = {
-  slack: {
-    iconBg: 'rgba(236,86,148,0.1)',
-    textColor: '#ec5694',
-    Icon: ({ size, color }) => <Hash size={size} color={color ?? '#ec5694'} />,
-  },
-  discord: {
-    iconBg: 'rgba(97,95,255,0.1)',
-    textColor: 'var(--color-brand-500)',
-    Icon: ({ size, color }) => <MessageSquare size={size} color={color ?? 'var(--color-brand-500)'} />,
-  },
-  jira: {
-    iconBg: 'rgba(0,82,204,0.1)',
-    textColor: '#0052cc',
-    Icon: ({ size, color }) => <Hash size={size} color={color ?? '#0052cc'} />,
-  },
-  gmail: {
-    iconBg: 'rgba(234,67,53,0.1)',
-    textColor: '#ea4335',
-    Icon: ({ size, color }) => <MessageSquare size={size} color={color ?? '#ea4335'} />,
-  },
+  slack: { iconBg: PROVIDER_ICON_META.slack.bg, textColor: PROVIDER_ICON_META.slack.color, Icon: PROVIDER_ICON_META.slack.Icon },
+  discord: { iconBg: PROVIDER_ICON_META.discord.bg, textColor: PROVIDER_ICON_META.discord.color, Icon: PROVIDER_ICON_META.discord.Icon },
+  jira: { iconBg: PROVIDER_ICON_META.jira.bg, textColor: PROVIDER_ICON_META.jira.color, Icon: PROVIDER_ICON_META.jira.Icon },
+  gmail: { iconBg: PROVIDER_ICON_META.gmail.bg, textColor: PROVIDER_ICON_META.gmail.color, Icon: PROVIDER_ICON_META.gmail.Icon },
 }
 
 const DEFAULT_STYLE = {
   iconBg: 'rgba(148,163,184,0.1)',
   textColor: 'var(--color-gray-400)',
-  Icon: ({ size, color }: { size?: number; color?: string }) => (
-    <MessageSquare size={size} color={color ?? 'var(--color-gray-400)'} />
-  ),
+  Icon: MessageSquare,
 }
 
 const PRIORITY_BADGE_STYLE: Record<

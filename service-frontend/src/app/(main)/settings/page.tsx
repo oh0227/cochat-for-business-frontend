@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Hash, MessageSquare, Calendar, Plus, Trash2, TriangleAlert } from 'lucide-react'
+import { Plus, Trash2, TriangleAlert } from 'lucide-react'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import NotificationPermissionButton from '@/components/ui/NotificationPermissionButton'
 import { TEMP_USER_ID } from '@/lib/api'
+import { PROVIDER_ICON_META } from '@/components/icons/ProviderIcon'
 
 type Provider = 'slack' | 'discord' | 'jira' | 'google_calendar'
 
@@ -36,28 +37,28 @@ const PROVIDER_CONFIG: Record<
   { name: string; iconBg: string; iconColor: string; Icon: React.ComponentType<{ size?: number; color?: string }> }
 > = {
   slack: {
-    name: 'Slack',
-    iconBg: 'rgba(236,86,148,0.1)',
-    iconColor: '#ec5694',
-    Icon: Hash,
+    name: PROVIDER_ICON_META.slack.name,
+    iconBg: PROVIDER_ICON_META.slack.bg,
+    iconColor: PROVIDER_ICON_META.slack.color,
+    Icon: PROVIDER_ICON_META.slack.Icon,
   },
   discord: {
-    name: 'Discord',
-    iconBg: 'rgba(97,95,255,0.1)',
-    iconColor: '#615fff',
-    Icon: MessageSquare,
+    name: PROVIDER_ICON_META.discord.name,
+    iconBg: PROVIDER_ICON_META.discord.bg,
+    iconColor: PROVIDER_ICON_META.discord.color,
+    Icon: PROVIDER_ICON_META.discord.Icon,
   },
   jira: {
-    name: 'Jira',
-    iconBg: 'rgba(44,79,251,0.1)',
-    iconColor: '#2c4ffb',
-    Icon: Hash,
+    name: PROVIDER_ICON_META.jira.name,
+    iconBg: PROVIDER_ICON_META.jira.bg,
+    iconColor: PROVIDER_ICON_META.jira.color,
+    Icon: PROVIDER_ICON_META.jira.Icon,
   },
   google_calendar: {
-    name: 'Google Calendar',
-    iconBg: 'rgba(66,133,244,0.1)',
-    iconColor: '#4285f4',
-    Icon: Calendar,
+    name: PROVIDER_ICON_META.google_calendar.name,
+    iconBg: PROVIDER_ICON_META.google_calendar.bg,
+    iconColor: PROVIDER_ICON_META.google_calendar.color,
+    Icon: PROVIDER_ICON_META.google_calendar.Icon,
   },
 }
 

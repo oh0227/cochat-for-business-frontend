@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Play, X, AlarmClock, Bell, Sparkles, Shield, MessageSquare, Loader2 } from 'lucide-react'
+import { Play, X, AlarmClock, Bell, Sparkles, Shield, Loader2 } from 'lucide-react'
 import type { Notification, NotificationProvider } from '@/types'
 import { formatRelativeTime } from '@/utils'
 import { useDeepWorkStore } from '@/store/deepWorkStore'
 import { endFocusSession } from '@/lib/focusSession'
 import CalendarEventAction from './CalendarEventAction'
+import { PROVIDER_ICON_META } from '@/components/icons/ProviderIcon'
 
 type Duration = 30 | 60 | 90
 
@@ -21,10 +22,10 @@ const PROVIDER_COLOR: Record<NotificationProvider, string> = {
 }
 
 const PROVIDER_NAME: Record<NotificationProvider, string> = {
-  slack: 'Slack',
-  discord: 'Discord',
-  jira: 'Jira',
-  gmail: 'Gmail',
+  slack: PROVIDER_ICON_META.slack.name,
+  discord: PROVIDER_ICON_META.discord.name,
+  jira: PROVIDER_ICON_META.jira.name,
+  gmail: PROVIDER_ICON_META.gmail.name,
 }
 
 function formatTime(totalSeconds: number): string {
@@ -342,6 +343,7 @@ export default function DeepWorkClient({
 
 function UrgentNotificationItem({ notification }: { notification: Notification }) {
   const { id, provider, channel, summary, actor, createdAt, isScheduleRelated, calendarStatus, calendarEventUrl } = notification
+  const ProviderLogo = provider ? PROVIDER_ICON_META[provider].Icon : null
   return (
     <div className="flex items-start gap-[var(--spacing-xs)] rounded-[var(--radius-xs)] bg-[var(--color-urgent-50)] px-[var(--spacing-sm)] py-[var(--spacing-xs)]">
       <span
@@ -350,7 +352,7 @@ function UrgentNotificationItem({ notification }: { notification: Notification }
           provider ? PROVIDER_COLOR[provider] : 'bg-[var(--color-gray-400)]',
         ].join(' ')}
       >
-        <MessageSquare size={16} />
+        {ProviderLogo ? <ProviderLogo size={16} color="white" /> : <Bell size={16} />}
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-4xs)]">
         <p

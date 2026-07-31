@@ -1,24 +1,17 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { ArrowLeft, Bell, Hash, MessageSquare, Sparkles, ExternalLink, X } from 'lucide-react'
+import { ArrowLeft, Bell, Sparkles, ExternalLink, X } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { ChannelSummary, ChatMessage, Notification } from '@/types'
 import ChatMessageRow from './ChatMessageRow'
 import AlertCard from './AlertCard'
 import CalendarEventAction from './CalendarEventAction'
+import { PROVIDER_ICON_META } from '@/components/icons/ProviderIcon'
 
 const PROVIDER_ICON: Record<string, { iconBg: string; textColor: string; Icon: React.ComponentType<{ size?: number; color?: string }> }> = {
-  slack: {
-    iconBg: 'rgba(236,86,148,0.1)',
-    textColor: '#ec5694',
-    Icon: ({ size, color }) => <Hash size={size} color={color ?? '#ec5694'} />,
-  },
-  discord: {
-    iconBg: 'rgba(97,95,255,0.1)',
-    textColor: 'var(--color-brand-500)',
-    Icon: ({ size, color }) => <MessageSquare size={size} color={color ?? 'var(--color-brand-500)'} />,
-  },
+  slack: { iconBg: PROVIDER_ICON_META.slack.bg, textColor: PROVIDER_ICON_META.slack.color, Icon: PROVIDER_ICON_META.slack.Icon },
+  discord: { iconBg: PROVIDER_ICON_META.discord.bg, textColor: PROVIDER_ICON_META.discord.color, Icon: PROVIDER_ICON_META.discord.Icon },
 }
 
 interface ChatRoomProps {

@@ -8,19 +8,20 @@ import type { Briefing, Notification, NotificationPriority, NotificationProvider
 import { formatRelativeTime } from '@/utils'
 import MarkdownContent from './MarkdownContent'
 import CalendarEventAction from './CalendarEventAction'
+import { PROVIDER_ICON_META } from '@/components/icons/ProviderIcon'
 
 const PROVIDER_HEX: Record<NotificationProvider, string> = {
-  slack: '#4a154b',
-  discord: '#5865f2',
-  jira: '#0052cc',
-  gmail: '#ea4335',
+  slack: PROVIDER_ICON_META.slack.color,
+  discord: PROVIDER_ICON_META.discord.color,
+  jira: PROVIDER_ICON_META.jira.color,
+  gmail: PROVIDER_ICON_META.gmail.color,
 }
 
 const PROVIDER_NAME: Record<NotificationProvider, string> = {
-  slack: 'Slack',
-  discord: 'Discord',
-  jira: 'Jira',
-  gmail: 'Gmail',
+  slack: PROVIDER_ICON_META.slack.name,
+  discord: PROVIDER_ICON_META.discord.name,
+  jira: PROVIDER_ICON_META.jira.name,
+  gmail: PROVIDER_ICON_META.gmail.name,
 }
 
 const PRIORITY_BADGE_STYLE: Record<NotificationPriority, { label: string; text: string; bg: string; border: string }> = {
@@ -192,7 +193,14 @@ export default function BriefingDetailView({ briefing, notifications }: Briefing
                     color: notification.provider ? PROVIDER_HEX[notification.provider] : 'var(--color-gray-400)',
                   }}
                 >
-                  <MessageSquare size={18} />
+                  {notification.provider ? (
+                    (() => {
+                      const ProviderLogo = PROVIDER_ICON_META[notification.provider].Icon
+                      return <ProviderLogo size={18} color={PROVIDER_HEX[notification.provider]} />
+                    })()
+                  ) : (
+                    <MessageSquare size={18} />
+                  )}
                 </span>
 
                 {/* 본문 */}

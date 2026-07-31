@@ -1,8 +1,8 @@
 'use client'
 
-import { Hash, MessageSquare, Clipboard } from 'lucide-react'
 import IntegrationCard from '../IntegrationCard'
 import type { Provider, ConnectionCounts } from '../types'
+import { PROVIDER_ICON_META } from '@/components/icons/ProviderIcon'
 
 const MESSENGER_PROVIDERS: {
   id: Provider
@@ -17,25 +17,25 @@ const MESSENGER_PROVIDERS: {
     id: 'slack',
     name: 'Slack',
     description: '연결할 계정을 입력해주세요.',
-    iconBg: 'rgba(236,86,148,0.1)',
-    Icon: Hash,
-    iconColor: '#ec5694',
+    iconBg: PROVIDER_ICON_META.slack.bg,
+    Icon: PROVIDER_ICON_META.slack.Icon,
+    iconColor: PROVIDER_ICON_META.slack.color,
   },
   {
     id: 'discord',
     name: 'Discord',
     description: '연결할 계정을 입력해주세요.',
-    iconBg: 'rgba(97,95,255,0.1)',
-    Icon: MessageSquare,
-    iconColor: '#615fff',
+    iconBg: PROVIDER_ICON_META.discord.bg,
+    Icon: PROVIDER_ICON_META.discord.Icon,
+    iconColor: PROVIDER_ICON_META.discord.color,
   },
   {
     id: 'jira',
     name: 'Jira',
     description: '추후 지원 예정입니다.',
-    iconBg: 'rgba(0,82,204,0.1)',
-    Icon: Clipboard,
-    iconColor: '#0052cc',
+    iconBg: PROVIDER_ICON_META.jira.bg,
+    Icon: PROVIDER_ICON_META.jira.Icon,
+    iconColor: PROVIDER_ICON_META.jira.color,
     comingSoon: true,
   },
 ]

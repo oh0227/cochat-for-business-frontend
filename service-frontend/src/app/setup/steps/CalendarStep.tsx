@@ -1,8 +1,9 @@
 'use client'
 
-import { Calendar, Sparkles, CalendarPlus, LayoutDashboard } from 'lucide-react'
+import { Sparkles, CalendarPlus, LayoutDashboard } from 'lucide-react'
 import IntegrationCard from '../IntegrationCard'
 import type { Provider, ConnectionCounts } from '../types'
+import { PROVIDER_ICON_META } from '@/components/icons/ProviderIcon'
 
 const WHY_CALENDAR = [
   {
@@ -73,9 +74,9 @@ export default function CalendarStep({ connectionCounts, loading, error, canFini
         <IntegrationCard
           name="Google Calendar"
           description="일정 관련 알림을 캘린더에 등록할 수 있어요."
-          iconBg="rgba(66,133,244,0.1)"
-          Icon={Calendar}
-          iconColor="#4285f4"
+          iconBg={PROVIDER_ICON_META.google_calendar.bg}
+          Icon={PROVIDER_ICON_META.google_calendar.Icon}
+          iconColor={PROVIDER_ICON_META.google_calendar.color}
           isConnected={connectionCount > 0}
           connectionCount={connectionCount}
           isLoading={loading === 'google_calendar'}

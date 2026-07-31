@@ -1,38 +1,26 @@
 'use client'
 
-import { MessageSquare, Hash, Mail, Clipboard } from 'lucide-react'
+import { MessageSquare } from 'lucide-react'
 import type { Notification, NotificationProvider } from '@/types'
 import PriorityBadge from './PriorityBadge'
 import CalendarEventAction from './CalendarEventAction'
 import { formatRelativeTime } from '@/utils'
+import { PROVIDER_ICON_META } from '@/components/icons/ProviderIcon'
 
 const PROVIDER_STYLE: Record<
   NotificationProvider,
-  { iconBg: string; Icon: React.ComponentType<{ size?: number; className?: string }> }
+  { iconBg: string; Icon: React.ComponentType<{ size?: number; color?: string }>; color: string }
 > = {
-  discord: {
-    iconBg: 'bg-[rgba(97,95,255,0.1)]',
-    Icon: ({ size, className }) => <MessageSquare size={size} className={className ?? 'text-[#615fff]'} />,
-  },
-  slack: {
-    iconBg: 'bg-[rgba(236,86,148,0.1)]',
-    Icon: ({ size, className }) => <Hash size={size} className={className ?? 'text-[#ec5694]'} />,
-  },
-  jira: {
-    iconBg: 'bg-[rgba(0,82,204,0.1)]',
-    Icon: ({ size, className }) => <Clipboard size={size} className={className ?? 'text-[#0052cc]'} />,
-  },
-  gmail: {
-    iconBg: 'bg-[rgba(234,67,53,0.1)]',
-    Icon: ({ size, className }) => <Mail size={size} className={className ?? 'text-[#ea4335]'} />,
-  },
+  discord: { iconBg: 'bg-[rgba(88,101,242,0.1)]', Icon: PROVIDER_ICON_META.discord.Icon, color: PROVIDER_ICON_META.discord.color },
+  slack: { iconBg: 'bg-[rgba(74,21,75,0.1)]', Icon: PROVIDER_ICON_META.slack.Icon, color: PROVIDER_ICON_META.slack.color },
+  jira: { iconBg: 'bg-[rgba(0,82,204,0.1)]', Icon: PROVIDER_ICON_META.jira.Icon, color: PROVIDER_ICON_META.jira.color },
+  gmail: { iconBg: 'bg-[rgba(234,67,53,0.1)]', Icon: PROVIDER_ICON_META.gmail.Icon, color: PROVIDER_ICON_META.gmail.color },
 }
 
 const DEFAULT_STYLE = {
   iconBg: 'bg-[var(--color-gray-50)]',
-  Icon: ({ size, className }: { size?: number; className?: string }) => (
-    <MessageSquare size={size} className={className ?? 'text-[var(--color-gray-400)]'} />
-  ),
+  Icon: MessageSquare,
+  color: 'var(--color-gray-400)',
 }
 
 interface NotificationCardProps {
@@ -42,7 +30,7 @@ interface NotificationCardProps {
 
 export default function NotificationCard({ notification, onClick }: NotificationCardProps) {
   const { id, summary, actor, channel, provider, priority, createdAt, isScheduleRelated, calendarStatus, calendarEventUrl } = notification
-  const { iconBg, Icon } = provider ? PROVIDER_STYLE[provider] : DEFAULT_STYLE
+  const { iconBg, Icon, color } = provider ? PROVIDER_STYLE[provider] : DEFAULT_STYLE
 
   const infoItems = [channel, actor, formatRelativeTime(createdAt)].filter(Boolean)
 
@@ -66,7 +54,7 @@ export default function NotificationCard({ notification, onClick }: Notification
         className={`flex shrink-0 items-center justify-center rounded-[10px] ${iconBg}`}
         style={{ width: '36px', height: '36px' }}
       >
-        <Icon size={20} />
+        <Icon size={20} color={color} />
       </span>
 
       {/* 본문 */}

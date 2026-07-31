@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { MessageSquare } from 'lucide-react'
 import type { Briefing, NotificationProvider } from '@/types'
 import { formatDate, formatTime, stripMarkdown } from '@/utils'
+import { PROVIDER_ICON_META } from '@/components/icons/ProviderIcon'
 
 const PROVIDER_COLOR: Record<NotificationProvider, string> = {
   slack: 'bg-[#4a154b]',
@@ -68,16 +68,19 @@ export default function BriefingCard({ briefing, providerCounts }: BriefingCardP
       {/* 푸터 */}
       <div className="flex items-center justify-between pt-[var(--spacing-4xs)]">
         <div className="flex items-center gap-[var(--spacing-2xs)]">
-          {providerEntries.map(([provider, count]) => (
-            <span key={provider} className="flex items-center gap-[var(--spacing-4xs)]">
-              <span className={['flex h-5 w-5 items-center justify-center rounded-full text-white', PROVIDER_COLOR[provider]].join(' ')}>
-                <MessageSquare size={10} />
+          {providerEntries.map(([provider, count]) => {
+            const ProviderLogo = PROVIDER_ICON_META[provider].Icon
+            return (
+              <span key={provider} className="flex items-center gap-[var(--spacing-4xs)]">
+                <span className={['flex h-5 w-5 items-center justify-center rounded-full text-white', PROVIDER_COLOR[provider]].join(' ')}>
+                  <ProviderLogo size={10} color="white" />
+                </span>
+                <span className="text-[var(--color-gray-500)]" style={{ fontSize: 'var(--font-size-5xs)' }}>
+                  ({count})
+                </span>
               </span>
-              <span className="text-[var(--color-gray-500)]" style={{ fontSize: 'var(--font-size-5xs)' }}>
-                ({count})
-              </span>
-            </span>
-          ))}
+            )
+          })}
         </div>
         <Link
           href={`/briefing/${briefing.id}`}
