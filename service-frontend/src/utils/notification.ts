@@ -8,7 +8,7 @@ export function getPriorityLabel(priority: NotificationPriority): string {
     critical: '긴급',
     high: '중요',
     medium: '보통',
-    low: '일반',
+    low: '낮음',
   }
   return labels[priority]
 }

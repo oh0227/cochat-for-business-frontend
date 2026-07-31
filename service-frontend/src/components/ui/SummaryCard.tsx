@@ -1,4 +1,4 @@
-import { AlertCircle, Clock, Info } from 'lucide-react'
+import { AlertCircle, Clock, Info, CircleDot } from 'lucide-react'
 import { getPriorityLabel } from '@/utils'
 import FocusCard from './FocusCard'
 
@@ -6,7 +6,7 @@ import FocusCard from './FocusCard'
 
 interface PrioritySummaryCardProps {
   type: 'priority'
-  priority: 'critical' | 'high' | 'medium'
+  priority: 'critical' | 'high' | 'medium' | 'low'
   count: number
   subtext: string
 }
@@ -38,12 +38,19 @@ const PRIORITY_STYLE = {
     iconBg: 'bg-[rgba(59,130,246,0.1)]',
     text: 'text-[var(--color-normal-500)]',
   },
+  low: {
+    bg: 'bg-[var(--color-status-completed-50)]',
+    border: 'border-[rgba(18,183,106,0.2)]',
+    iconBg: 'bg-[rgba(16,167,96,0.1)]',
+    text: 'text-[var(--color-status-completed-500)]',
+  },
 } as const
 
 const PRIORITY_ICON = {
   critical: AlertCircle,
   high: Clock,
   medium: Info,
+  low: CircleDot,
 } as const
 
 /* ─── 메인 컴포넌트 ─────────────────────────────────────────────── */
@@ -68,7 +75,7 @@ function PriorityCard({
   count,
   subtext,
 }: {
-  priority: 'critical' | 'high' | 'medium'
+  priority: 'critical' | 'high' | 'medium' | 'low'
   count: number
   subtext: string
 }) {
