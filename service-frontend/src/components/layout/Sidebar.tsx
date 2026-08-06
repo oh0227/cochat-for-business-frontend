@@ -15,6 +15,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
 } from 'lucide-react'
+import Tooltip from '@/components/ui/Tooltip'
 
 const NAV_ITEMS = [
   { label: '대시보드', href: '/dashboard', icon: LayoutDashboard },
@@ -48,12 +49,10 @@ function NavLinks({
       <nav className="flex flex-1 flex-col gap-[var(--spacing-3xs)] px-[var(--spacing-2xs)]">
         {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
           const isActive = pathname === href || pathname.startsWith(href + '/')
-          return (
+          const link = (
             <Link
-              key={href}
               href={href}
               onClick={onNavigate}
-              title={showLabel ? undefined : label}
               className={[
                 'flex items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-xs)] px-[var(--spacing-2xs)] py-[var(--spacing-3xs)]',
                 'transition-colors',
@@ -79,33 +78,48 @@ function NavLinks({
               )}
             </Link>
           )
+
+          if (!showLabel) {
+            return (
+              <Tooltip key={href} label={label}>
+                {link}
+              </Tooltip>
+            )
+          }
+
+          return <span key={href}>{link}</span>
         })}
       </nav>
 
       <div className="px-[var(--spacing-2xs)] pb-[var(--spacing-lg)]">
-        <Link
-          href="/settings"
-          onClick={onNavigate}
-          title={showLabel ? undefined : '설정'}
-          className={[
-            'flex items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-xs)] px-[var(--spacing-2xs)] py-[var(--spacing-3xs)]',
-            'transition-colors',
-            showLabel ? '' : 'justify-center',
-            pathname === '/settings'
-              ? 'bg-[var(--color-brand-500)] text-white'
-              : 'text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]',
-          ].join(' ')}
-        >
-          <Settings size={20} />
-          {showLabel && (
-            <span
-              className="font-medium"
-              style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+        {(() => {
+          const settingsLink = (
+            <Link
+              href="/settings"
+              onClick={onNavigate}
+              className={[
+                'flex items-center gap-[var(--spacing-2xs)] rounded-[var(--radius-xs)] px-[var(--spacing-2xs)] py-[var(--spacing-3xs)]',
+                'transition-colors',
+                showLabel ? '' : 'justify-center',
+                pathname === '/settings'
+                  ? 'bg-[var(--color-brand-500)] text-white'
+                  : 'text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]',
+              ].join(' ')}
             >
-              설정
-            </span>
-          )}
-        </Link>
+              <Settings size={20} />
+              {showLabel && (
+                <span
+                  className="font-medium"
+                  style={{ fontSize: 'var(--font-size-3xs)', lineHeight: 'var(--line-height-4xs)' }}
+                >
+                  설정
+                </span>
+              )}
+            </Link>
+          )
+
+          return showLabel ? settingsLink : <Tooltip label="설정">{settingsLink}</Tooltip>
+        })()}
       </div>
     </>
   )
@@ -188,40 +202,35 @@ export default function Sidebar({ unreadCount, isOpen = false, onClose }: Sideba
                   CoChat
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={togglePinned}
-                aria-label="사이드바 접기"
-                title="사이드바 접기"
-                className="flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]"
-              >
-                <PanelLeftClose size={18} />
-              </button>
+              <Tooltip label="사이드바 닫기" className="shrink-0">
+                <button
+                  type="button"
+                  onClick={togglePinned}
+                  aria-label="사이드바 닫기"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]"
+                >
+                  <PanelLeftClose size={18} />
+                </button>
+              </Tooltip>
             </>
           ) : (
-            <div className="relative flex w-full justify-center">
-              <button
-                type="button"
-                onClick={togglePinned}
-                onMouseEnter={() => setHoveringToggle(true)}
-                onMouseLeave={() => setHoveringToggle(false)}
-                aria-label="사이드바 열기"
-                className="flex size-9 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]"
-              >
-                {hoveringToggle ? (
-                  <PanelLeftOpen size={20} />
-                ) : (
-                  <Image src="/logo.png" alt="CoChat 로고" width={26} height={26} className="rounded-[6px]" />
-                )}
-              </button>
-              {hoveringToggle && (
-                <span
-                  className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-full px-3 py-1.5 text-white shadow-lg"
-                  style={{ background: 'var(--color-gray-inverse)', fontSize: 'var(--font-size-3xs)' }}
+            <div className="flex w-full justify-center">
+              <Tooltip label="사이드바 열기">
+                <button
+                  type="button"
+                  onClick={togglePinned}
+                  onMouseEnter={() => setHoveringToggle(true)}
+                  onMouseLeave={() => setHoveringToggle(false)}
+                  aria-label="사이드바 열기"
+                  className="flex size-9 items-center justify-center rounded-[var(--radius-xs)] text-[var(--color-gray-700)] hover:bg-[var(--color-gray-50)]"
                 >
-                  사이드바 열기
-                </span>
-              )}
+                  {hoveringToggle ? (
+                    <PanelLeftOpen size={20} />
+                  ) : (
+                    <Image src="/logo.png" alt="CoChat 로고" width={26} height={26} className="rounded-[6px]" />
+                  )}
+                </button>
+              </Tooltip>
             </div>
           )}
         </div>
