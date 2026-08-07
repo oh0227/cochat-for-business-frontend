@@ -31,13 +31,15 @@ CoChat은 Slack·Discord 같은 여러 업무 채널에 흩어진 메시지를 �
 
 ### 문제
 
-<img width="1672" height="941" alt="Cochat-문제상황" src="https://github.com/user-attachments/assets/b7e1dd3d-1ada-463c-9191-c86e7d2076aa" />
+<img width="2730" height="1536" alt="CoChat_문제인식_완성" src="https://github.com/user-attachments/assets/2f660549-e293-4e83-8912-ae5a5bb1f518" />
+
 
 여러 메신저를 동시에 쓰는 팀에서는 "지금 당장 봐야 하는 메시지"와 "나중에 봐도 되는 메시지"가 뒤섞여서, 결국 알림을 계속 확인하느라 몰입해서 일하는 시간이 끊긴다.
 
 ### CoChat의 해결 방식
 
-> 🖼️ **[이미지: CoChat이 알림을 정리해주는 모습 — "해결"]**
+<img width="2752" height="1536" alt="CoChat_문제해결_완성" src="https://github.com/user-attachments/assets/c695239f-5224-4ef5-898b-4e2b8bbc05e1" />
+
 
 CoChat은 메시지 수신 시점에 AI가 긴급도·일정 관련 여부를 판단해서, 집중 모드 중에는 정말 긴급한 것만 보여주고 나머지는 보류시켰다가 브리핑으로 한 번에 정리해서 보여준다. 일정이 언급된 메시지는 감지해서 Google Calendar 등록까지 이어준다.
 
