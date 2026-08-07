@@ -31,7 +31,7 @@ CoChat은 Slack·Discord 같은 여러 업무 채널에 흩어진 메시지를 �
 
 ### 문제
 
-> 🖼️ **[이미지: 여러 메신저 알림에 둘러싸여 있는 모습 — "문제 상황"]**
+<img width="1672" height="941" alt="Cochat-문제상황" src="https://github.com/user-attachments/assets/b7e1dd3d-1ada-463c-9191-c86e7d2076aa" />
 
 여러 메신저를 동시에 쓰는 팀에서는 "지금 당장 봐야 하는 메시지"와 "나중에 봐도 되는 메시지"가 뒤섞여서, 결국 알림을 계속 확인하느라 몰입해서 일하는 시간이 끊긴다.
 
