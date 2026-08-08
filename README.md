@@ -56,7 +56,8 @@ CoChat은 메시지 수신 시점에 AI가 긴급도·일정 관련 여부를 �
 
 Slack·Discord에서 온 메시지를 실시간(SSE)으로 수신해 우선순위 배지와 함께 보여준다. 일정 관련 메시지는 자동으로 감지되어 캘린더 등록 버튼이 붙는다.
 
-> 🖼️ **[스크린샷: 메시지 목록 + 채팅방(일정 등록 버튼, AI 답장 제안 포함)]**
+<img width="1584" height="993" alt="메시지" src="https://github.com/user-attachments/assets/495cf078-beec-4e11-b28b-df4f8dc3c174" />
+
 
 ### 집중 모드 — 딥워크 세션
 
@@ -79,6 +80,9 @@ Slack·Discord에서 온 메시지를 실시간(SSE)으로 수신해 우선순�
 ## 기술 스택
 
 브라우저는 Next.js 프론트를 통해서만 백엔드와 통신한다. 대부분의 요청은 Next.js Route Handler(`/api/**`)가 서버 사이드에서 FastAPI 백엔드로 프록시하고, 실시간 알림 스트림(SSE)처럼 브라우저가 직접 백엔드를 호출해야 하는 소수의 경로만 예외로 열어뒀다. 백엔드는 Slack/Discord/Google Calendar API와 통신하고, Groq LLM으로 메시지의 긴급도·일정 관련 여부를 판단해 저장한다.
+
+<img width="1672" height="941" alt="CoChat-기술스택" src="https://github.com/user-attachments/assets/0f8caece-de53-44ba-8639-a97aafe0a359" />
+
 
 - **프론트엔드** (Next.js 16 App Router + TypeScript): Zustand로 집중 모드 세션 등 전역 클라이언트 상태 관리, `@microsoft/fetch-event-source`로 인증 헤더를 실은 SSE 수신, Tailwind CSS 4 + CSS 커스텀 프로퍼티 기반 라이트/다크 테마
 - **백엔드** (FastAPI, Render): 알림 수집·분류, 브리핑 생성, 집중 세션·캘린더 이벤트 관리 — [cochat-for-business-backend](https://github.com/oh0227/cochat-for-business-backend)
