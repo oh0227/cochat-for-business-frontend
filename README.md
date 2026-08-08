@@ -73,16 +73,16 @@ Slack·Discord에서 온 메시지를 실시간(SSE)으로 수신해 우선순�
 <img width="1584" height="993" alt="집중 모드" src="https://github.com/user-attachments/assets/74c8e10f-fcfb-4f59-9098-d85fe886e215" />
 
 
-### 캘린더 — Google Calendar 연동
+### 캘린더 — 외부 캘린더 연동
 
-일정 관련 메시지는 감지 즉시(긴급) 또는 조용히 누적(비긴급)되고, 알림 카드의 등록 버튼으로 실제 Google Calendar에 일정을 만들 수 있다. `/calendar` 페이지는 별도 DB 없이 연동된 Google Calendar를 그대로 CRUD 프록시해서, 생성·수정·삭제가 실제 캘린더에 바로 반영된다.
+일정 관련 메시지는 감지 즉시(긴급) 또는 조용히 누적(비긴급)되고, 알림 카드의 등록 버튼으로 연동된 캘린더에 일정을 만들 수 있다. `/calendar` 페이지는 별도 DB 없이 연동된 캘린더 서비스를 그대로 CRUD 프록시해서, 생성·수정·삭제가 실제 캘린더에 바로 반영된다. 현재는 Google Calendar를 지원하며, 다른 캘린더 서비스도 순차적으로 연동할 예정이다.
 
 <img width="1584" height="993" alt="캘린더" src="https://github.com/user-attachments/assets/4e481add-5297-4b83-a173-8b40788d78fc" />
 
 
 ## 기술 스택
 
-브라우저는 Next.js 프론트를 통해서만 백엔드와 통신한다. 대부분의 요청은 Next.js Route Handler(`/api/**`)가 서버 사이드에서 FastAPI 백엔드로 프록시하고, 실시간 알림 스트림(SSE)처럼 브라우저가 직접 백엔드를 호출해야 하는 소수의 경로만 예외로 열어뒀다. 백엔드는 Slack/Discord/Google Calendar API와 통신하고, Groq LLM으로 메시지의 긴급도·일정 관련 여부를 판단해 저장한다.
+브라우저는 Next.js 프론트를 통해서만 백엔드와 통신한다. 대부분의 요청은 Next.js Route Handler(`/api/**`)가 서버 사이드에서 FastAPI 백엔드로 프록시하고, 실시간 알림 스트림(SSE)처럼 브라우저가 직접 백엔드를 호출해야 하는 소수의 경로만 예외로 열어뒀다. 현재는 AI 분류 로직과 DB 처리 로직이 하나의 FastAPI(Python) 서버에서 함께 동작한다 — Groq LLM으로 메시지의 긴급도·일정 관련 여부를 판단하는 것도, 그 결과를 PostgreSQL에 저장하는 것도 같은 서버가 처리한다. 트래픽이 늘어나면 AI 분류 부분을 별도 LLM 서버로 분리할 계획이다.
 
 <img width="1672" height="941" alt="CoChat-기술스택" src="https://github.com/user-attachments/assets/0f8caece-de53-44ba-8639-a97aafe0a359" />
 
@@ -90,7 +90,7 @@ Slack·Discord에서 온 메시지를 실시간(SSE)으로 수신해 우선순�
 - **프론트엔드** (Next.js 16 App Router + TypeScript): Zustand로 집중 모드 세션 등 전역 클라이언트 상태 관리, `@microsoft/fetch-event-source`로 인증 헤더를 실은 SSE 수신, Tailwind CSS 4 + CSS 커스텀 프로퍼티 기반 라이트/다크 테마
 - **백엔드** (FastAPI, Render): 알림 수집·분류, 브리핑 생성, 집중 세션·캘린더 이벤트 관리 — [cochat-for-business-backend](https://github.com/oh0227/cochat-for-business-backend)
 - **AI**: Groq LLM으로 메시지 긴급도 분류, 일정 관련 여부 판단
-- **외부 연동**: Slack, Discord (메시지 수집), Google Calendar (OAuth, 일정 CRUD)
+- **외부 연동**: Slack, Discord (메시지 수집), 캘린더 서비스 — Google Calendar 지원 중, OAuth 기반 일정 CRUD (추후 Outlook/Naver 등 확장 예정)
 
 ## 엔지니어링 하이라이트
 
@@ -99,6 +99,7 @@ Slack·Discord에서 온 메시지를 실시간(SSE)으로 수신해 우선순�
 - **집중 모드 중 알림 필터링**: 집중 모드 중에는 긴급 알림만 실시간으로 방해하고, 나머지는 조용히 쌓아뒀다가 브리핑으로 한 번에 확인하도록 SSE 수신 로직에 우선순위 게이팅을 넣었다.
 - **테마 토큰 시스템**: 라이트/다크 색상을 하드코딩하지 않고 CSS 커스텀 프로퍼티로 정의해서, 카드 배경처럼 투명도가 필요한 색은 알파 블렌딩으로 두 테마에 자동 적응하게 만들었다.
 - **프론트/백엔드 비동기 협업**: 백엔드를 별도 세션에서 병행 개발하면서, API 스펙 불일치나 버그를 발견하면 재현 조건과 원인 분석을 문서로 정리해 전달하고, 반대로 백엔드가 배포한 변경사항을 프롬프트로 전달받아 연동하는 방식으로 작업했다.
+- **단일 서버 아키텍처**: 현재는 AI 분류와 DB 로직이 같은 Python(FastAPI) 프로세스 안에서 함께 처리된다. 초기 단계에서는 배포·운영 복잡도를 낮추는 게 우선이라 의도적으로 분리하지 않았고, 트래픽이 늘어나는 시점에 LLM 서버를 독립시킬 계획이다.
 
 ## 폴더 구조
 
@@ -143,6 +144,7 @@ npm run dev
 - 자동화된 테스트가 없다. 회귀를 직접 브라우저로 확인하며 개발했다.
 - 메시지에서 일정 시간을 자동으로 추출하는 기능은 백엔드 작업 대기 중이라, 현재는 등록 시 시간을 직접 확인/입력해야 한다.
 - Jira, Gmail은 알림 provider 타입상으로는 준비돼 있지만 실제 OAuth 연동은 아직 Slack·Discord·Google Calendar만 구현되어 있다.
+- AI 분류(Groq LLM 호출)는 현재 FastAPI 서버 안에서 함께 처리되고 있다. 트래픽 증가에 대비해 추후 별도 LLM 서버로 분리할 예정이다.
 
 ## 커밋 히스토리
 
